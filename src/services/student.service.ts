@@ -1,7 +1,9 @@
+import { Error } from "mongoose";
 import ServiceResult from "../interfaces/IService";
 import StudentModel from "../models/student.model";
-import { generateToken } from "../utils/JWT";
-import { comparePassword } from "../utils/encrypt";
+import JWT from "../utils/JWT";
+import { comparePassword, encrypt } from "../utils/encrypt";
+import Email from "../utils/sendEmail";
 
 class StudentService {
   async find(): Promise<ServiceResult<IStudent[]>> {
@@ -10,6 +12,24 @@ class StudentService {
       status: "SUCCESS",
       data,
     };
+  }
+
+  async findById(id: string): Promise<ServiceResult<IStudent>> {
+    try {
+      const data = await StudentModel.findById(id);
+      if (!data) {
+        throw new Error("User not found");
+      }
+      return {
+        status: "SUCCESS",
+        data,
+      };
+    } catch (error: Error | any) {
+      return {
+        status: "NOT_FOUND",
+        data: { message: error.message || "Internal server error" },
+      };
+    }
   }
 
   async login({
@@ -29,33 +49,107 @@ class StudentService {
         throw new Error("Password invalid");
       }
 
-      const { password: passwordDB, ...student } = data;
+      const { password: passwordDB, frequency, ...student } = data;
 
-      const token = generateToken(student);
+      if (!data.accepted) {
+        throw new Error("User not accepted");
+      }
+
+      const token = JWT.generateToken(student);
 
       return {
         status: "SUCCESS",
         data: { token },
       };
-    } catch (error) {
+    } catch (error: Error | any) {
       return {
         status: "NOT_FOUND",
-        data: { message: JSON.stringify(error) || "Internal server error" },
+        data: { message: error.message || "Internal server error" },
       };
     }
   }
 
   async create(student: IStudent) {
     try {
-      const data = await StudentModel.create(student);
+      await StudentModel.model.validate(student);
+
+      const studentWithSameEmail = await StudentModel.findByEmail(
+        student.email
+      );
+      if (studentWithSameEmail) {
+        let errorMessage = "Usuário já cadastrado";
+        if (!studentWithSameEmail.accepted)
+          errorMessage += " - não liberado pelo administrador. Aguarde.";
+        throw new Error(errorMessage);
+      }
+      if (student.password) {
+        student.password = encrypt(student.password);
+      }
+      const data = await StudentModel.create({
+        ...student,
+        accepted: false,
+        role: "student",
+      });
+      const adminList = await StudentModel.getAdminList();
+      await Email.sendConfirmationEmail(student, adminList);
       return {
         status: "CREATED",
         data,
       };
-    } catch (error) {
+    } catch (error: Error | any) {
+      return {
+        status: "INVALID",
+        data: { message: error.message || "Internal server error" },
+      };
+    }
+  }
+
+  private async isDuplicateEmail(email: string, _id: string): Promise<boolean> {
+    const data = await StudentModel.model.find({ email, _id: { $ne: _id } });
+    return data.length > 0;
+  }
+
+  async update(id: string, student: IStudent) {
+    // verificar se o estudante existe
+    try {
+      const data = await StudentModel.findById(id);
+      if (!data) {
+        throw new Error("Usuario nao encontrado");
+      }
+      if (await this.isDuplicateEmail(student.email, id)) {
+        throw new Error("Email já existe");
+      }
+      await StudentModel.update(id, student);
+      return {
+        status: "UPDATED",
+        data,
+      };
+    } catch (error: Error | any) {
       return {
         status: "ERROR",
-        data: { message: JSON.stringify(error) || "Internal server error" },
+        data: { message: error.message || "Internal server error" },
+      };
+    }
+    // verificar duplicidade de email
+  }
+
+  async delete(id: string) {
+    try {
+      const data = await StudentModel.findById(id);
+      if (!data) {
+        throw new Error("User not found");
+      }
+      await StudentModel.delete(id);
+      return {
+        status: "DELETED",
+        data: {
+          _id: id,
+        },
+      };
+    } catch (error: Error | any) {
+      return {
+        status: "ERROR",
+        data: { message: error.message || "Internal server error" },
       };
     }
   }

@@ -14,7 +14,7 @@ export class LoginController {
       const { status, data } = await this.service.login(req.body);
       console.log('status', status, 'data', data, 'controller');
       if (status !== "SUCCESS") {
-        throw new Error("Dados de login inválidos");
+        throw new Error("Dados de login inválidos ou usuário não autorizado");
       }
 
       return res.status(mapStatusHTTP(status)).json(data);

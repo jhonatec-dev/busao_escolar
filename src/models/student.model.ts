@@ -5,34 +5,36 @@ class StudentModel {
 
   constructor() {
     const schema = new Schema<IStudent>({
-      name: String,
-      school: String,
-      email: String,
-      password: String,
-      role: String,
+      name: { type: String, required: true },
+      school: { type: String, required: true },
+      email: { type: String, required: true },
+      password: { type: String, required: true },
+      role: { type: String, default: "student" },
+      accepted: { type: Boolean, default: false },
       frequency: {
-        monday: Boolean,
-        tuesday: Boolean,
-        wednesday: Boolean,
-        thursday: Boolean,
-        friday: Boolean,
-        saturday: Boolean,
-        sunday: Boolean,
+        monday: { type: Boolean, default: false },
+        tuesday: { type: Boolean, default: false },
+        wednesday: { type: Boolean, default: false },
+        thursday: { type: Boolean, default: false },
+        friday: { type: Boolean, default: false },
+        saturday: { type: Boolean, default: false },
+        sunday: { type: Boolean, default: false },
       },
     });
     this.model = model<IStudent>("Student", schema);
   }
 
   async create(student: IStudent) {
-    return await this.model.create(student);
+    const { password, ...data } = (await this.model.create(student)).toObject();
+    return data;
   }
 
   async find() {
-    return await this.model.find().select("-password");
+    return await this.model.find().select("_id name");
   }
 
   async findById(id: string) {
-    return await this.model.findById(id);
+    return await this.model.findById(id).select("-password");
   }
 
   async findByEmail(email: string) {
@@ -41,6 +43,13 @@ class StudentModel {
         email,
       })
     )?.toObject();
+  }
+
+  async getAdminList() {
+    const data = await this.model
+      .find({ role: "admin", accepted: true })
+      .select("email");
+    return data.map((item) => item.email);
   }
 
   async update(id: string, student: IStudent) {

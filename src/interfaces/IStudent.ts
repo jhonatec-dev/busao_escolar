@@ -4,6 +4,7 @@ interface IStudent {
   email: string;
   password?: string;
   role: string;
+  accepted: boolean;
   frequency: {
     monday: boolean;
     tuesday: boolean;
