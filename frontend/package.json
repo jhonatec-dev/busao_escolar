@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -H 0.0.0.0",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -12,10 +12,13 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^5.0.8",
+    "@mui/icons-material": "^5.14.16",
     "@mui/material": "^5.14.16",
+    "axios": "^1.6.0",
     "next": "14.0.1",
     "react": "^18",
     "react-dom": "^18",
+    "react-hook-form": "^7.47.0",
     "sass": "^1.69.5",
     "validator": "^13.11.0"
   },
@@ -23,6 +26,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/validator": "^13.11.5",
     "eslint": "^8",
     "eslint-config-next": "14.0.1",
     "typescript": "^5"

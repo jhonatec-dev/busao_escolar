@@ -46,7 +46,10 @@ class StudentService {
         throw new Error('User not found')
       }
 
-      if (data.password !== undefined && !comparePassword(password, data.password)) {
+      if (
+        data.password !== undefined &&
+        !comparePassword(password, data.password)
+      ) {
         throw new Error('Password invalid')
       }
 
@@ -77,10 +80,10 @@ class StudentService {
       const studentWithSameEmail = await StudentModel.findByEmail(
         student.email
       )
-      if (studentWithSameEmail !== null) {
+      if (studentWithSameEmail !== null && studentWithSameEmail !== undefined) {
         let errorMessage = 'Usuário já cadastrado'
         if (!studentWithSameEmail.accepted) {
-          errorMessage += ' - não liberado pelo administrador. Aguarde.'
+          errorMessage += ' - Aguardando aprovação do administrador'
         }
         throw new Error(errorMessage)
       }

@@ -11,8 +11,7 @@ const loginRoutes = Router()
 loginRoutes.get(
   '/',
   validateToken,
-  async (req: Request, res: Response) =>
-    await studentController.find(req, res)
+  async (req: Request, res: Response) => await studentController.find(req, res)
 )
 
 loginRoutes.post(
@@ -27,6 +26,13 @@ loginRoutes.put(
   [validateToken, validateCreateStudent],
   async (req: Request, res: Response) =>
     await studentController.update(req, res)
+)
+
+loginRoutes.get(
+  '/profile',
+  validateToken,
+  async (req: Request, res: Response) =>
+    await studentController.getProfile(req, res)
 )
 
 loginRoutes.get(

@@ -39,11 +39,11 @@ class StudentModel {
   }
 
   async findByEmail (email: string): Promise<IStudent | null> {
-    return await (
+    return (await (
       await this.model.findOne({
         email
       })
-    )?.toObject() as IStudent
+    )?.toObject()) as IStudent
   }
 
   async getAdminList (): Promise<string[]> {

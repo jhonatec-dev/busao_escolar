@@ -7,13 +7,15 @@
     "dev": "ts-node-dev  --transpile-only --ignore-watch node_modules --respawn src/server.ts",
     "jhon": "ts-node src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint . --ext .ts",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/bcrypt": "^5.0.1",
+    "@types/cors": "^2.8.15",
     "@types/express": "^4.17.20",
     "@types/jsonwebtoken": "^9.0.4",
     "@types/nodemailer": "^6.4.13",
@@ -37,6 +39,7 @@
   "dependencies": {
     "@types/joi": "^17.2.3",
     "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "joi": "^17.11.0",

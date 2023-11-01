@@ -1,6 +1,14 @@
-import '@/styles/globals.scss'
-import type { AppProps } from 'next/app'
+import AppProvider from "@/context/appProvider";
+import "@/styles/globals.scss";
+import { Paper } from "@mui/material";
+import type { AppProps } from "next/app";
 
 export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+  return (
+    <AppProvider>
+      <Paper className="App">
+      <Component {...pageProps} />
+      </Paper>
+    </AppProvider>
+  );
 }

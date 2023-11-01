@@ -11,7 +11,11 @@ export class LoginController {
 
   async login (req: Request, res: Response): Promise<Response> {
     try {
-      const { status, data } = await this.service.login(req.body)
+      const { email, password } = req.body
+      const { status, data } = await this.service.login({
+        email,
+        password
+      })
       console.log('status', status, 'data', data, 'controller')
       if (status !== 'SUCCESS') {
         throw new Error('Dados de login inválidos ou usuário não autorizado')
@@ -19,7 +23,7 @@ export class LoginController {
 
       return res.status(mapStatusHTTP(status)).json(data)
     } catch (error: Error | any) {
-      return res.status(500).json({ message: error.message })
+      return res.status(400).json({ message: error.message })
     }
   }
 }

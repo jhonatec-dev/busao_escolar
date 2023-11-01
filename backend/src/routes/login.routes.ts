@@ -7,7 +7,8 @@ const loginRoutes = Router()
 
 const loginController = new LoginController()
 
-loginRoutes.post('/', [validateLogin], async (req: Request, res: Response) => { await loginController.login(req, res) }
-)
+loginRoutes.post('/', validateLogin, async (req: Request, res: Response) => {
+  await loginController.login(req, res)
+})
 
 export default loginRoutes
