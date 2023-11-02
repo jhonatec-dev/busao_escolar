@@ -46,6 +46,7 @@ export default function Home() {
       }
     } catch (error: AxiosError | any) {
       if (error instanceof AxiosError) {
+        console.log('deu ruim geral')
         showMessage(error.response?.data.message, "error");
       } else showMessage(error.message, "error");
     }
