@@ -19,7 +19,7 @@ export default function Home() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { showMessage, getData } = useContext(AppContext);
+  const { showMessage, getData, login } = useContext(AppContext);
   const router = useRouter();
 
   const validateForm = () => {
@@ -44,7 +44,7 @@ export default function Home() {
       });
       if (data && data.token) {
         saveToLS("tokenBusaoEscolar", data.token);
-        router.push("/dashboard");
+        login();
       }
     } catch (error: any) {
       showMessage(error.message, "error");

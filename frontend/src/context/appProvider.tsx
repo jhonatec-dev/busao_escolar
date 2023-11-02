@@ -3,7 +3,13 @@ import { getFromLS, removeFromLS, saveToLS } from "@/utils/localStorage";
 import { Alert, Snackbar, ThemeProvider, createTheme } from "@mui/material";
 import axios, { AxiosError } from "axios";
 import router from "next/router";
-import { createContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -12,6 +18,7 @@ export interface AppContextType {
   toggleMode: () => void;
   showMessage: (message: string, mode: messageMode) => void;
   logout: () => void;
+  login: () => void;
   profile: IStudent;
   getData: (endPoint: string, method: method, data?: any) => any;
   getDataAuth: (endPoint: string, method: method, data?: any) => any;
@@ -28,25 +35,23 @@ export default function AppProvider({ children }: any) {
   const [messageMode, setMessageMode] = useState<messageMode>("info");
   const [profile, setProfile] = useState<IStudent>({} as IStudent);
 
-  useEffect(() => {
-    restoreThemeMode();
+  const login = useCallback(async () => {
     const token = getFromLS("tokenBusaoEscolar");
     if (!token) {
       if (router.pathname === "/dashboard") router.push("/");
       return;
     }
 
-    const getProfile = async () => {
-      const newProfile = (await getDataAuth(
-        "student/profile",
-        "get"
-      )) as IStudent;
-      
-      setProfile(newProfile);
-      if(router.pathname === "/") router.push("/dashboard");
-    };
+    const newProfile = await getDataAuth("student/profile", "get");
 
-    getProfile();
+    if (!newProfile) return;
+    setProfile(newProfile as IStudent);
+    if (router.pathname === "/") router.push("/dashboard");
+  }, []);
+
+  useEffect(() => {
+    restoreThemeMode();
+    login();
   }, []);
 
   const theme = createTheme({
@@ -59,17 +64,17 @@ export default function AppProvider({ children }: any) {
     },
     components: {
       MuiBackdrop: {
-        styleOverrides: {
-          root: {
-            backdropFilter: "blur(10px) !important",
-            margin: "0 !important",
-            padding: "0",
-            position: "fixed",
-            top: "0",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            zIndex: "50",
-          },
-        },
+        // styleOverrides: {
+        //   root: {
+        //     backdropFilter: "blur(10px) !important",
+        //     margin: "0 !important",
+        //     padding: "0",
+        //     position: "fixed",
+        //     top: "0",
+        //     backgroundColor: "rgba(0, 0, 0, 0.5)",
+        //     zIndex: "50",
+        //   },
+        // },
       },
       // MuiButton: {
       //   styleOverrides: {
@@ -145,7 +150,7 @@ export default function AppProvider({ children }: any) {
     );
   };
 
-  const toggleMode = () => {
+  const toggleMode = useCallback(() => {
     const newMode = themeMode === "light" ? "dark" : "light";
     setThemeMode(newMode);
     document.documentElement.style.setProperty(
@@ -165,59 +170,82 @@ export default function AppProvider({ children }: any) {
       `var(--font-color-highlight-${newMode})`
     );
     saveToLS("themeMode", newMode);
-  };
+  }, [themeMode]);
 
-  const showMessage = (message: string, mode: messageMode) => {
+  const showMessage = useCallback((message: string, mode: messageMode) => {
     setMessageContent(message);
     setMessageMode(mode);
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     removeFromLS("tokenBusaoEscolar");
     router.push("/");
-  };
+  }, []);
 
-  const getData = async (endPoint: string, method: method, data?: any) => {
-    try {
-      const response = await axios[method](`${API_URL}/${endPoint}`, data);
-      return response.data;
-    } catch (error: AxiosError | any) {
-      console.log(
-        "Error",
-        error,
-        "instancia",
-        typeof error,
-        "instancia",
-        error instanceof AxiosError
-      );
-      if (error instanceof AxiosError) {
-        showMessage(error.response?.data.message, "error");
-      } else showMessage(error.message, "error");
+  const getData = useCallback(
+    async (endPoint: string, method: method, data?: any) => {
+      try {
+        const response = await axios[method](`${API_URL}/${endPoint}`, data);
+        return response.data;
+      } catch (error: AxiosError | any) {
+        console.log(
+          "Error",
+          error,
+          "instancia",
+          typeof error,
+          "instancia",
+          error instanceof AxiosError
+        );
+        if (error instanceof AxiosError) {
+          showMessage(error.response?.data.message, "error");
+        } else showMessage(error.message, "error");
 
-      return;
-    }
-  };
-
-  const getDataAuth = async (endPoint: string, method: method, data?: any) => {
-    try {
-      const token = getFromLS("tokenBusaoEscolar");
-      const response = await axios[method](`${API_URL}/${endPoint}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        data,
-      });
-      return response.data;
-    } catch (error: AxiosError | any) {
-      if (error instanceof AxiosError) {
-        if (error.response?.status === 401) {
-          logout();
-        }
-        throw new Error(error.response?.data.message);
+        return;
       }
-      throw new Error(error.message);
-    }
-  };
+    },
+    [showMessage]
+  );
+
+  const getDataAuth = useCallback(
+    async (endPoint: string, method: method, data?: any) => {
+      try {
+        const token = getFromLS("tokenBusaoEscolar");
+        console.log("token", token);
+        if (!token) {
+          logout();
+          return;
+        }
+        let response: any;
+        console.log("dados no auth do provider", { endPoint, method, data });
+        if (method === "get") {
+          console.log("entrei aqui");
+          response = await axios[method](`${API_URL}/${endPoint}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+        } else {
+          response = await axios[method](`${API_URL}/${endPoint}`, data ?? {}, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+        }
+
+        console.log("response no Provider", response);
+        return response.data;
+      } catch (error: AxiosError | any) {
+        if (error instanceof AxiosError) {
+          if (error.response?.status === 401) {
+            logout();
+          }
+          throw new Error(error.response?.data.message);
+        }
+        throw new Error(error.message);
+      }
+    },
+    [logout]
+  );
 
   const values = useMemo(
     () => ({
@@ -226,6 +254,7 @@ export default function AppProvider({ children }: any) {
       toggleMode,
       showMessage,
       logout,
+      login,
       getData,
       getDataAuth,
     }),

@@ -31,7 +31,7 @@ class StudentModel {
   }
 
   async find (): Promise<IStudent[]> {
-    return await this.model.find().select('_id name')
+    return await this.model.find().select('-password')
   }
 
   async findById (id: string): Promise<IStudent> {

@@ -1,4 +1,5 @@
 export interface IStudent {
+  _id?: string
   name: string
   school: string
   email: string

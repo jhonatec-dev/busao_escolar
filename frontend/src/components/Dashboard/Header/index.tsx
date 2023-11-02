@@ -52,7 +52,12 @@ export default function Header() {
             <MenuItem onClick={logout}>
               <ExitToApp sx={{ mr: 1 }} /> Sair
             </MenuItem>
-            <MenuItem onClick={toggleMode}>
+            <MenuItem
+              onClick={() => {
+                toggleMode();
+                handleClose();
+              }}
+            >
               {themeMode === "light" ? (
                 <DarkMode sx={{ mr: 1 }} />
               ) : (

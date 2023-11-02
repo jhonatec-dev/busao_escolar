@@ -13,6 +13,8 @@ const validateToken = async (
 ): Promise<void> => {
   const { authorization } = req.headers
 
+  console.log('authorization', authorization)
+
   if (authorization === undefined) {
     res.status(401).json({ message: 'Token não encontrado' })
     return
