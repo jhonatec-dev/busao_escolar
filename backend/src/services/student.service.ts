@@ -162,6 +162,27 @@ class StudentService {
       }
     }
   }
+
+  async accept (id: string): Promise<ServiceResult<{ _id: string }>> {
+    try {
+      const data = await StudentModel.findById(id)
+      if (data === null) {
+        throw new Error('User not found')
+      }
+      await StudentModel.accept(id)
+      return {
+        status: 'SUCCESS',
+        data: {
+          _id: id
+        }
+      }
+    } catch (error: Error | any) {
+      return {
+        status: 'ERROR',
+        data: { message: error.message }
+      }
+    }
+  }
 }
 
 export default StudentService

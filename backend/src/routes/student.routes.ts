@@ -49,4 +49,8 @@ loginRoutes.delete(
     await studentController.delete(req, res)
 )
 
+loginRoutes.post('/accept/:id', validateToken, async (req: Request, res: Response) =>
+  await studentController.accept(req, res)
+)
+
 export default loginRoutes

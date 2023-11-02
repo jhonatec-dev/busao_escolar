@@ -61,6 +61,10 @@ class StudentModel {
   async delete (id: string): Promise<void> {
     await this.model.deleteOne({ _id: id })
   }
+
+  async accept (id: string): Promise<void> {
+    await this.model.updateOne({ _id: id }, { accepted: true })
+  }
 }
 
 export default new StudentModel()

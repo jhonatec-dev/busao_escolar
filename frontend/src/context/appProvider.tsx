@@ -1,11 +1,13 @@
-import { getFromLS, saveToLS } from "@/utils/localStorage";
+import { getFromLS, removeFromLS, saveToLS } from "@/utils/localStorage";
 import { Alert, Snackbar, ThemeProvider, createTheme } from "@mui/material";
+import router from "next/router";
 import { createContext, useEffect, useMemo, useState } from "react";
 
 export interface AppContextType {
-  theme: any;
+  themeMode: themeMode;
   toggleMode: () => void;
   showMessage: (message: string, mode: messageMode) => void;
+  logout: () => void;
 }
 
 export const AppContext = createContext({} as AppContextType);
@@ -14,15 +16,15 @@ export type themeMode = "light" | "dark";
 export type messageMode = "error" | "success" | "info" | "warning";
 
 export default function AppProvider({ children }: any) {
-  const [mode, setMode] = useState<"light" | "dark">("light");
+  const [themeMode, setThemeMode] = useState<"light" | "dark">("light");
   const [messageContent, setMessageContent] = useState("");
   const [messageMode, setMessageMode] = useState<messageMode>("info");
 
   const theme = createTheme({
     palette: {
-      mode,
+      mode: themeMode,
       text: {
-        primary: mode === "light" ? "#545454" : "#e3e3e3",
+        primary: themeMode === "light" ? "#545454" : "#e3e3e3",
         // secondary: mode === "light" ? "#b7b7b7" : "#6c6c6c",
       },
     },
@@ -72,10 +74,10 @@ export default function AppProvider({ children }: any) {
       MuiPaper: {
         styleOverrides: {
           root: {
-            backgroundColor: mode === "light" ? "#d9d9d9" : "#1e1e1e",
+            backgroundColor: themeMode === "light" ? "#d9d9d9" : "#1e1e1e",
           },
           elevation2: {
-            backgroundColor: mode === "light" ? "#e9e9e9" : "#232323",
+            backgroundColor: themeMode === "light" ? "#e9e9e9" : "#232323",
             boxShadow: "none",
           },
         },
@@ -94,29 +96,29 @@ export default function AppProvider({ children }: any) {
   });
 
   useEffect(() => {
-    const themeMode = getFromLS("themeMode") || "light";
-    setMode(themeMode);
+    const newThemeMode = getFromLS("themeMode") || "light";
+    setThemeMode(newThemeMode);
     document.documentElement.style.setProperty(
       "--scrollbar-background",
-      `var(--background-${themeMode})`
+      `var(--background-${newThemeMode})`
     );
     document.documentElement.style.setProperty(
       "--scrollbar-thumb",
-      `var(--thumb-${themeMode})`
+      `var(--thumb-${newThemeMode})`
     );
     document.documentElement.style.setProperty(
       "--thumb-hover",
-      `var(--thumb-hover-${themeMode})`
+      `var(--thumb-hover-${newThemeMode})`
     );
     document.documentElement.style.setProperty(
       "--font-color-light",
-      `var(--font-color-highlight-${themeMode})`
+      `var(--font-color-highlight-${newThemeMode})`
     );
   }, []);
 
   const toggleMode = () => {
-    const newMode = mode === "light" ? "dark" : "light";
-    setMode(newMode);
+    const newMode = themeMode === "light" ? "dark" : "light";
+    setThemeMode(newMode);
     document.documentElement.style.setProperty(
       "--scrollbar-background",
       `var(--background-${newMode})`
@@ -141,13 +143,19 @@ export default function AppProvider({ children }: any) {
     setMessageMode(mode);
   };
 
+  const logout = () => {
+    removeFromLS("token");
+    router.push("/");
+  };
+
   const values = useMemo(
     () => ({
-      theme,
+      themeMode,
       toggleMode,
       showMessage,
+      logout,
     }),
-    [theme]
+    [themeMode]
   );
 
   return (
@@ -155,21 +163,21 @@ export default function AppProvider({ children }: any) {
       <ThemeProvider theme={theme}>
         {children}
         <Snackbar
-        open={messageContent.length > 0}
-        autoHideDuration={2500}
-        onClose={() => setMessageContent("")}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert
+          open={messageContent.length > 0}
+          autoHideDuration={2500}
           onClose={() => setMessageContent("")}
-          severity={messageMode}
-          variant="filled"
-          sx={{ width: "100%" }}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
         >
-          {messageContent}
-        </Alert>
-      </Snackbar>
-        </ThemeProvider>
+          <Alert
+            onClose={() => setMessageContent("")}
+            severity={messageMode}
+            variant="filled"
+            sx={{ width: "100%" }}
+          >
+            {messageContent}
+          </Alert>
+        </Snackbar>
+      </ThemeProvider>
     </AppContext.Provider>
   );
 }

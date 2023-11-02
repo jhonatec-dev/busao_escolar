@@ -55,6 +55,15 @@ class StudentController {
 
     return res.status(401).json({ message: 'Usuário não autorizado' })
   }
+
+  async accept (req: Request, res: Response): Promise<Response> {
+    if (req.body.token.role === 'admin') {
+      const { status, data } = await this.service.accept(req.params.id)
+      return res.status(mapStatusHTTP(status)).json(data)
+    }
+
+    return res.status(401).json({ message: 'Usuário não autorizado' })
+  }
 }
 
 export default StudentController

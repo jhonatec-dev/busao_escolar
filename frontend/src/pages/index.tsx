@@ -51,6 +51,12 @@ export default function Home() {
     }
   };
 
+  const handleKeyPress = (event: any) => {
+    if (event.key === "Enter") {
+      handleClickLogin();
+    }
+  }
+
   return (
     <>
       <Head>
@@ -80,6 +86,7 @@ export default function Home() {
               variant="filled"
               fullWidth
               value={password}
+              onKeyPress={handleKeyPress}
               onChange={(e) => setPassword(e.target.value)}
               inputProps={{ type: showPassword ? "text" : "password" }}
               InputProps={{
