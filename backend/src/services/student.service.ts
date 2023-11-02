@@ -42,7 +42,7 @@ class StudentService {
   }): Promise<ServiceResult<{ token: string }>> {
     try {
       const data = await StudentModel.findByEmail(email)
-      console.log('data no Service', data)
+      // console.log('data no Service', data)
       if (data === null || data === undefined) {
         throw new Error('Usuário ou Senha inválidos')
       }

@@ -7,7 +7,7 @@ const validateLogin = (
   next: NextFunction
 ): void => {
   const { email, password } = req.body
-  console.log('middleware', email, password)
+  // console.log('middleware', email, password)
   if (
     email === undefined ||
     password === undefined ||
