@@ -35,10 +35,10 @@ async function startServer (): Promise<void> {
       console.log(`Servidor rodando na porta ${port}`)
     })
   } catch (error) {
-    console.log(error)
+    console.log('Erro no servidor:', error)
   }
 }
 
 startServer().catch((error) => {
-  console.log(error)
+  console.log('Erro no servidor:', error)
 })
