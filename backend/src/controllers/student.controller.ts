@@ -21,7 +21,7 @@ class StudentController {
       const { status, data } = await this.service.findById(req.params.id)
       return res.status(mapStatusHTTP(status)).json(data)
     }
-    return res.status(401).json({ message: 'Usuário não autorizado' })
+    return res.status(403).json({ message: 'Usuário não autorizado' })
   }
 
   async getProfile (req: Request, res: Response): Promise<Response> {
@@ -44,7 +44,7 @@ class StudentController {
       return res.status(mapStatusHTTP(status)).json(data)
     }
 
-    return res.status(401).json({ message: 'Usuário não autorizado' })
+    return res.status(403).json({ message: 'Usuário não autorizado' })
   }
 
   async delete (req: Request, res: Response): Promise<Response> {
@@ -53,7 +53,7 @@ class StudentController {
       return res.status(mapStatusHTTP(status)).json(data)
     }
 
-    return res.status(401).json({ message: 'Usuário não autorizado' })
+    return res.status(403).json({ message: 'Usuário não autorizado' })
   }
 
   async accept (req: Request, res: Response): Promise<Response> {
@@ -62,7 +62,7 @@ class StudentController {
       return res.status(mapStatusHTTP(status)).json(data)
     }
 
-    return res.status(401).json({ message: 'Usuário não autorizado' })
+    return res.status(403).json({ message: 'Usuário não autorizado' })
   }
 }
 

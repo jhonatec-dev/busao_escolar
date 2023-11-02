@@ -14,7 +14,7 @@ const validateToken = async (
   const { authorization } = req.headers
 
   if (authorization === undefined) {
-    res.status(400).json({ message: 'Token não encontrado' })
+    res.status(401).json({ message: 'Token não encontrado' })
     return
   }
 

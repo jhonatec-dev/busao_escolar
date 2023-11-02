@@ -4,6 +4,8 @@ const statusList = {
   DELETED: 204,
   UPDATED: 200,
   INVALID: 400,
+  UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
   NOT_FOUND: 404,
   ERROR: 500
 }

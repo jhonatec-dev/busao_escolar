@@ -19,7 +19,7 @@ class StudentService {
     try {
       const data = await StudentModel.findById(id)
       if (data === null) {
-        throw new Error('User not found')
+        throw new Error('Usuário não encontrado')
       }
       return {
         status: 'SUCCESS',
@@ -123,7 +123,7 @@ class StudentService {
     try {
       const data = await StudentModel.findById(id)
       if (data === null) {
-        throw new Error('Usuario nao encontrado')
+        throw new Error('Usuário não encontrado')
       }
       if (await this.isDuplicateEmail(student.email, id)) {
         throw new Error('Email já existe')
@@ -135,7 +135,7 @@ class StudentService {
       }
     } catch (error: Error | any) {
       return {
-        status: 'ERROR',
+        status: 'INVALID',
         data: { message: error.message }
       }
     }
@@ -146,7 +146,7 @@ class StudentService {
     try {
       const data = await StudentModel.findById(id)
       if (data === null) {
-        throw new Error('User not found')
+        throw new Error('Usuário não encontrado')
       }
       await StudentModel.delete(id)
       return {
@@ -157,7 +157,7 @@ class StudentService {
       }
     } catch (error: Error | any) {
       return {
-        status: 'ERROR',
+        status: 'INVALID',
         data: { message: error.message }
       }
     }
@@ -167,7 +167,7 @@ class StudentService {
     try {
       const data = await StudentModel.findById(id)
       if (data === null) {
-        throw new Error('User not found')
+        throw new Error('Usuário não encontrado')
       }
       await StudentModel.accept(id)
       return {
@@ -178,7 +178,7 @@ class StudentService {
       }
     } catch (error: Error | any) {
       return {
-        status: 'ERROR',
+        status: 'INVALID',
         data: { message: error.message }
       }
     }

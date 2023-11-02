@@ -25,9 +25,6 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import validator from "validator";
 
 import { AppContext } from "@/context/appProvider";
-import axios from "axios";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Register() {
   const {
@@ -39,21 +36,21 @@ export default function Register() {
   } = useForm<IStudent>();
   const [showPassword, setShowPassword] = useState(false);
   const [showFrequency, setShowFrequency] = useState(false);
-  const { showMessage } = useContext(AppContext);
+  const { showMessage, getData } = useContext(AppContext);
   const [created, setCreated] = useState(false);
   const [loading, setLoading] = useState(false);
   const onSubmit: SubmitHandler<IStudent> = async (data) => {
     try {
       setLoading(true);
-      const response = await axios.post(`${API_URL}/student`, data);
-      if (response.data) {
+      const response = await getData(`student`, "post", data);
+      if (response) {
         showMessage("Conta criada com sucesso", "success");
         reset();
         setCreated(true);
       }
     } catch (error: any) {
       // console.log(error);
-      showMessage(error.response?.data.message, "error");
+      showMessage(error.message, "error");
       setCreated(false);
       reset();
     } finally {
@@ -101,7 +98,7 @@ export default function Register() {
   }
 
   return (
-    <Stack alignItems={"center"} justifyContent={"center"} >
+    <Stack alignItems={"center"} justifyContent={"center"}>
       <Card className="Card" variant="outlined">
         <form onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={2} p={"3rem 1rem"} textAlign={"center"}>

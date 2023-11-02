@@ -1,17 +1,24 @@
+import { IStudent } from "@/interfaces/IStudent";
 import { getFromLS, removeFromLS, saveToLS } from "@/utils/localStorage";
 import { Alert, Snackbar, ThemeProvider, createTheme } from "@mui/material";
+import axios, { AxiosError } from "axios";
 import router from "next/router";
 import { createContext, useEffect, useMemo, useState } from "react";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export interface AppContextType {
   themeMode: themeMode;
   toggleMode: () => void;
   showMessage: (message: string, mode: messageMode) => void;
   logout: () => void;
+  profile: IStudent;
+  getData: (endPoint: string, method: method, data?: any) => any;
+  getDataAuth: (endPoint: string, method: method, data?: any) => any;
 }
 
 export const AppContext = createContext({} as AppContextType);
-
+export type method = "get" | "post" | "put" | "delete";
 export type themeMode = "light" | "dark";
 export type messageMode = "error" | "success" | "info" | "warning";
 
@@ -19,6 +26,28 @@ export default function AppProvider({ children }: any) {
   const [themeMode, setThemeMode] = useState<"light" | "dark">("light");
   const [messageContent, setMessageContent] = useState("");
   const [messageMode, setMessageMode] = useState<messageMode>("info");
+  const [profile, setProfile] = useState<IStudent>({} as IStudent);
+
+  useEffect(() => {
+    restoreThemeMode();
+    const token = getFromLS("tokenBusaoEscolar");
+    if (!token) {
+      if (router.pathname === "/dashboard") router.push("/");
+      return;
+    }
+
+    const getProfile = async () => {
+      const newProfile = (await getDataAuth(
+        "student/profile",
+        "get"
+      )) as IStudent;
+      
+      setProfile(newProfile);
+      if(router.pathname === "/") router.push("/dashboard");
+    };
+
+    getProfile();
+  }, []);
 
   const theme = createTheme({
     palette: {
@@ -95,7 +124,7 @@ export default function AppProvider({ children }: any) {
     },
   });
 
-  useEffect(() => {
+  const restoreThemeMode = () => {
     const newThemeMode = getFromLS("themeMode") || "light";
     setThemeMode(newThemeMode);
     document.documentElement.style.setProperty(
@@ -114,7 +143,7 @@ export default function AppProvider({ children }: any) {
       "--font-color-light",
       `var(--font-color-highlight-${newThemeMode})`
     );
-  }, []);
+  };
 
   const toggleMode = () => {
     const newMode = themeMode === "light" ? "dark" : "light";
@@ -144,18 +173,63 @@ export default function AppProvider({ children }: any) {
   };
 
   const logout = () => {
-    removeFromLS("token");
+    removeFromLS("tokenBusaoEscolar");
     router.push("/");
+  };
+
+  const getData = async (endPoint: string, method: method, data?: any) => {
+    try {
+      const response = await axios[method](`${API_URL}/${endPoint}`, data);
+      return response.data;
+    } catch (error: AxiosError | any) {
+      console.log(
+        "Error",
+        error,
+        "instancia",
+        typeof error,
+        "instancia",
+        error instanceof AxiosError
+      );
+      if (error instanceof AxiosError) {
+        showMessage(error.response?.data.message, "error");
+      } else showMessage(error.message, "error");
+
+      return;
+    }
+  };
+
+  const getDataAuth = async (endPoint: string, method: method, data?: any) => {
+    try {
+      const token = getFromLS("tokenBusaoEscolar");
+      const response = await axios[method](`${API_URL}/${endPoint}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data,
+      });
+      return response.data;
+    } catch (error: AxiosError | any) {
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 401) {
+          logout();
+        }
+        throw new Error(error.response?.data.message);
+      }
+      throw new Error(error.message);
+    }
   };
 
   const values = useMemo(
     () => ({
       themeMode,
+      profile,
       toggleMode,
       showMessage,
       logout,
+      getData,
+      getDataAuth,
     }),
-    [themeMode]
+    [themeMode, profile]
   );
 
   return (

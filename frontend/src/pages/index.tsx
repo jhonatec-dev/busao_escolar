@@ -7,21 +7,19 @@ import {
   IconButton,
   Stack,
   TextField,
-  Typography
+  Typography,
 } from "@mui/material";
-import axios, { AxiosError } from "axios";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
 import validator from "validator";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
 export default function Home() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { showMessage } = useContext(AppContext);
+  const { showMessage, getData } = useContext(AppContext);
   const router = useRouter();
 
   const validateForm = () => {
@@ -36,18 +34,20 @@ export default function Home() {
       return;
     }
     try {
-      const response = await axios.post(`${API_URL}/login`, {
+      // const response = await axios.post(`${API_URL}/login`, {
+      //   email,
+      //   password,
+      // });
+      const data = await getData("login", "post", {
         email,
         password,
       });
-      if (response.data.token) {
-        saveToLS("token", response.data.token);
+      if (data && data.token) {
+        saveToLS("tokenBusaoEscolar", data.token);
         router.push("/dashboard");
       }
-    } catch (error: AxiosError | any) {
-      if (error instanceof AxiosError) {
-        showMessage(error.response?.data.message, "error");
-      } else showMessage(error.message, "error");
+    } catch (error: any) {
+      showMessage(error.message, "error");
     }
   };
 
@@ -55,7 +55,7 @@ export default function Home() {
     if (event.key === "Enter") {
       handleClickLogin();
     }
-  }
+  };
 
   return (
     <>
@@ -80,7 +80,7 @@ export default function Home() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            
+
             <TextField
               label="Senha"
               variant="filled"
@@ -101,7 +101,10 @@ export default function Home() {
               Entrar
             </Button>
             <Stack direction={"row"} pt={4} justifyContent={"space-between"}>
-              <Button onClick={() => showMessage("Em desenvolvimento", "info")} sx={{ textTransform: "none" }}>
+              <Button
+                onClick={() => showMessage("Em desenvolvimento", "info")}
+                sx={{ textTransform: "none" }}
+              >
                 Esqueci minha senha
               </Button>
               <Button href="/register" size="large">
