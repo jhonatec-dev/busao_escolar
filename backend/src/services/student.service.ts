@@ -42,21 +42,22 @@ class StudentService {
   }): Promise<ServiceResult<{ token: string }>> {
     try {
       const data = await StudentModel.findByEmail(email)
-      if (data === null) {
-        throw new Error('User not found')
+      console.log('data no Service', data)
+      if (data === null || data === undefined) {
+        throw new Error('Usuário ou Senha inválidos')
       }
 
       if (
         data.password !== undefined &&
         !comparePassword(password, data.password)
       ) {
-        throw new Error('Password invalid')
+        throw new Error('Usuário ou Senha inválidos')
       }
 
       const { password: passwordDB, frequency, ...student } = data
 
       if (!data.accepted) {
-        throw new Error('User not accepted')
+        throw new Error('Aguarde no seu E-mail a aprovação do cadastro')
       }
 
       const token = JWT.generateToken(student)

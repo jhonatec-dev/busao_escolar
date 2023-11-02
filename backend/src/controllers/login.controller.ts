@@ -16,10 +16,6 @@ export class LoginController {
         email,
         password
       })
-      console.log('status', status, 'data', data, 'controller')
-      if (status !== 'SUCCESS') {
-        throw new Error('Dados de login inválidos ou usuário não autorizado')
-      }
 
       return res.status(mapStatusHTTP(status)).json(data)
     } catch (error: Error | any) {

@@ -5,8 +5,7 @@
   "main": "src/server.ts",
   "scripts": {
     "dev": "ts-node-dev  --transpile-only --ignore-watch node_modules --respawn src/server.ts",
-    "jhon": "ts-node src/server.ts",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node dist/server.js",
     "lint": "eslint . --ext .ts",
     "build": "tsc"
   },
