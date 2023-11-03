@@ -6,12 +6,18 @@ import {
   Button,
   Card,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   IconButton,
   Menu,
   MenuItem,
   Stack,
   ToggleButton,
   ToggleButtonGroup,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { useContext, useState } from "react";
@@ -29,6 +35,7 @@ export default function StudentCard({
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [localStudent, setLocalStudent] = useState(student);
   const [loading, setLoading] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
   const { getDataAuth, showMessage } = useContext(AppContext);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -112,7 +119,7 @@ export default function StudentCard({
   const handleEditClick = () => {
     handleClose();
     setEditMode(true);
-  }
+  };
 
   if (loading) {
     return (
@@ -136,19 +143,19 @@ export default function StudentCard({
           <Typography variant="body1" fontWeight={"bold"}>
             {localStudent.name}
           </Typography>
+          <IconButton onClick={handleMenu}>
+            <MoreVert />
+          </IconButton>
+        </Stack>
+        <Stack direction={"row"} spacing={2} justifyContent={"space-between"}>
+          <Typography variant="body1">{localStudent.school}</Typography>
           <Button
-            variant="contained"
+            variant="text"
             color={localStudent.accepted ? "success" : "warning"}
             size="small"
           >
             {localStudent.accepted ? "Ativo" : "Inativo"}
           </Button>
-        </Stack>
-        <Stack direction={"row"} spacing={2} justifyContent={"space-between"}>
-          <Typography variant="body1">{localStudent.school}</Typography>
-          <IconButton onClick={handleMenu}>
-            <MoreVert />
-          </IconButton>
         </Stack>
         <Stack spacing={1}>
           <Typography variant="body1" fontWeight={"bold"}>
@@ -157,25 +164,26 @@ export default function StudentCard({
           <ToggleButtonGroup color="primary">
             {localStudent.frequency &&
               Object.keys(localStudent.frequency).map((day) => (
-                <ToggleButton
-                  key={day}
-                  value={day}
-                  selected={
-                    localStudent.frequency[
-                      day as keyof typeof student.frequency
-                    ]
-                  }
-                  onClick={handleFrequencyChange}
-                >
-                  {formatWeekDay(day)}
-                </ToggleButton>
+                <Tooltip title={formatWeekDay(day)} key={day}>
+                  <ToggleButton
+                    key={day}
+                    value={day}
+                    selected={
+                      localStudent.frequency[
+                        day as keyof typeof student.frequency
+                      ]
+                    }
+                  >
+                    {formatWeekDay(day)[0]}
+                  </ToggleButton>
+                </Tooltip>
               ))}
           </ToggleButtonGroup>
           {editMode && (
             <Stack direction={"row"} spacing={1} justifyContent={"flex-end"}>
               <Button
                 variant="contained"
-                color="warning"
+                color="inherit"
                 size="small"
                 onClick={handleCancelClick}
               >
@@ -183,7 +191,7 @@ export default function StudentCard({
               </Button>
               <Button
                 variant="contained"
-                color="success"
+                color="info"
                 size="small"
                 onClick={handleSaveClick}
               >
@@ -216,10 +224,32 @@ export default function StudentCard({
         <MenuItem onClick={handleEditClick}>
           <Edit sx={{ mr: 1 }} /> Editar Frequência
         </MenuItem>
-        <MenuItem onClick={handleDeleteClick}>
+        <MenuItem onClick={() => setShowDialog(true)}>
           <Delete sx={{ mr: 1 }} /> Excluir
         </MenuItem>
       </Menu>
+      <Dialog
+        open={showDialog}
+        onClose={() => setShowDialog(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {`Tem certeza que deseja excluir o aluno? `}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Isso não pode ser desfeito. {localStudent.name} também não constará no registro de todas as viagens
+            futuras.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteClick}>Confirmar</Button>
+          <Button onClick={() => setShowDialog(false)} autoFocus>
+            Cancelar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

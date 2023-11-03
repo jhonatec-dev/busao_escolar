@@ -121,6 +121,7 @@ class StudentService {
   ): Promise<ServiceResult<IStudent>> {
     // verificar se o estudante existe
     try {
+      await StudentModel.model.validate(student)
       const data = await StudentModel.findById(id)
       if (data === null) {
         throw new Error('Usuário não encontrado')

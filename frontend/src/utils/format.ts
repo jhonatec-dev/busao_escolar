@@ -1,11 +1,11 @@
 const daysOfWeek = {
-  sunday: "D",
-  monday: "S",
-  tuesday: "T",
-  wednesday: "Q",
-  thursday: "Q",
-  friday: "S",
-  saturday: "S",
+  sunday: "Domingo",
+  monday: "Segunda",
+  tuesday: "Terça",
+  wednesday: "Quarta",
+  thursday: "Quinta",
+  friday: "Sexta",
+  saturday: "Sábado",
 };
 
 export const formatNumberToReal = (value: number) =>

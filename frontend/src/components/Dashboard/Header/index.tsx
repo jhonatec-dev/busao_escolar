@@ -25,7 +25,7 @@ export default function Header() {
 
   return (
     <>
-      <AppBar position="fixed" sx={{ top: 0 }}>
+      <AppBar position="sticky">
         <Toolbar sx={{ justifyContent: "space-between" }}>
           <Typography variant="h6">Olá, {profile?.name}</Typography>
           <IconButton onClick={handleMenu}>
