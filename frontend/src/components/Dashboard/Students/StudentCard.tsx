@@ -81,6 +81,7 @@ export default function StudentCard({
 
   const handleDeleteClick = async () => {
     try {
+      setShowDialog(false);
       handleClose();
       setLoading(true);
       const data = await getDataAuth(`student/${student._id}`, "delete");

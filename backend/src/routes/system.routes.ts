@@ -8,11 +8,11 @@ const stytemRoutes = Router()
 const systemController = new SystemController()
 
 stytemRoutes.get(
-  '/bus',
+  '/bus', validateToken,
   async (req: Request, res: Response) => await systemController.getBus(req, res)
 )
 
-stytemRoutes.post(
+stytemRoutes.patch(
   '/bus',
   validateToken,
   async (req: Request, res: Response) =>

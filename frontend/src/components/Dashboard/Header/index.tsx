@@ -1,12 +1,18 @@
 import { AppContext } from "@/context/appProvider";
-import { DarkMode, Edit, ExitToApp, LightMode } from "@mui/icons-material";
+import {
+  DarkMode,
+  Edit,
+  ExitToApp,
+  LightMode,
+  MenuSharp,
+} from "@mui/icons-material";
 import {
   AppBar,
-  Avatar,
   IconButton,
   Menu,
   MenuItem,
   Toolbar,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { useContext, useState } from "react";
@@ -28,9 +34,11 @@ export default function Header() {
       <AppBar position="sticky">
         <Toolbar sx={{ justifyContent: "space-between" }}>
           <Typography variant="h6">Olá, {profile?.name}</Typography>
-          <IconButton onClick={handleMenu}>
-            <Avatar />
-          </IconButton>
+          <Tooltip title="Abrir menu">
+            <IconButton onClick={handleMenu} size="large" color="inherit">
+              <MenuSharp fontSize="inherit" />
+            </IconButton>
+          </Tooltip>
           <Menu
             id="menu-appbar"
             anchorEl={anchorEl}
