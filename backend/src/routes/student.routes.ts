@@ -6,51 +6,55 @@ import validateToken from '../middlewares/token.middleware'
 
 const studentController = new StudentController()
 
-const loginRoutes = Router()
+const studentRoutes = Router()
 
-loginRoutes.get(
+studentRoutes.get(
   '/',
   validateToken,
   async (req: Request, res: Response) => await studentController.find(req, res)
 )
 
-loginRoutes.post(
+studentRoutes.post(
   '/',
   validateCreateStudent,
   async (req: Request, res: Response) =>
     await studentController.create(req, res)
 )
 
-loginRoutes.put(
+studentRoutes.put(
   '/',
   [validateToken, validateCreateStudent],
   async (req: Request, res: Response) =>
     await studentController.update(req, res)
 )
 
-loginRoutes.get(
+studentRoutes.get(
   '/profile',
   validateToken,
   async (req: Request, res: Response) =>
     await studentController.getProfile(req, res)
 )
 
-loginRoutes.get(
+studentRoutes.get(
   '/:id',
   validateToken,
   async (req: Request, res: Response) =>
     await studentController.findById(req, res)
 )
 
-loginRoutes.delete(
+studentRoutes.delete(
   '/:id',
   validateToken,
   async (req: Request, res: Response) =>
     await studentController.delete(req, res)
 )
 
-loginRoutes.post('/accept/:id', validateToken, async (req: Request, res: Response) =>
+studentRoutes.patch('/accept/:id', validateToken, async (req: Request, res: Response) =>
   await studentController.accept(req, res)
 )
 
-export default loginRoutes
+studentRoutes.patch('/frequency/:id', validateToken, async (req: Request, res: Response) =>
+  await studentController.changeFrequency(req, res)
+)
+
+export default studentRoutes

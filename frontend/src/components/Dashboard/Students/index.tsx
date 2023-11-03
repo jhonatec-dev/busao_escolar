@@ -23,6 +23,10 @@ export default function Students() {
     getStudents();
   }, []);
 
+  const handleDeleteStudent = (id: string) => {
+    setStudents((prev) => prev.filter((student) => student._id !== id));
+  }
+
   return (
     <>
       <Card className="Card" variant="outlined">
@@ -43,7 +47,7 @@ export default function Students() {
         />
         <Stack spacing={2} mt={2}>
           {filteredStudents.map((student) => (
-            <StudentCard key={student._id} student={student} />
+            <StudentCard key={student._id} student={student} handleDeleteStudent={handleDeleteStudent} />
           ))}
         </Stack>
       </Card>

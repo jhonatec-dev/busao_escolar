@@ -1,7 +1,7 @@
 import { AppContext } from "@/context/appProvider";
 import { IStudent } from "@/interfaces/IStudent";
 import { formatWeekDay } from "@/utils/format";
-import { Check, ExitToApp, MoreVert } from "@mui/icons-material";
+import { Check, Delete, Edit, MoreVert } from "@mui/icons-material";
 import {
   Button,
   Card,
@@ -18,11 +18,16 @@ import { useContext, useState } from "react";
 
 interface StudentCardProps {
   student: IStudent;
+  handleDeleteStudent: (id: string) => void;
 }
 
-export default function StudentCard({ student }: StudentCardProps) {
+export default function StudentCard({
+  student,
+  handleDeleteStudent,
+}: StudentCardProps) {
   const [editMode, setEditMode] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [localStudent, setLocalStudent] = useState(student);
   const [loading, setLoading] = useState(false);
   const { getDataAuth, showMessage } = useContext(AppContext);
 
@@ -35,24 +40,79 @@ export default function StudentCard({ student }: StudentCardProps) {
   };
 
   const handleSaveClick = () => {
-    setEditMode(false);
+    try {
+      setLoading(true);
+      const data = getDataAuth(`student/frequency/${student._id}`, "patch", {
+        ...localStudent.frequency,
+      });
+      if (data) {
+        showMessage("Frequência salva com sucesso", "success");
+        setEditMode(false);
+      }
+    } catch (error) {
+      showMessage((error as Error).message, "error");
+      handleCancelClick();
+    }
+    setLoading(false);
   };
 
   const handleActivateClick = async () => {
     try {
       handleClose();
       setLoading(true);
-      const data = await getDataAuth(`student/accept/${student._id}`, "post");
+      const data = await getDataAuth(`student/accept/${student._id}`, "patch");
       if (data) {
-        student.accepted = true;
+        setLocalStudent((prev) => ({ ...prev, accepted: true }));
         showMessage("Aluno ativado com sucesso", "success");
       }
-    } catch (error: any) {
-      showMessage(error.message, "error");
+    } catch (error) {
+      showMessage((error as Error).message, "error");
     }
     setEditMode(false);
     setLoading(false);
   };
+
+  const handleDeleteClick = async () => {
+    try {
+      handleClose();
+      setLoading(true);
+      const data = await getDataAuth(`student/${student._id}`, "delete");
+      showMessage("Aluno excluído com sucesso", "success");
+      handleDeleteStudent(student._id as string);
+    } catch (error) {
+      showMessage((error as Error).message, "error");
+    }
+    setLoading(false);
+  };
+
+  const handleFrequencyChange = (
+    ev: React.MouseEvent<HTMLElement>,
+    value: string
+  ) => {
+    handleClose();
+    // resetar a frequência, em caso de cancelamento
+    if (editMode) {
+      console.log("handleFrequencyChange", ev, value);
+      setLocalStudent((prev) => ({
+        ...prev,
+        frequency: {
+          ...prev.frequency,
+          [value as keyof typeof prev.frequency]:
+            !prev.frequency[value as keyof typeof prev.frequency],
+        },
+      }));
+    }
+  };
+
+  const handleCancelClick = () => {
+    setLocalStudent(student);
+    setEditMode(false);
+  };
+
+  const handleEditClick = () => {
+    handleClose();
+    setEditMode(true);
+  }
 
   if (loading) {
     return (
@@ -74,18 +134,18 @@ export default function StudentCard({ student }: StudentCardProps) {
           alignItems={"center"}
         >
           <Typography variant="body1" fontWeight={"bold"}>
-            {student.name}
+            {localStudent.name}
           </Typography>
           <Button
             variant="contained"
-            color={student.accepted ? "success" : "warning"}
+            color={localStudent.accepted ? "success" : "warning"}
             size="small"
           >
-            {student.accepted ? "Ativo" : "Inativo"}
+            {localStudent.accepted ? "Ativo" : "Inativo"}
           </Button>
         </Stack>
         <Stack direction={"row"} spacing={2} justifyContent={"space-between"}>
-          <Typography variant="body1">{student.school}</Typography>
+          <Typography variant="body1">{localStudent.school}</Typography>
           <IconButton onClick={handleMenu}>
             <MoreVert />
           </IconButton>
@@ -94,31 +154,42 @@ export default function StudentCard({ student }: StudentCardProps) {
           <Typography variant="body1" fontWeight={"bold"}>
             Frequência
           </Typography>
-          <ToggleButtonGroup color="success">
-            {student.frequency &&
-              Object.keys(student.frequency).map((day) => (
+          <ToggleButtonGroup color="primary">
+            {localStudent.frequency &&
+              Object.keys(localStudent.frequency).map((day) => (
                 <ToggleButton
                   key={day}
                   value={day}
                   selected={
-                    student.frequency[
+                    localStudent.frequency[
                       day as keyof typeof student.frequency
-                    ] as boolean
+                    ]
                   }
+                  onClick={handleFrequencyChange}
                 >
                   {formatWeekDay(day)}
                 </ToggleButton>
               ))}
           </ToggleButtonGroup>
           {editMode && (
-            <Button
-              variant="contained"
-              color="success"
-              size="small"
-              onClick={handleSaveClick}
-            >
-              Salvar
-            </Button>
+            <Stack direction={"row"} spacing={1} justifyContent={"flex-end"}>
+              <Button
+                variant="contained"
+                color="warning"
+                size="small"
+                onClick={handleCancelClick}
+              >
+                Cancelar
+              </Button>
+              <Button
+                variant="contained"
+                color="success"
+                size="small"
+                onClick={handleSaveClick}
+              >
+                Salvar
+              </Button>
+            </Stack>
           )}
         </Stack>
       </Card>
@@ -137,15 +208,17 @@ export default function StudentCard({ student }: StudentCardProps) {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        {!student.accepted && (
+        {!localStudent.accepted && (
           <MenuItem onClick={handleActivateClick}>
             <Check sx={{ mr: 1 }} /> Ativar
           </MenuItem>
         )}
-        <MenuItem>
-          <ExitToApp sx={{ mr: 1 }} /> Sair
+        <MenuItem onClick={handleEditClick}>
+          <Edit sx={{ mr: 1 }} /> Editar Frequência
         </MenuItem>
-        <MenuItem></MenuItem>
+        <MenuItem onClick={handleDeleteClick}>
+          <Delete sx={{ mr: 1 }} /> Excluir
+        </MenuItem>
       </Menu>
     </>
   );

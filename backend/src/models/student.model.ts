@@ -65,6 +65,10 @@ class StudentModel {
   async accept (id: string): Promise<void> {
     await this.model.updateOne({ _id: id }, { accepted: true })
   }
+
+  async changeFrequency (id: string, frequency: Pick<IStudent, 'frequency'>): Promise<void> {
+    await this.model.updateOne({ _id: id }, { frequency })
+  }
 }
 
 export default new StudentModel()

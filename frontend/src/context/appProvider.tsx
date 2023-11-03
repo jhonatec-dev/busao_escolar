@@ -25,7 +25,7 @@ export interface AppContextType {
 }
 
 export const AppContext = createContext({} as AppContextType);
-export type method = "get" | "post" | "put" | "delete";
+export type method = "get" | "post" | "put" | "delete" | "patch";
 export type themeMode = "light" | "dark";
 export type messageMode = "error" | "success" | "info" | "warning";
 
@@ -217,7 +217,7 @@ export default function AppProvider({ children }: any) {
         }
         let response: any;
         console.log("dados no auth do provider", { endPoint, method, data });
-        if (method === "get") {
+        if (method === "get" || method === "delete") {
           console.log("entrei aqui");
           response = await axios[method](`${API_URL}/${endPoint}`, {
             headers: {
@@ -234,14 +234,14 @@ export default function AppProvider({ children }: any) {
 
         console.log("response no Provider", response);
         return response.data;
-      } catch (error: AxiosError | any) {
+      } catch (error) {
         if (error instanceof AxiosError) {
           if (error.response?.status === 401) {
             logout();
           }
           throw new Error(error.response?.data.message);
         }
-        throw new Error(error.message);
+        throw new Error((error as Error).message);
       }
     },
     [logout]

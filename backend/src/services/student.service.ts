@@ -183,6 +183,26 @@ class StudentService {
       }
     }
   }
+
+  async changeFrequency (
+    id: string,
+    frequency: Pick<IStudent, 'frequency'>
+  ): Promise<ServiceResult<{ _id: string }>> {
+    try {
+      await StudentModel.changeFrequency(id, frequency)
+      return {
+        status: 'SUCCESS',
+        data: {
+          _id: id
+        }
+      }
+    } catch (error) {
+      return {
+        status: 'INVALID',
+        data: { message: (error as Error).message }
+      }
+    }
+  }
 }
 
 export default StudentService
