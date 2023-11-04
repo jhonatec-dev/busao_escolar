@@ -1,25 +1,25 @@
+import Logo from "@/components/Logo";
 import { AppContext } from "@/context/appProvider";
 import { saveToLS } from "@/utils/localStorage";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
-  Button,
-  Card,
-  IconButton,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+  DarkMode,
+  LightMode,
+  Visibility,
+  VisibilityOff,
+} from "@mui/icons-material";
+import { Button, Card, IconButton, Stack, TextField } from "@mui/material";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
 import validator from "validator";
 
-
 export default function Home() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { showMessage, getData, login } = useContext(AppContext);
+  const [classNameImg, setClassNameImg] = useState("");
+  const { showMessage, getData, login, toggleMode, themeMode } =
+    useContext(AppContext);
   const router = useRouter();
 
   const validateForm = () => {
@@ -43,6 +43,7 @@ export default function Home() {
         password,
       });
       if (data && data.token) {
+        setClassNameImg("move-to-right");
         saveToLS("tokenBusaoEscolar", data.token);
         login();
       }
@@ -68,10 +69,10 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Stack alignItems={"center"} justifyContent={"center"} height={"100vh"}>
+      <Stack alignItems={"center"} justifyContent={"center"} minHeight={"100vh"}>
         <Card className="Card" variant="outlined">
-          <Stack spacing={2} p={2}>
-            <Typography variant="h4">Busão Escolar</Typography>
+          <Stack spacing={2} alignItems={"center"}>
+            <Logo size={100} className={classNameImg} />
             <TextField
               label="E-mail"
               variant="filled"
@@ -97,10 +98,27 @@ export default function Home() {
                 ),
               }}
             />
-            <Button variant="contained" size="large" onClick={handleClickLogin}>
+            <Button
+              variant="contained"
+              size="large"
+              onClick={handleClickLogin}
+              fullWidth
+            >
               Entrar
             </Button>
-            <Stack direction={"row"} pt={4} justifyContent={"space-between"}>
+            <IconButton onClick={toggleMode} size="large">
+              {themeMode === "light" ? (
+                <DarkMode fontSize="inherit" />
+              ) : (
+                <LightMode fontSize="inherit" />
+              )}
+            </IconButton>
+            <Stack
+              direction={"row"}
+              pt={4}
+              justifyContent={"space-between"}
+              width={"100%"}
+            >
               <Button
                 onClick={() => showMessage("Em desenvolvimento", "info")}
                 sx={{ textTransform: "none" }}

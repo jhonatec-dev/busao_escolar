@@ -35,7 +35,7 @@ export type messageMode = "error" | "success" | "info" | "warning";
 
 export default function AppProvider({ children }: any) {
   const [themeMode, setThemeMode] = useState<"light" | "dark">("light");
-  const [messageContent, setMessageContent] = useState("");
+  const [messageContent, setMessageContent] = useState<string>("");
   const [messageMode, setMessageMode] = useState<messageMode>("info");
   const [profile, setProfile] = useState<IStudent>({} as IStudent);
 
@@ -51,12 +51,15 @@ export default function AppProvider({ children }: any) {
     if (!newProfile) return;
     setProfile(newProfile as IStudent);
     if (router.pathname === "/") router.push("/dashboard");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     restoreThemeMode();
-    console.log('AppProvider', messageContent, messageMode);
+    // console.log('AppProvider', messageContent, messageMode);
+    setMessageContent("");
     login();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const theme = createTheme({
@@ -265,6 +268,7 @@ export default function AppProvider({ children }: any) {
       getData,
       getDataAuth,
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [themeMode, profile]
   );
 

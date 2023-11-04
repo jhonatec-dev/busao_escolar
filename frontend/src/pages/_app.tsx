@@ -7,7 +7,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <AppProvider>
       <Paper className="App">
-      <Component {...pageProps} />
+        <Component {...pageProps} />
       </Paper>
     </AppProvider>
   );

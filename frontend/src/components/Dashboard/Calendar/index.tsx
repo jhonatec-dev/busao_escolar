@@ -74,7 +74,7 @@ export default function Calendar() {
 
   return (
     <>
-      <Card className="Card" elevation={2}>
+      <Card className="Card" variant="outlined">
         <Stack
           direction="row"
           justifyContent="space-between"

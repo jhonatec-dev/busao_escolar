@@ -24,6 +24,7 @@ import { useContext, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import validator from "validator";
 
+import Logo from "@/components/Logo";
 import { AppContext } from "@/context/appProvider";
 
 export default function Register() {
@@ -63,7 +64,7 @@ export default function Register() {
       <Stack alignItems={"center"} justifyContent={"center"} height={"100vh"}>
         <Card className="Card" variant="outlined">
           <Stack spacing={2} p={2} alignItems={"center"} textAlign={"center"}>
-            <Typography variant="h4">Busão Escolar</Typography>
+            <Logo size={100} />
             <Typography variant="h5">Criando conta...</Typography>
             <CircularProgress />
           </Stack>
@@ -77,7 +78,7 @@ export default function Register() {
       <Stack alignItems={"center"} justifyContent={"center"} height={"100vh"}>
         <Card className="Card" variant="outlined">
           <Stack spacing={2} p={2} alignItems={"center"} textAlign={"center"}>
-            <Typography variant="h4">Busão Escolar</Typography>
+            <Logo size={100} />
             <Typography variant="h5">Conta criada com sucesso!</Typography>
             <Typography variant="body1">
               Enviamos para seu E-mail a confirmação do cadastro.
@@ -98,11 +99,11 @@ export default function Register() {
   }
 
   return (
-    <Stack alignItems={"center"} justifyContent={"center"}>
+    <Stack alignItems={"center"} justifyContent={"center"} minHeight={"100vh"}>
       <Card className="Card" variant="outlined">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack spacing={2} p={"3rem 1rem"} textAlign={"center"}>
-            <Typography variant="h4">Busão Escolar</Typography>
+          <Stack spacing={2} textAlign={"center"}>
+            <Logo size={100} />
             <Typography variant="h6">Crie sua conta</Typography>
             <Divider sx={{ width: "100%" }}>Dados do aluno</Divider>
             <TextField

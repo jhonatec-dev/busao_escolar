@@ -51,6 +51,39 @@ form {
   }
 }
 
+.Footer {
+  text-align: center;
+  padding: 1rem;
+}
+
+.Logo-img {
+  margin-right: 3.5rem;
+  animation: bus-move 3s infinite alternate;
+}
+
+.move-to-right {
+  animation: animation-move-to-right 3s linear;
+}
+
+@keyframes bus-move {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(30%);
+  }
+}
+
+@keyframes animation-move-to-right {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(500px);
+  }
+  
+}
+
 @media screen and (min-width: 600px) {
   .App {
     // padding: 0 2rem;

@@ -11,10 +11,12 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Stack,
   Toolbar,
   Tooltip,
   Typography,
 } from "@mui/material";
+import Image from "next/image";
 import { useContext, useState } from "react";
 
 export default function Header() {
@@ -32,8 +34,16 @@ export default function Header() {
   return (
     <>
       <AppBar position="sticky">
-        <Toolbar sx={{ justifyContent: "space-between" }}>
-          <Typography variant="h6">Olá, {profile?.name}</Typography>
+        <Toolbar sx={{ justifyContent: "space-between", padding: 1.3 }}>
+          <Stack direction="row" alignItems="center" spacing={2}>
+            <Image
+              src="/assets/images/bus.svg"
+              alt="logo"
+              width={50}
+              height={50}
+            />
+            <Typography variant="h6">{profile?.name}</Typography>
+          </Stack>
           <Tooltip title="Abrir menu">
             <IconButton onClick={handleMenu} size="large" color="inherit">
               <MenuSharp fontSize="inherit" />
