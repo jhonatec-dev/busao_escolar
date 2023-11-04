@@ -19,7 +19,7 @@ form {
   width: 100%;
 }
 
-.App{
+.App {
   min-height: 100vh;
 }
 
@@ -32,11 +32,34 @@ form {
   max-width: 800px !important;
 }
 
+.MuiDateCalendar-root {
+  width: 100% !important;
+  overflow: initial !important;
+  .MuiDayCalendar-header {
+    justify-content: space-evenly !important;
+    font-size: larger;
+    font-weight: bold;
+  }
+
+  .MuiDayCalendar-weekContainer {
+    justify-content: space-evenly !important;
+    margin: 0.6rem 0;
+  }
+
+  .MuiPickersSlideTransition-root {
+    overflow: initial !important;
+  }
+}
+
 @media screen and (min-width: 600px) {
   .App {
     // padding: 0 2rem;
   }
-  
+
+  .Dashboard {
+    margin-left: 1rem !important;
+  }
+
   .Card {
     width: 500px;
   }

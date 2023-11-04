@@ -1,7 +1,7 @@
 import { AppContext } from "@/context/appProvider";
 import { IStudent } from "@/interfaces/IStudent";
 import { Clear } from "@mui/icons-material";
-import { Card, IconButton, Stack, TextField } from "@mui/material";
+import { Card, IconButton, Stack, TextField, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import StudentCard from "./StudentCard";
 
@@ -30,6 +30,7 @@ export default function Students() {
   return (
     <>
       <Card className="Card" variant="outlined">
+        <Typography variant="h6">Alunos</Typography>
         <TextField
           label="Pesquisar"
           value={search}

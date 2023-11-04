@@ -1,7 +1,8 @@
 import Bus from "@/components/Dashboard/Bus";
+import Calendar from "@/components/Dashboard/Calendar";
 import Header from "@/components/Dashboard/Header";
 import Students from "@/components/Dashboard/Students";
-import { Card, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -9,14 +10,12 @@ export default function Dashboard() {
   return (
     <>
       <Header />
-      <Stack mt={6} spacing={2}>
-        <Stack direction="row" spacing={2} flexWrap="wrap">
+      <Stack className="Dashboard" mt={4} gap={4}>
+        <Stack direction="row" gap={2} flexWrap="wrap" justifyContent="center">
           <Bus />
-          <Card>
-            <h3>Calendário Mensal</h3>
-          </Card>
+          <Calendar />
         </Stack>
-        <Stack direction={"row"} spacing={2} flexWrap="wrap">
+        <Stack direction={"row"} gap={2} flexWrap="wrap" justifyContent="center">
           <Students />
         </Stack>
       </Stack>

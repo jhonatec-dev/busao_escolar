@@ -1,6 +1,10 @@
 import { IStudent } from "@/interfaces/IStudent";
 import { getFromLS, removeFromLS, saveToLS } from "@/utils/localStorage";
 import { Alert, Snackbar, ThemeProvider, createTheme } from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import "dayjs/locale/pt-br";
+
 import axios, { AxiosError } from "axios";
 import router from "next/router";
 import {
@@ -51,6 +55,7 @@ export default function AppProvider({ children }: any) {
 
   useEffect(() => {
     restoreThemeMode();
+    console.log('AppProvider', messageContent, messageMode);
     login();
   }, []);
 
@@ -62,6 +67,7 @@ export default function AppProvider({ children }: any) {
         // secondary: mode === "light" ? "#b7b7b7" : "#6c6c6c",
       },
     },
+
     components: {
       MuiBackdrop: {
         // styleOverrides: {
@@ -116,6 +122,7 @@ export default function AppProvider({ children }: any) {
           },
         },
       },
+
       // MuiTypography: {
       //   styleOverrides: {
       //     root: {
@@ -263,24 +270,26 @@ export default function AppProvider({ children }: any) {
 
   return (
     <AppContext.Provider value={values}>
-      <ThemeProvider theme={theme}>
-        {children}
-        <Snackbar
-          open={messageContent.length > 0}
-          autoHideDuration={2500}
-          onClose={() => setMessageContent("")}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        >
-          <Alert
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
+        <ThemeProvider theme={theme}>
+          {children}
+          <Snackbar
+            open={messageContent.length > 0}
+            autoHideDuration={2500}
             onClose={() => setMessageContent("")}
-            severity={messageMode}
-            variant="filled"
-            sx={{ width: "100%" }}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
           >
-            {messageContent}
-          </Alert>
-        </Snackbar>
-      </ThemeProvider>
+            <Alert
+              onClose={() => setMessageContent("")}
+              severity={messageMode}
+              variant="filled"
+              sx={{ width: "100%" }}
+            >
+              {messageContent}
+            </Alert>
+          </Snackbar>
+        </ThemeProvider>
+      </LocalizationProvider>
     </AppContext.Provider>
   );
 }
