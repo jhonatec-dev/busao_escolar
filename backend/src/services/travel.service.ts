@@ -6,10 +6,14 @@ import {
   type ITravelStudent
 } from '../interfaces/ITravel'
 import studentModel from '../models/student.model'
+import systemModel from '../models/system.model'
 import travelModel from '../models/travel.model'
 
 class TravelService {
-  async getTravelMonth (year: number, month: number): Promise<ServiceResult<ITravel>> {
+  async getTravelMonth (
+    year: number,
+    month: number
+  ): Promise<ServiceResult<ITravel>> {
     try {
       const data = await travelModel.findOne(year, month)
       return {
@@ -26,7 +30,8 @@ class TravelService {
 
   private async generateStudents (
     days: number[],
-    currentTravel: ITravel
+    currentTravel: ITravel,
+    initialBusSits: number = 30
   ): Promise<ITravel> {
     const students = await studentModel.find(true)
     if (students.length === 0) {
@@ -45,6 +50,7 @@ class TravelService {
           day: i,
           active: true,
           observations: '',
+          busSits: initialBusSits,
           frequentStudents: students
             .filter(
               (student) =>
@@ -79,11 +85,14 @@ class TravelService {
     try {
       const currentTravel = await travelModel.findOrCreate(
         travel.year,
-        travel.month,
-        travel.busSits
+        travel.month
       )
-      const newTravel = await this.generateStudents(travel.days, currentTravel)
+      const initialBusSits = await systemModel.getBus()
+      console.log('initialBusSits', initialBusSits)
+      const newTravel = await this.generateStudents(travel.days, currentTravel, initialBusSits)
       // throw new Error('teste')
+
+      console.log('newTravel', newTravel)
 
       const data = await travelModel.update(
         currentTravel._id as string,

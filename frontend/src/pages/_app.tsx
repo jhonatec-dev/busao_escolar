@@ -1,4 +1,4 @@
-import AppProvider from "@/context/appProvider";
+import AppProvider from "@/context/app.provider";
 import "@/styles/globals.scss";
 import { Paper } from "@mui/material";
 import type { AppProps } from "next/app";

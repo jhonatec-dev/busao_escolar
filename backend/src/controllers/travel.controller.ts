@@ -11,8 +11,8 @@ class TravelController {
 
   async getTravelMonth (req: Request, res: Response): Promise<Response> {
     const { status, data } = await this.service.getTravelMonth(
-      req.body.year,
-      req.body.month
+      +req.params.year,
+      +req.params.month
     )
     return res.status(mapStatusHTTP(status)).json(data)
   }

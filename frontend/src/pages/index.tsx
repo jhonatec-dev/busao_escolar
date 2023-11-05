@@ -1,5 +1,5 @@
 import Logo from "@/components/Logo";
-import { AppContext } from "@/context/appProvider";
+import { AppContext } from "@/context/app.provider";
 import { saveToLS } from "@/utils/localStorage";
 import {
   DarkMode,

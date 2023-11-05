@@ -25,6 +25,7 @@ class TravelModel {
     const dayTravelScheme = new Schema<ITravelDay>(
       {
         day: { type: Number, required: true },
+        busSits: { type: Number, default: 30 },
         active: { type: Boolean, default: true },
         observations: { type: String, default: '' },
         frequentStudents: [studentScheme],
@@ -36,7 +37,6 @@ class TravelModel {
     )
 
     const schema = new Schema<ITravel>({
-      busSits: { type: Number, default: 30 },
       year: { type: Number, default: dayjs().year() },
       month: { type: Number, default: dayjs().month() + 1 },
       days: [dayTravelScheme]
@@ -58,8 +58,7 @@ class TravelModel {
 
   async findOrCreate (
     year: number,
-    month: number,
-    busSits: number
+    month: number
   ): Promise<ITravel> {
     const data = await this.model.findOne({ year, month })
 
@@ -67,7 +66,7 @@ class TravelModel {
       console.log(data)
       return data as ITravel
     }
-    return await this.model.create({ year, month, busSits })
+    return await this.model.create({ year, month })
   }
 
   async update (id: string, travel: Partial<ITravel>): Promise<ITravel> {

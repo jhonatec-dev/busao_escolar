@@ -1,3 +1,6 @@
+import { AppContext } from "@/context/app.provider";
+import { DataContext } from "@/context/data.provider";
+import { ITravel } from "@/interfaces/ITravel";
 import { Edit, MoreVert, Print } from "@mui/icons-material";
 import {
   Button,
@@ -10,14 +13,17 @@ import {
 } from "@mui/material";
 import { DateCalendar } from "@mui/x-date-pickers";
 import { DayCalendarSkeleton } from "@mui/x-date-pickers/DayCalendarSkeleton";
-import { Dayjs } from "dayjs";
-import { useEffect, useState } from "react";
+import dayjs, { Dayjs } from "dayjs";
+import { useContext, useEffect, useState } from "react";
 import ServerDay from "./DaySlot";
 
 export default function Calendar() {
+  const { travel, setTravel } = useContext(DataContext);
+  const { showMessage, getDataAuth } = useContext(AppContext);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [selDate, setSelDate] = useState<Dayjs>(dayjs());
   const [daysHighlightedDB, setDaysHighlightedDB] = useState<number[]>([]);
   const [daysHighlighted, setDaysHighlighted] =
     useState<number[]>(daysHighlightedDB);
@@ -25,7 +31,7 @@ export default function Calendar() {
   // const highlightedDays = [1, 3, 6, 10];
 
   useEffect(() => {
-    // aqui será a funçao para buscar do banto
+    getTravelMonth(selDate);
   }, []);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -41,17 +47,45 @@ export default function Calendar() {
     setEditMode(true);
   };
 
-  const handleMonthChange = () => {
+  const getTravelMonth = async (newDate: Dayjs, travel?: ITravel) => {
     // aqui será a funçao para buscar do banco
     // atualizar o estado do daysHighlightedDB
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+
+    try {
+      setLoading(true);
+      // console.log("newDate", newDate);
+      let data: ITravel;
+      if(travel === undefined) {
+        data = await getDataAuth(
+          `travel/${newDate.year()}/${newDate.month() + 1}`,
+          "get"
+        )
+      } else {
+        data = travel
+      }
+      
+      console.log("travel no handleMonth", data);
+      if (data === null || data === undefined) {
+        setTravel({} as ITravel);
+        setDaysHighlightedDB([]);
+        setDaysHighlighted([]);
+        setLoading(false);
+      } else {
+        setTravel(data);
+        const newHighlighted = data.days.filter((d) => d.active).map((d) => d.day);
+        setDaysHighlightedDB(newHighlighted);
+        setDaysHighlighted(newHighlighted);
+      }
+    } catch (error) {
+      showMessage((error as Error).message, "error");
+    }
+
+    setLoading(false);
   };
 
   const handleDayClick = (newDate: Dayjs | null) => {
     if (!newDate) return;
+    setSelDate(newDate);
     const day = newDate?.date();
     if (editMode) {
       if (daysHighlighted.includes(day)) {
@@ -62,9 +96,23 @@ export default function Calendar() {
     }
   };
 
-  const handleSaveClick = () => {
+  const handleSaveClick = async () => {
+    // enviar para o backend
+    try {
+      console.log('handleSaveClick \n', selDate.year(), selDate.month() + 1, daysHighlighted);
+      const data = await getDataAuth("travel", "post", {
+        year: selDate.year(),
+        month: selDate.month() + 1,
+        days: daysHighlighted,
+      }) as ITravel;
+      getTravelMonth(selDate, data);
+      showMessage("Calendário de viagens salvo com sucesso", "success");
+    } catch (error) {
+      showMessage((error as Error).message, "error");
+
+    }
+
     setEditMode(false);
-    setDaysHighlightedDB(daysHighlighted);
   };
 
   const handleCancelClick = () => {
@@ -87,9 +135,10 @@ export default function Calendar() {
         </Stack>
         <DateCalendar
           onChange={handleDayClick}
+          value={selDate}
           renderLoading={() => <DayCalendarSkeleton />}
           loading={loading}
-          onMonthChange={handleMonthChange}
+          onMonthChange={getTravelMonth}
           views={["day"]}
           slots={{
             day: ServerDay,

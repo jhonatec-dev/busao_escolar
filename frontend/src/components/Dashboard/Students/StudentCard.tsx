@@ -1,4 +1,4 @@
-import { AppContext } from "@/context/appProvider";
+import { AppContext } from "@/context/app.provider";
 import { IStudent } from "@/interfaces/IStudent";
 import { formatWeekDay } from "@/utils/format";
 import { Check, Delete, Edit, MoreVert } from "@mui/icons-material";
@@ -100,7 +100,7 @@ export default function StudentCard({
     handleClose();
     // resetar a frequência, em caso de cancelamento
     if (editMode) {
-      console.log("handleFrequencyChange", ev, value);
+      // console.log("handleFrequencyChange", ev, value);
       setLocalStudent((prev) => ({
         ...prev,
         frequency: {

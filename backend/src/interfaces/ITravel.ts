@@ -8,6 +8,7 @@ interface ITravelStudent {
 interface ITravelDay {
   day: number
   active: boolean
+  busSits: number
   observations: string
   frequentStudents: ITravelStudent[]
   otherStudents: ITravelStudent[]
@@ -15,7 +16,6 @@ interface ITravelDay {
 
 interface ITravel {
   _id?: string
-  busSits: number
   year: number
   month: number
   days: ITravelDay[]
@@ -23,7 +23,6 @@ interface ITravel {
 
 interface ITravelService {
   _id?: string
-  busSits: number
   year: number
   month: number
   days: number[]

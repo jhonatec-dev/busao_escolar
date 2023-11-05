@@ -1,7 +1,6 @@
 import { type NextFunction, type Request, type Response } from 'express'
-import validator from 'validator'
 
-export const validateDateTravelBody = (
+export const validateTravelBody = (
   req: Request,
   res: Response,
   next: NextFunction
@@ -12,7 +11,7 @@ export const validateDateTravelBody = (
     return
   }
 
-  if (!validator.isNumeric(year) || !validator.isNumeric(month)) {
+  if (typeof year !== 'number' || typeof month !== 'number') {
     res.status(400).json({ message: 'Ano e mês devem ser numéricos' })
     return
   }
@@ -25,12 +24,12 @@ export const validateDateTravelBody = (
   next()
 }
 
-export const validateDateTravelQuery = (
+export const validateTravelParams = (
   req: Request,
   res: Response,
   next: NextFunction
 ): void => {
-  const { year, month } = req.query
+  const { year, month } = req.params
   if (year === undefined || month === undefined) {
     res.status(400).json({ message: 'Ano e mês devem ser informados' })
     return
@@ -39,11 +38,6 @@ export const validateDateTravelQuery = (
   if (+year < 2010 || +year > 2100 || +month < 0 || +month > 12) {
     res.status(400).json({ message: 'Ano ou mês inválidos' })
     return
-  }
-
-  req.body = {
-    year: +year,
-    month: +month
   }
 
   next()

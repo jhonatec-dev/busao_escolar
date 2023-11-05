@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/server.ts",
   "scripts": {
-    "dev": "ts-node-dev  --transpile-only --ignore-watch node_modules --respawn src/server.ts",
+    "dev": "ts-node-dev  --transpile-only --ignore-watch node_modules --respawn --inspect src/server.ts",
     "start": "node dist/server.js",
     "lint": "eslint . --ext .ts",
     "build": "tsc"

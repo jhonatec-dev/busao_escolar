@@ -3,8 +3,8 @@ import { Router, type Request, type Response } from 'express'
 import TravelController from '../controllers/travel.controller'
 import validateToken from '../middlewares/token.middleware'
 import {
-  validateDateTravelBody,
-  validateDateTravelQuery
+  validateTravelBody,
+  validateTravelParams
 } from '../middlewares/travel.middleware'
 
 const travelController = new TravelController()
@@ -12,8 +12,8 @@ const travelController = new TravelController()
 const travelRoutes = Router()
 
 travelRoutes.get(
-  '/',
-  [validateToken, validateDateTravelQuery],
+  '/:year/:month',
+  [validateToken, validateTravelParams],
   async (req: Request, res: Response) => {
     await travelController.getTravelMonth(req, res)
   }
@@ -21,7 +21,7 @@ travelRoutes.get(
 
 travelRoutes.post(
   '/',
-  [validateToken, validateDateTravelBody],
+  [validateToken, validateTravelBody],
   async (req: Request, res: Response) => {
     await travelController.setMonthTravels(req, res)
   }

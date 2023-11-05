@@ -1,4 +1,4 @@
-import { AppContext } from "@/context/appProvider";
+import { AppContext } from "@/context/app.provider";
 import { Button, Card, Stack, TextField, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 
@@ -12,7 +12,7 @@ export default function Bus() {
       try {
         const response = await getDataAuth("system/bus", "get");
         if (!response) return;
-        console.log(response);
+        // console.log(response);
         setBusDB(response as number);
         setBus(response as number);
       } catch (error) {

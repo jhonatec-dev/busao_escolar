@@ -1,4 +1,4 @@
-import { AppContext } from "@/context/appProvider";
+import { AppContext } from "@/context/app.provider";
 import {
   DarkMode,
   Edit,
