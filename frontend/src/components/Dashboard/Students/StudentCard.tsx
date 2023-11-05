@@ -169,6 +169,7 @@ export default function StudentCard({
                   <ToggleButton
                     key={day}
                     value={day}
+                    onChange={handleFrequencyChange}
                     selected={
                       localStudent.frequency[
                         day as keyof typeof student.frequency
