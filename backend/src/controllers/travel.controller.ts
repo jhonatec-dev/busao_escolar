@@ -9,9 +9,17 @@ class TravelController {
     this.service = new TravelService()
   }
 
-  async create (req: Request, res: Response): Promise<Response> {
+  async getTravelMonth (req: Request, res: Response): Promise<Response> {
+    const { status, data } = await this.service.getTravelMonth(
+      req.body.year,
+      req.body.month
+    )
+    return res.status(mapStatusHTTP(status)).json(data)
+  }
+
+  async setMonthTravels (req: Request, res: Response): Promise<Response> {
     if (req.body.token.role === 'admin') {
-      const { status, data } = await this.service.create(req.body)
+      const { status, data } = await this.service.setMonthTravels(req.body)
       return res.status(mapStatusHTTP(status)).json(data)
     }
 
