@@ -5,6 +5,7 @@ import { Edit, MoreVert, Print } from "@mui/icons-material";
 import {
   Button,
   Card,
+  Dialog,
   IconButton,
   Menu,
   MenuItem,
@@ -15,11 +16,14 @@ import { DateCalendar } from "@mui/x-date-pickers";
 import { DayCalendarSkeleton } from "@mui/x-date-pickers/DayCalendarSkeleton";
 import dayjs, { Dayjs } from "dayjs";
 import { useContext, useEffect, useState } from "react";
+import { useWindowSize } from "usehooks-ts";
+import TravelDialog from "../TravelDialog";
 import ServerDay from "./DaySlot";
 
 export default function Calendar() {
   const { travel, setTravel } = useContext(DataContext);
   const { showMessage, getDataAuth } = useContext(AppContext);
+  const { width } = useWindowSize();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -27,6 +31,7 @@ export default function Calendar() {
   const [daysHighlightedDB, setDaysHighlightedDB] = useState<number[]>([]);
   const [daysHighlighted, setDaysHighlighted] =
     useState<number[]>(daysHighlightedDB);
+  const [openDialog, setOpenDialog] = useState(false);
 
   // const highlightedDays = [1, 3, 6, 10];
 
@@ -40,6 +45,7 @@ export default function Calendar() {
 
   const handleClose = () => {
     setAnchorEl(null);
+    setOpenDialog(false);
   };
 
   const handleEditClick = () => {
@@ -55,15 +61,15 @@ export default function Calendar() {
       setLoading(true);
       // console.log("newDate", newDate);
       let data: ITravel;
-      if(travel === undefined) {
+      if (travel === undefined) {
         data = await getDataAuth(
           `travel/${newDate.year()}/${newDate.month() + 1}`,
           "get"
-        )
+        );
       } else {
-        data = travel
+        data = travel;
       }
-      
+
       console.log("travel no handleMonth", data);
       if (data === null || data === undefined) {
         setTravel({} as ITravel);
@@ -72,7 +78,9 @@ export default function Calendar() {
         setLoading(false);
       } else {
         setTravel(data);
-        const newHighlighted = data.days.filter((d) => d.active).map((d) => d.day);
+        const newHighlighted = data.days
+          .filter((d) => d.active)
+          .map((d) => d.day);
         setDaysHighlightedDB(newHighlighted);
         setDaysHighlighted(newHighlighted);
       }
@@ -93,23 +101,29 @@ export default function Calendar() {
       } else {
         setDaysHighlighted((prev) => [...prev, day]);
       }
+    } else {
+      setOpenDialog(true);
     }
   };
 
   const handleSaveClick = async () => {
     // enviar para o backend
     try {
-      console.log('handleSaveClick \n', selDate.year(), selDate.month() + 1, daysHighlighted);
-      const data = await getDataAuth("travel", "post", {
+      console.log(
+        "handleSaveClick \n",
+        selDate.year(),
+        selDate.month() + 1,
+        daysHighlighted
+      );
+      const data = (await getDataAuth("travel", "post", {
         year: selDate.year(),
         month: selDate.month() + 1,
         days: daysHighlighted,
-      }) as ITravel;
+      })) as ITravel;
       getTravelMonth(selDate, data);
       showMessage("Calendário de viagens salvo com sucesso", "success");
     } catch (error) {
       showMessage((error as Error).message, "error");
-
     }
 
     setEditMode(false);
@@ -202,6 +216,18 @@ export default function Calendar() {
           <Print sx={{ mr: 1 }} /> Imprimir (Em Construção)
         </MenuItem>
       </Menu>
+      <Dialog
+        open={openDialog}
+        onClose={handleClose}
+        maxWidth="md"
+        fullScreen={width < 800}
+      >
+        <TravelDialog
+          handleClose={handleClose}
+          date={selDate}
+          travel={travel}
+        />
+      </Dialog>
     </>
   );
 }

@@ -15,6 +15,10 @@ body {
   overflow-x: hidden;
 }
 
+body {
+  padding-right: 0 !important;
+}
+
 form {
   width: 100%;
 }
@@ -37,8 +41,10 @@ form {
   overflow: initial !important;
   .MuiDayCalendar-header {
     justify-content: space-evenly !important;
-    font-size: larger;
-    font-weight: bold;
+    span {
+      font-size: 1.125rem;
+      font-weight: bold;
+    }
   }
 
   .MuiDayCalendar-weekContainer {
@@ -81,7 +87,6 @@ form {
   100% {
     transform: translateX(500px);
   }
-  
 }
 
 @media screen and (min-width: 600px) {

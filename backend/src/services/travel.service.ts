@@ -57,9 +57,10 @@ class TravelService {
                 student.frequency[weekDay as keyof typeof student.frequency]
             )
             .map((student) => ({
-              id: student._id as string,
+              _id: student._id as string,
               name: student.name,
               email: student.email,
+              school: student.school,
               approved: true as boolean
             })),
           otherStudents: [] as ITravelStudent[]

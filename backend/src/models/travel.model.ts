@@ -12,9 +12,10 @@ class TravelModel {
   constructor () {
     const studentScheme = new Schema<ITravelStudent>(
       {
-        id: { type: String, required: true },
+        _id: { type: String, required: true },
         name: { type: String, required: true },
         email: { type: String, required: true },
+        school: { type: String, required: true },
         approved: { type: Boolean, default: false }
       },
       {
