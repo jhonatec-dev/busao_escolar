@@ -30,8 +30,9 @@ class StudentModel {
     return data
   }
 
-  async find (): Promise<IStudent[]> {
-    return await this.model.find().select('-password')
+  async find (onlyAccepted = false): Promise<IStudent[]> {
+    const filter = onlyAccepted ? { accepted: true } : {}
+    return await this.model.find(filter).select('-password')
   }
 
   async findById (id: string): Promise<IStudent> {
