@@ -32,9 +32,6 @@ form {
   padding: 2rem 1rem;
 }
 
-.large {
-  max-width: 800px !important;
-}
 
 .MuiDateCalendar-root {
   width: 100% !important;
@@ -100,5 +97,9 @@ form {
 
   .Card {
     width: 500px;
+  }
+
+  .Terms{
+    width: 800px;
   }
 }

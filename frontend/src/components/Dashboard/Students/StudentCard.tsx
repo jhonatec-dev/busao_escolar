@@ -150,13 +150,14 @@ export default function StudentCard({
         </Stack>
         <Stack direction={"row"} spacing={2} justifyContent={"space-between"}>
           <Typography variant="body1">{localStudent.school}</Typography>
-          <Button
-            variant="text"
+          <ToggleButton
             color={localStudent.accepted ? "success" : "warning"}
+            selected
+            value="active"
             size="small"
           >
             {localStudent.accepted ? "Ativo" : "Inativo"}
-          </Button>
+          </ToggleButton>
         </Stack>
         <Stack spacing={1}>
           <Typography variant="body1" fontWeight={"bold"}>
