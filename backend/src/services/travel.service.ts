@@ -69,6 +69,8 @@ class TravelService {
         // tenho no banco, mas nao no meu request
         const index = daysTravel.findIndex((elm) => elm.day === i)
         daysTravel[index].active = false
+        // TODO: enviar email ao estudante avisando o cancelamento da viagem
+        // criar um array de viagens canceladas e agrupar em uma única mensagem
       }
     }
 
@@ -90,7 +92,11 @@ class TravelService {
       )
       const initialBusSits = await systemModel.getBus()
       console.log('initialBusSits', initialBusSits)
-      const newTravel = await this.generateStudents(travel.days, currentTravel, initialBusSits)
+      const newTravel = await this.generateStudents(
+        travel.days,
+        currentTravel,
+        initialBusSits
+      )
       // throw new Error('teste')
 
       console.log('newTravel', newTravel)
@@ -104,6 +110,52 @@ class TravelService {
         status: 'CREATED',
         data
       }
+    } catch (error) {
+      return {
+        status: 'INVALID',
+        data: { message: (error as Error).message }
+      }
+    }
+  }
+
+  private isStudentInTravel (
+    studentId: string,
+    travel: ITravel,
+    day: number
+  ): boolean {
+    const dayTravel = travel.days.find((elm) => elm.day === day)
+    if (dayTravel === undefined) {
+      throw new Error('Viagem não encontrada')
+    }
+    return (
+      dayTravel.frequentStudents.some((elm) => elm._id === studentId) ||
+      dayTravel.otherStudents.some((elm) => elm._id === studentId)
+    )
+  }
+
+  async addOtherStudent (
+    idTravel: string,
+    day: number,
+    student: Omit<ITravelStudent, 'approved'>
+  ): Promise<ServiceResult<string>> {
+    try {
+      const travel = await travelModel.findById(idTravel)
+      if (travel === null) {
+        throw new Error('Viagem não encontrada')
+      }
+      // TODO: verificar se o estudante já está como frequente no mesmo dia da semana que a viagem solicitada
+      if (this.isStudentInTravel(student._id, travel, day)) {
+        throw new Error('Estudante já está registrado na viagem')
+      }
+      await travelModel.addOtherStudent(idTravel, day, {
+        ...student,
+        approved: false
+      })
+      return {
+        status: 'SUCCESS',
+        data: 'adicionado com sucesso'
+      }
+      // TODO: enviar email confirmando o agendamento
     } catch (error) {
       return {
         status: 'INVALID',

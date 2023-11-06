@@ -17,7 +17,7 @@ import { DayCalendarSkeleton } from "@mui/x-date-pickers/DayCalendarSkeleton";
 import dayjs, { Dayjs } from "dayjs";
 import { useContext, useEffect, useState } from "react";
 import { useWindowSize } from "usehooks-ts";
-import TravelDialog from "../TravelDialog";
+import TravelDialogStudent from "../TravelDialog/student";
 import ServerDay from "./DaySlot";
 
 export default function Calendar() {
@@ -222,7 +222,13 @@ export default function Calendar() {
         maxWidth="md"
         fullScreen={width < 800}
       >
-        <TravelDialog
+        {/* <TravelDialog
+          handleClose={handleClose}
+          date={selDate}
+          travel={travel}
+        /> */}
+
+        <TravelDialogStudent
           handleClose={handleClose}
           date={selDate}
           travel={travel}

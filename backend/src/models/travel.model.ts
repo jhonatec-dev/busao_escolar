@@ -16,7 +16,8 @@ class TravelModel {
         name: { type: String, required: true },
         email: { type: String, required: true },
         school: { type: String, required: true },
-        approved: { type: Boolean, default: false }
+        approved: { type: Boolean, default: false },
+        message: { type: String, default: '', required: false }
       },
       {
         _id: false
@@ -57,10 +58,7 @@ class TravelModel {
     return await this.model.create(travel)
   }
 
-  async findOrCreate (
-    year: number,
-    month: number
-  ): Promise<ITravel> {
+  async findOrCreate (year: number, month: number): Promise<ITravel> {
     const data = await this.model.findOne({ year, month })
 
     if (data !== null && data !== undefined) {
@@ -76,14 +74,21 @@ class TravelModel {
     })) as ITravel
   }
 
-  async aproveStudent (
+  async addOtherStudent (
     idTravel: string,
     day: number,
-    idStudent: string
+    student: ITravelStudent
   ): Promise<void> {
-    await this.model.updateOne(
-      { _id: idTravel, 'days.day': day, 'days.$.otherStudents._id': idStudent },
-      { $set: { 'days.$.active': true } }
+    await this.model.findByIdAndUpdate(
+      { _id: idTravel },
+      {
+        $push: {
+          'days.$[day].otherStudents': student
+        }
+      },
+      {
+        arrayFilters: [{ 'day.day': day }]
+      }
     )
   }
 }

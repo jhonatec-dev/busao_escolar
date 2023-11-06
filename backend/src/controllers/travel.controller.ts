@@ -1,4 +1,5 @@
 import { type Request, type Response } from 'express'
+import { type ITravelStudent } from '../interfaces/ITravel'
 import TravelService from '../services/travel.service'
 import { mapStatusHTTP } from '../utils/mapStatusHTTP'
 
@@ -24,6 +25,24 @@ class TravelController {
     }
 
     return res.status(403).json({ message: 'Usuário não autorizado' })
+  }
+
+  async addOtherStudent (req: Request, res: Response): Promise<Response> {
+    const { idTravel, day } = req.params
+    const { token, message } = req.body
+    const student: Omit<ITravelStudent, 'approved'> = {
+      _id: token._id as string,
+      name: token.name as string,
+      email: token.email as string,
+      school: token.school as string,
+      message: message ?? ''
+    }
+    const { status, data } = await this.service.addOtherStudent(
+      idTravel,
+      +day,
+      student
+    )
+    return res.status(mapStatusHTTP(status)).json(data)
   }
 }
 

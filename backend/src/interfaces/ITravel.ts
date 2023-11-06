@@ -4,6 +4,7 @@ interface ITravelStudent {
   email: string
   school: string
   approved: boolean
+  message?: string
 }
 
 interface ITravelDay {

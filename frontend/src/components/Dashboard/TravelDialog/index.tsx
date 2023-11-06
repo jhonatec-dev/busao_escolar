@@ -138,7 +138,7 @@ export default function TravelDialog({
                 {currentDayTravel.frequentStudents.map((student, i) => (
                   <Card key={i} elevation={2} sx={{ p: 2 }}>
                     <Stack spacing={2}>
-                      <Typography>{student.name}</Typography>
+                      <Typography fontWeight={600}>{student.name}</Typography>
                       <Typography>{student.school}</Typography>
                       <ToggleButton
                         color="primary"
@@ -168,8 +168,9 @@ export default function TravelDialog({
                 {currentDayTravel.otherStudents.map((student, i) => (
                   <Card key={i} elevation={2} sx={{ p: 2 }}>
                     <Stack spacing={2}>
-                      <Typography>{student.name}</Typography>
+                      <Typography fontWeight={600}>{student.name}</Typography>
                       <Typography>{student.school}</Typography>
+                      <Typography>{student.message}</Typography>
                       <ToggleButton
                         color="primary"
                         value="check"

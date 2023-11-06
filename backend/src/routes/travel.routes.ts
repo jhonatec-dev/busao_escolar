@@ -27,4 +27,12 @@ travelRoutes.post(
   }
 )
 
+travelRoutes.post(
+  '/:idTravel/:day',
+  [validateToken],
+  async (req: Request, res: Response) => {
+    await travelController.addOtherStudent(req, res)
+  }
+)
+
 export default travelRoutes

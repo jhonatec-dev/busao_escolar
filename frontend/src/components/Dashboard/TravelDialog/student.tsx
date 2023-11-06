@@ -1,17 +1,10 @@
+import { AppContext } from "@/context/app.provider";
 import { ITravel } from "@/interfaces/ITravel";
-import { Close, ExpandLess, ExpandMore } from "@mui/icons-material";
-import {
-  Button,
-  Card,
-  Collapse,
-  IconButton,
-  TextField,
-  ToggleButton,
-  Typography,
-} from "@mui/material";
+import { Close } from "@mui/icons-material";
+import { Button, IconButton, TextField, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
 import { Dayjs } from "dayjs";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 interface ITravelDialogProps {
   date: Dayjs;
@@ -19,40 +12,79 @@ interface ITravelDialogProps {
   travel: ITravel;
 }
 
-export default function TravelDialog({
+export default function TravelDialogStudent({
   handleClose,
   date,
   travel,
 }: ITravelDialogProps) {
-  const [frequentOpen, setFrequentOpen] = useState(false);
-  const [otherOpen, setOtherOpen] = useState(false);
-  const currentDayTravelDB = travel.days
+  const { profile, showMessage, getDataAuth } = useContext(AppContext);
+  const [message, setMessage] = useState("");
+  const currentDayTravel = travel.days
     ? travel.days.find((d) => d.day === date.date())
     : undefined;
-  const [currentDayTravel, setCurrentDayTravel] = useState(
-    currentDayTravelDB || {
-      day: date.date(),
-      active: false,
-      busSits: 0,
-      observations: "",
-      frequentStudents: [],
-      otherStudents: [],
-    }
-  );
 
-  const handleActiveClick = (
-    group: "frequentStudents" | "otherStudents",
-    index: number
-  ) => {
-    setCurrentDayTravel((prev) => {
-      const newStudents = [...prev[group]];
-      newStudents[index].approved = !newStudents[index].approved;
-      return {
-        ...prev,
-        [group]: newStudents,
-      };
-    });
+  useEffect(() => {
+    alreadyOnList();
+  }, []);
+
+  const alreadyOnList = () => {
+    if (!currentDayTravel) {
+      return <Typography>Dia sem viagem registrada</Typography>;
+    }
+
+    const frequent = currentDayTravel?.frequentStudents.find(
+      (s) => s._id === profile?._id
+    );
+    const other = currentDayTravel?.otherStudents.find(
+      (s) => s._id === profile?._id
+    );
+
+    const studentOnTravel = frequent || other;
+
+    if (!studentOnTravel) {
+      return (
+        <>
+          <TextField
+            label="Quer adiconar alguma mensagem?"
+            variant="filled"
+            fullWidth
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            rows={4}
+            inputProps={{ maxLength: 140 }}
+            multiline
+          />
+
+          <Button onClick={handleSaveClick} fullWidth variant="contained">
+            Solicitar vaga
+          </Button>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <Typography>Você já está listado na viagem deste dia</Typography>
+        <Typography fontWeight={"bold"}>
+          {studentOnTravel.approved ? "Aprovado" : "Aguardando aprovação"}
+        </Typography>
+      </>
+    );
   };
+
+  const handleSaveClick = () => {
+    try {
+      const data = getDataAuth(`travel/${travel._id}/${date.date()}`, "post", {
+        message: message,
+      });
+      if (data) {
+        showMessage("Vaga solicitada com sucesso", "success");
+        handleClose();
+      }
+    } catch (error) {
+      showMessage((error as Error).message, "error");
+    }
+  }
 
   return (
     <Stack p={2} spacing={2}>
@@ -70,98 +102,9 @@ export default function TravelDialog({
           <Close />
         </IconButton>
       </Stack>
-      <Stack spacing={2}>
-        {currentDayTravel.active ? (
-          <>
-            <TextField
-              label="Lugares no ônibus"
-              variant="filled"
-              value={currentDayTravel.busSits}
-              onChange={(ev) => {
-                setCurrentDayTravel((prev) => ({
-                  ...prev,
-                  busSits: Number(ev.target.value),
-                }));
-              }}
-              inputProps={{ type: "number" }}
-              fullWidth
-            />
-            <TextField
-              label="Observações"
-              variant="filled"
-              fullWidth
-              value={currentDayTravel.observations}
-              onChange={(ev) => {
-                setCurrentDayTravel((prev) => ({
-                  ...prev,
-                  observations: ev.target.value,
-                }));
-              }}
-              multiline
-            />
-            <Button
-              fullWidth
-              variant="outlined"
-              startIcon={frequentOpen ? <ExpandLess /> : <ExpandMore />}
-              onClick={() => setFrequentOpen((prev) => !prev)}
-            >
-              Alunos frequentes
-            </Button>
-            <Collapse in={frequentOpen}>
-              <Stack spacing={2}>
-                {currentDayTravel.frequentStudents.map((student, i) => (
-                  <Card key={i} elevation={2} sx={{ p: 2 }}>
-                    <Typography>{student.name}</Typography>
-                    <Typography>{student.school}</Typography>
-                    <ToggleButton
-                      color="primary"
-                      value="check"
-                      selected={student.approved}
-                      size="small"
-                      fullWidth
-                      onClick={() => handleActiveClick("frequentStudents", i)}
-                    >
-                      {student.approved ? "Ativado" : "Desativado"}
-                    </ToggleButton>
-                  </Card>
-                ))}
-              </Stack>
-            </Collapse>
-            <Button
-              fullWidth
-              variant="outlined"
-              startIcon={otherOpen ? <ExpandLess /> : <ExpandMore />}
-              onClick={() => setOtherOpen((prev) => !prev)}
-            >
-              Outros alunos
-            </Button>
-            <Collapse in={otherOpen}>
-              <Stack spacing={2}>
-                {currentDayTravel.otherStudents.map((student, i) => (
-                  <Card key={i} elevation={2} sx={{ p: 2 }}>
-                    <Typography>{student.name}</Typography>
-                    <Typography>{student.school}</Typography>
-                    <ToggleButton
-                      color="primary"
-                      value="check"
-                      selected={student.approved}
-                      size="small"
-                      fullWidth
-                      onClick={() => handleActiveClick("otherStudents", i)}
-                    >
-                      {student.approved ? "Ativado" : "Desativado"}
-                    </ToggleButton>
-                  </Card>
-                ))}
-              </Stack>
-            </Collapse>
-            <Button fullWidth variant="contained">
-              Salvar
-            </Button>
-          </>
-        ) : (
-          <Typography>Dia sem viagem registrada</Typography>
-        )}
+
+      <Stack spacing={2} textAlign={"center"}>
+        {alreadyOnList()}
       </Stack>
     </Stack>
   );

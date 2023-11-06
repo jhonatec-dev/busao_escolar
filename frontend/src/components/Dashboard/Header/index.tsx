@@ -1,5 +1,6 @@
 import { AppContext } from "@/context/app.provider";
 import {
+  Assignment,
   DarkMode,
   Edit,
   ExitToApp,
@@ -17,11 +18,13 @@ import {
   Typography,
 } from "@mui/material";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { useContext, useState } from "react";
 
 export default function Header() {
   const { profile, logout, toggleMode, themeMode } = useContext(AppContext);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const router = useRouter();
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -69,6 +72,9 @@ export default function Header() {
             </MenuItem>
             <MenuItem onClick={logout}>
               <ExitToApp sx={{ mr: 1 }} /> Sair
+            </MenuItem>
+            <MenuItem onClick={() => router.push("/terms")}>
+              <Assignment sx={{ mr: 1 }} /> Termos de Uso
             </MenuItem>
             <MenuItem
               onClick={() => {

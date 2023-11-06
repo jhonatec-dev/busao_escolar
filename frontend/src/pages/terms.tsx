@@ -1,3 +1,4 @@
+import Logo from "@/components/Logo";
 import { Button, Card, List, ListItem, Stack, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 
@@ -13,6 +14,7 @@ export default function Terms() {
           textAlign={"center"}
           justifyContent={"center"}
         >
+          <Logo size={80} />
           <Typography variant="h4">Termos de Serviço</Typography>
 
           <Typography variant="body1">
