@@ -74,7 +74,7 @@ export default function TravelDialogStudent({
 
   const handleSaveClick = () => {
     try {
-      const data = getDataAuth(`travel/${travel._id}/${date.date()}`, "post", {
+      const data = getDataAuth(`travel/${travel._id}/${date.date()}/other-students`, "post", {
         message: message,
       });
       if (data) {

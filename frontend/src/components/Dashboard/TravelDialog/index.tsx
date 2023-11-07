@@ -1,3 +1,4 @@
+import { AppContext } from "@/context/app.provider";
 import { ITravel } from "@/interfaces/ITravel";
 import { Close, ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
@@ -11,7 +12,7 @@ import {
 } from "@mui/material";
 import { Stack } from "@mui/system";
 import { Dayjs } from "dayjs";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 interface ITravelDialogProps {
   date: Dayjs;
@@ -24,6 +25,7 @@ export default function TravelDialog({
   date,
   travel,
 }: ITravelDialogProps) {
+  const { showMessage, getDataAuth } = useContext(AppContext);
   const [frequentOpen, setFrequentOpen] = useState(false);
   const [otherOpen, setOtherOpen] = useState(false);
   // const [freeSits, setFreeSits] = useState(0);
@@ -69,6 +71,20 @@ export default function TravelDialog({
         busSits: +ev.target.value,
       };
     });
+  };
+
+  const handleSaveClick = async() => {
+    try {
+      await getDataAuth(
+        `travel/${travel._id}/${date.date()}`,
+        "put",
+        currentDayTravel
+      );
+      showMessage("Viagem alterada com sucesso", "success");
+      handleClose();
+    } catch (error) {
+      showMessage((error as Error).message, "error");
+    }
   };
 
   return (
@@ -186,7 +202,7 @@ export default function TravelDialog({
                 ))}
               </Stack>
             </Collapse>
-            <Button fullWidth variant="contained">
+            <Button onClick={handleSaveClick} fullWidth variant="contained">
               Salvar
             </Button>
           </>

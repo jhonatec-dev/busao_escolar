@@ -44,6 +44,19 @@ class TravelController {
     )
     return res.status(mapStatusHTTP(status)).json(data)
   }
+
+  async updateDay (req: Request, res: Response): Promise<Response> {
+    if (req.body.token.role === 'admin') {
+      const { status, data } = await this.service.updateDay(
+        req.params.idTravel,
+        +req.params.day,
+        req.body
+      )
+      return res.status(mapStatusHTTP(status)).json(data)
+    }
+
+    return res.status(403).json({ message: 'Usuário não autorizado' })
+  }
 }
 
 export default TravelController

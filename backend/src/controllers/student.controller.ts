@@ -57,7 +57,6 @@ class StudentController {
   }
 
   async accept (req: Request, res: Response): Promise<Response> {
-    console.log(req.body.token)
     if (req.body.token.role === 'admin') {
       const { status, data } = await this.service.accept(req.params.id)
       return res.status(mapStatusHTTP(status)).json(data)

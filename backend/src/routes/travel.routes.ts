@@ -27,8 +27,16 @@ travelRoutes.post(
   }
 )
 
-travelRoutes.post(
+travelRoutes.put(
   '/:idTravel/:day',
+  [validateToken],
+  async (req: Request, res: Response) => {
+    await travelController.updateDay(req, res)
+  }
+)
+
+travelRoutes.post(
+  '/:idTravel/:day/other-students',
   [validateToken],
   async (req: Request, res: Response) => {
     await travelController.addOtherStudent(req, res)

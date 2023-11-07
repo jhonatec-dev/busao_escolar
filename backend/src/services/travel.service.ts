@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 import type ServiceResult from '../interfaces/IService'
 import {
   type ITravel,
+  type ITravelDay,
   type ITravelService,
   type ITravelStudent
 } from '../interfaces/ITravel'
@@ -91,15 +92,11 @@ class TravelService {
         travel.month
       )
       const initialBusSits = await systemModel.getBus()
-      console.log('initialBusSits', initialBusSits)
       const newTravel = await this.generateStudents(
         travel.days,
         currentTravel,
         initialBusSits
       )
-      // throw new Error('teste')
-
-      console.log('newTravel', newTravel)
 
       const data = await travelModel.update(
         currentTravel._id as string,
@@ -156,6 +153,25 @@ class TravelService {
         data: 'adicionado com sucesso'
       }
       // TODO: enviar email confirmando o agendamento
+    } catch (error) {
+      return {
+        status: 'INVALID',
+        data: { message: (error as Error).message }
+      }
+    }
+  }
+
+  async updateDay (
+    idTravel: string,
+    day: number,
+    travel: Partial<ITravelDay>
+  ): Promise<ServiceResult<string>> {
+    try {
+      await travelModel.updateDay(idTravel, day, travel)
+      return {
+        status: 'SUCCESS',
+        data: 'atualizado com sucesso'
+      }
     } catch (error) {
       return {
         status: 'INVALID',

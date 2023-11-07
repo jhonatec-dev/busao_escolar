@@ -62,7 +62,6 @@ class TravelModel {
     const data = await this.model.findOne({ year, month })
 
     if (data !== null && data !== undefined) {
-      console.log(data)
       return data as ITravel
     }
     return await this.model.create({ year, month })
@@ -72,6 +71,22 @@ class TravelModel {
     return (await this.model.findByIdAndUpdate({ _id: id }, travel, {
       new: true
     })) as ITravel
+  }
+
+  async updateDay (id: string, day: number, travel: Partial<ITravelDay>): Promise<void> {
+    await this.model.updateOne(
+      {
+        'days.day': day
+      },
+      {
+        $set: {
+          'days.$[day]': travel
+        }
+      },
+      {
+        arrayFilters: [{ 'day.day': day }]
+      }
+    )
   }
 
   async addOtherStudent (
