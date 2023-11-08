@@ -9,6 +9,7 @@ import {
 } from "@mui/icons-material";
 import {
   AppBar,
+  Divider,
   IconButton,
   Menu,
   MenuItem,
@@ -22,7 +23,8 @@ import { useRouter } from "next/router";
 import { useContext, useState } from "react";
 
 export default function Header() {
-  const { profile, logout, toggleMode, themeMode } = useContext(AppContext);
+  const { profile, logout, toggleMode, themeMode, showMessage } =
+    useContext(AppContext);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const router = useRouter();
 
@@ -32,6 +34,11 @@ export default function Header() {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleEditProfileClick = () => {
+    showMessage("Funcionalidade em desenvolvimento", "warning");
+    handleClose();
   };
 
   return (
@@ -67,15 +74,14 @@ export default function Header() {
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
-            <MenuItem onClick={handleClose}>
+            <MenuItem onClick={handleEditProfileClick}>
               <Edit sx={{ mr: 1 }} /> Editar minha conta
             </MenuItem>
-            <MenuItem onClick={logout}>
-              <ExitToApp sx={{ mr: 1 }} /> Sair
-            </MenuItem>
+
             <MenuItem onClick={() => router.push("/terms")}>
               <Assignment sx={{ mr: 1 }} /> Termos de Uso
             </MenuItem>
+            <Divider />
             <MenuItem
               onClick={() => {
                 toggleMode();
@@ -88,6 +94,10 @@ export default function Header() {
                 <LightMode sx={{ mr: 1 }} />
               )}
               {themeMode === "light" ? "Modo escuro" : "Modo claro"}
+            </MenuItem>
+            <Divider />
+            <MenuItem onClick={logout}>
+              <ExitToApp sx={{ mr: 1 }} /> Sair
             </MenuItem>
           </Menu>
         </Toolbar>

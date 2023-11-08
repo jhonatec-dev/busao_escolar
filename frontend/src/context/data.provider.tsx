@@ -1,4 +1,6 @@
+import { IStudent } from "@/interfaces/IStudent";
 import { ITravel } from "@/interfaces/ITravel";
+import dayjs, { Dayjs } from "dayjs";
 import { createContext, useState } from "react";
 
 interface IDataContext {
@@ -12,7 +14,9 @@ export const DataContext = createContext({} as IDataContext);
 
 export const DataProvider = ({ children }: any) => {
   const [travel, setTravel] = useState<ITravel>({} as ITravel);
-  const [asStudent, setAsStudent] = useState(false);
+  const [students, setStudents] = useState<IStudent[]>([]);
+  const [selDate, setSelDate] = useState<Dayjs>(dayjs());
+  const [asStudent, setAsStudent] = useState(true);
 
   const values = {
     travel,

@@ -1,11 +1,15 @@
 import { AppContext } from "@/context/app.provider";
-import { Button, Card, Stack, TextField, Typography } from "@mui/material";
+import { DataContext } from "@/context/data.provider";
+import { Button, Card, Stack, TextField, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 
-export default function Bus() {
+export default function System() {
   const { getDataAuth, showMessage } = useContext(AppContext);
+  const {asStudent, setAsStudent} = useContext(DataContext);
   const [busDB, setBusDB] = useState(0);
   const [bus, setBus] = useState(busDB);
+
+  console.log('asStudent', asStudent)
 
   useEffect(() => {
     const getBus = async () => {
@@ -37,19 +41,39 @@ export default function Bus() {
 
   return (
     <Card className="Card" variant="outlined">
+      <Stack spacing={2}>
       <Typography variant="h6">Ônibus padrão</Typography>
-      <Stack direction="row" spacing={2} justifyContent={"space-between"}>
+      <Stack direction="row" spacing={4} justifyContent={"space-between"} alignItems={"center"}>
         <TextField
           label="Lugares"
           variant="filled"
-          fullWidth
           value={bus}
+          fullWidth
           onChange={(ev) => setBus(Number(ev.target.value))}
           inputProps={{ type: "number" }}
+          helperText="Valor de base usado ao criar novas viagens"
         />
         <Button variant="contained" onClick={handleUpdateBus}>
           Atualizar
         </Button>
+      </Stack>
+      <Typography variant="h6">Interagindo com o calendário como:</Typography>
+      <ToggleButtonGroup value={asStudent}>
+        <ToggleButton
+          value="true"
+          selected={asStudent}
+          onClick={() => setAsStudent(true)}
+        >
+          Aluno
+        </ToggleButton>
+        <ToggleButton
+          value="false"
+          selected={!asStudent}
+          onClick={() => setAsStudent(false)}
+        >
+          Administrador
+        </ToggleButton>
+      </ToggleButtonGroup>
       </Stack>
     </Card>
   );

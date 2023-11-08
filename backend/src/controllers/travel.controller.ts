@@ -1,17 +1,11 @@
 import { type Request, type Response } from 'express'
 import { type ITravelStudent } from '../interfaces/ITravel'
-import TravelService from '../services/travel.service'
+import travelService from '../services/travel.service'
 import { mapStatusHTTP } from '../utils/mapStatusHTTP'
 
 class TravelController {
-  private readonly service: TravelService
-
-  constructor () {
-    this.service = new TravelService()
-  }
-
   async getTravelMonth (req: Request, res: Response): Promise<Response> {
-    const { status, data } = await this.service.getTravelMonth(
+    const { status, data } = await travelService.getTravelMonth(
       +req.params.year,
       +req.params.month
     )
@@ -20,7 +14,7 @@ class TravelController {
 
   async setMonthTravels (req: Request, res: Response): Promise<Response> {
     if (req.body.token.role === 'admin') {
-      const { status, data } = await this.service.setMonthTravels(req.body)
+      const { status, data } = await travelService.setMonthTravels(req.body)
       return res.status(mapStatusHTTP(status)).json(data)
     }
 
@@ -37,7 +31,7 @@ class TravelController {
       school: token.school as string,
       message: message ?? ''
     }
-    const { status, data } = await this.service.addOtherStudent(
+    const { status, data } = await travelService.addOtherStudent(
       idTravel,
       +day,
       student
@@ -47,7 +41,7 @@ class TravelController {
 
   async updateDay (req: Request, res: Response): Promise<Response> {
     if (req.body.token.role === 'admin') {
-      const { status, data } = await this.service.updateDay(
+      const { status, data } = await travelService.updateDay(
         req.params.idTravel,
         +req.params.day,
         req.body

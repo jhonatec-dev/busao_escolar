@@ -1,5 +1,6 @@
 import dayjs from 'dayjs'
 import type ServiceResult from '../interfaces/IService'
+import { type IStudent } from '../interfaces/IStudent'
 import {
   type ITravel,
   type ITravelDay,
@@ -179,6 +180,75 @@ class TravelService {
       }
     }
   }
+
+  async updateStudentOnTravels (student: IStudent, shouldRemove = false): Promise<boolean> {
+    try {
+      const today = dayjs()
+      const currYear = today.year()
+      const currMonth = today.month() + 1
+      const currDay = today.date()
+      const tripsToUpdate = await travelModel.model.find({
+        $or: [
+          {
+            year: currYear,
+            month: currMonth,
+            'days.day': { $gte: currDay }
+          },
+          {
+            year: currYear,
+            month: { $gt: currMonth }
+          },
+          {
+            year: { $gt: currYear }
+          }
+        ]
+      })
+
+      const studentTravel: ITravelStudent = {
+        _id: student._id as string,
+        name: student.name,
+        email: student.email,
+        school: student.school,
+        approved: true
+      }
+
+      for (const trip of tripsToUpdate) {
+        let shouldUpdate = false
+        trip.days.forEach((day) => {
+          if (
+            (trip.year === currYear &&
+              trip.month === currMonth &&
+              day.day >= currDay) ||
+            (trip.year === currYear && trip.month > currMonth) ||
+            trip.year > currYear
+          ) {
+            // TODO: verificar sobre o dia da semana da frequencia do estudante
+            const weekDay = dayjs(`${trip.year}-${trip.month}-${day.day}`)
+              .format('dddd')
+              .toLowerCase()
+            if (student.frequency[weekDay as keyof typeof student.frequency]) {
+              shouldUpdate = true
+              // Adicione o estudante à lista de frequentStudents
+              day.frequentStudents.push(studentTravel)
+
+              // Remova o estudante da lista de otherStudents
+              day.otherStudents = day.otherStudents.filter(
+                (student) => student._id !== studentTravel._id
+              )
+            }
+          }
+        })
+
+        // Salve as alterações na viagem
+        if (shouldUpdate) {
+          await trip.save()
+        }
+      }
+      return true
+    } catch (error) {
+      throw new Error((error as Error).message)
+    }
+  }
 }
 
-export default TravelService
+export default new TravelService()

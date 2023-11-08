@@ -18,11 +18,12 @@ import dayjs, { Dayjs } from "dayjs";
 import { useContext, useEffect, useState } from "react";
 import { useWindowSize } from "usehooks-ts";
 import TravelDialog from "../TravelDialog";
+import TravelDialogStudent from "../TravelDialog/student";
 import ServerDay from "./DaySlot";
 
 export default function Calendar() {
-  const { travel, setTravel } = useContext(DataContext);
-  const { showMessage, getDataAuth } = useContext(AppContext);
+  const { travel, setTravel, asStudent } = useContext(DataContext);
+  const { showMessage, getDataAuth, profile } = useContext(AppContext);
   const { width } = useWindowSize();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [loading, setLoading] = useState(false);
@@ -143,16 +144,23 @@ export default function Calendar() {
           alignItems="center"
         >
           <Typography variant="h6">Calendário Mensal</Typography>
-          <IconButton onClick={handleMenu}>
-            <MoreVert />
-          </IconButton>
+          {profile.role === "admin" && (
+            <IconButton onClick={handleMenu}>
+              <MoreVert />
+            </IconButton>
+          )}
         </Stack>
+        <Typography variant="body1">
+          Clique no dia marcado em azul para agendar uma vaga ou consultar se já
+          foi aprovada
+        </Typography>
         <DateCalendar
           onChange={handleDayClick}
           value={selDate}
           renderLoading={() => <DayCalendarSkeleton />}
           loading={loading}
           onMonthChange={getTravelMonth}
+          dayOfWeekFormatter={(_day, date) => date.format("ddd")}
           views={["day"]}
           slots={{
             day: ServerDay,
@@ -222,17 +230,19 @@ export default function Calendar() {
         maxWidth="md"
         fullScreen={width < 800}
       >
-        <TravelDialog
-          handleClose={handleClose}
-          date={selDate}
-          travel={travel}
-        />
-
-        {/* <TravelDialogStudent
-          handleClose={handleClose}
-          date={selDate}
-          travel={travel}
-        /> */}
+        {asStudent ? (
+          <TravelDialogStudent
+            handleClose={handleClose}
+            date={selDate}
+            travel={travel}
+          />
+        ) : (
+          <TravelDialog
+            handleClose={handleClose}
+            date={selDate}
+            travel={travel}
+          />
+        )}
       </Dialog>
     </>
   );

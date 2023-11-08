@@ -32,12 +32,22 @@ form {
   padding: 2rem 1rem;
 }
 
-
 .MuiDateCalendar-root {
   width: 100% !important;
   overflow: initial !important;
+  margin: 0 !important;
+  padding: 0 !important;
+
+  .MuiDayCalendar-header-root {
+    padding: 0 !important;
+  }
+
+  .MuiPickersCalendarHeader-root{
+    padding: 0 !important;
+  }
+
   .MuiDayCalendar-header {
-    justify-content: space-evenly !important;
+    justify-content: space-between !important;
     span {
       font-size: 1.125rem;
       font-weight: bold;
@@ -45,12 +55,18 @@ form {
   }
 
   .MuiDayCalendar-weekContainer {
-    justify-content: space-evenly !important;
+    justify-content: space-between !important;
     margin: 0.6rem 0;
   }
 
   .MuiPickersSlideTransition-root {
     overflow: initial !important;
+  }
+
+  .MuiPickersCalendarHeader-label {
+    text-transform: capitalize !important;
+    font-size: large;
+    font-weight: bold;
   }
 }
 
@@ -99,7 +115,7 @@ form {
     width: 500px;
   }
 
-  .Terms{
+  .Terms {
     width: 800px;
   }
 }

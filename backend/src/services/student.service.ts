@@ -5,6 +5,7 @@ import StudentModel from '../models/student.model'
 import JWT from '../utils/JWT'
 import { comparePassword, encrypt } from '../utils/encrypt'
 import Email from '../utils/sendEmail'
+import travelService from './travel.service'
 
 class StudentService {
   async find (): Promise<ServiceResult<IStudent[]>> {
@@ -166,11 +167,12 @@ class StudentService {
 
   async accept (id: string): Promise<ServiceResult<{ _id: string }>> {
     try {
-      const data = await StudentModel.findById(id)
-      if (data === null) {
+      const student = await StudentModel.findById(id)
+      if (student === null) {
         throw new Error('Usuário não encontrado')
       }
       await StudentModel.accept(id)
+      await travelService.updateStudentOnTravels(student)
       return {
         status: 'SUCCESS',
         data: {
@@ -190,7 +192,12 @@ class StudentService {
     frequency: Pick<IStudent, 'frequency'>
   ): Promise<ServiceResult<{ _id: string }>> {
     try {
+      const student = await StudentModel.findById(id)
+      if (student === null) {
+        throw new Error('Usuário não encontrado')
+      }
       await StudentModel.changeFrequency(id, frequency)
+      await travelService.updateStudentOnTravels(student)
       return {
         status: 'SUCCESS',
         data: {

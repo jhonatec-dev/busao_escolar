@@ -20,7 +20,7 @@ export default function TravelDialogStudent({
   const { profile, showMessage, getDataAuth } = useContext(AppContext);
   const [message, setMessage] = useState("");
   const currentDayTravel = travel.days
-    ? travel.days.find((d) => d.day === date.date())
+    ? travel.days.find((d) => d.day === date.date() && d.active)
     : undefined;
 
   useEffect(() => {
