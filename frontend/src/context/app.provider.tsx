@@ -198,14 +198,7 @@ export default function AppProvider({ children }: any) {
         const response = await axios[method](`${API_URL}/${endPoint}`, data);
         return response.data;
       } catch (error: AxiosError | any) {
-        console.log(
-          "Error",
-          error,
-          "instancia",
-          typeof error,
-          "instancia",
-          error instanceof AxiosError
-        );
+        
         if (error instanceof AxiosError) {
           showMessage(error.response?.data.message, "error");
         } else showMessage(error.message, "error");
@@ -220,7 +213,7 @@ export default function AppProvider({ children }: any) {
     async (endPoint: string, method: method, data?: any) => {
       try {
         const token = getFromLS("tokenBusaoEscolar");
-        console.log("token", token);
+        // console.log("token", token);
         if (!token) {
           logout();
           return;
@@ -228,7 +221,6 @@ export default function AppProvider({ children }: any) {
         let response: any;
         console.log("dados no auth do provider", { endPoint, method, data });
         if (method === "get" || method === "delete") {
-          console.log("entrei aqui");
           response = await axios[method](`${API_URL}/${endPoint}`, {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -245,6 +237,7 @@ export default function AppProvider({ children }: any) {
         console.log("response no Provider", response);
         return response.data;
       } catch (error) {
+        console.log('error no provider', error)
         if (error instanceof AxiosError) {
           if (error.response?.status === 401) {
             logout();

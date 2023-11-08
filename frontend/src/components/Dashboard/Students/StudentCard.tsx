@@ -1,4 +1,4 @@
-import { AppContext } from "@/context/appProvider";
+import { AppContext } from "@/context/app.provider";
 import { IStudent } from "@/interfaces/IStudent";
 import { formatWeekDay } from "@/utils/format";
 import { Check, Delete, Edit, MoreVert } from "@mui/icons-material";
@@ -100,7 +100,7 @@ export default function StudentCard({
     handleClose();
     // resetar a frequência, em caso de cancelamento
     if (editMode) {
-      console.log("handleFrequencyChange", ev, value);
+      // console.log("handleFrequencyChange", ev, value);
       setLocalStudent((prev) => ({
         ...prev,
         frequency: {
@@ -150,13 +150,14 @@ export default function StudentCard({
         </Stack>
         <Stack direction={"row"} spacing={2} justifyContent={"space-between"}>
           <Typography variant="body1">{localStudent.school}</Typography>
-          <Button
-            variant="text"
+          <ToggleButton
             color={localStudent.accepted ? "success" : "warning"}
+            selected
+            value="active"
             size="small"
           >
             {localStudent.accepted ? "Ativo" : "Inativo"}
-          </Button>
+          </ToggleButton>
         </Stack>
         <Stack spacing={1}>
           <Typography variant="body1" fontWeight={"bold"}>

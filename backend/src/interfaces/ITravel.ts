@@ -1,13 +1,16 @@
 interface ITravelStudent {
-  id: string
+  _id: string
   name: string
   email: string
+  school: string
   approved: boolean
+  message?: string
 }
 
 interface ITravelDay {
   day: number
   active: boolean
+  busSits: number
   observations: string
   frequentStudents: ITravelStudent[]
   otherStudents: ITravelStudent[]
@@ -15,7 +18,6 @@ interface ITravelDay {
 
 interface ITravel {
   _id?: string
-  busSits: number
   year: number
   month: number
   days: ITravelDay[]
@@ -23,7 +25,6 @@ interface ITravel {
 
 interface ITravelService {
   _id?: string
-  busSits: number
   year: number
   month: number
   days: number[]

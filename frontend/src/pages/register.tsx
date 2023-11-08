@@ -25,7 +25,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import validator from "validator";
 
 import Logo from "@/components/Logo";
-import { AppContext } from "@/context/appProvider";
+import { AppContext } from "@/context/app.provider";
 
 export default function Register() {
   const {
@@ -38,6 +38,7 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showFrequency, setShowFrequency] = useState(false);
   const { showMessage, getData } = useContext(AppContext);
+  const [accepted, setAccepted] = useState(false);
   const [created, setCreated] = useState(false);
   const [loading, setLoading] = useState(false);
   const onSubmit: SubmitHandler<IStudent> = async (data) => {
@@ -244,7 +245,25 @@ export default function Register() {
               error={!!errors.confirmPassword}
               helperText={errors.confirmPassword?.message}
             />
-            <Button variant="contained" size="large" type="submit">
+            <Button href="/terms">
+              Termos de Serviço e Política de Privacidade
+            </Button>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  value={"accept"}
+                  checked={accepted}
+                  onChange={(e) => setAccepted(e.target.checked)}
+                />
+              }
+              label="Eu li e concordo com os Termos de Serviço e a Política de Privacidade"
+            />
+            <Button
+              variant="contained"
+              size="large"
+              type="submit"
+              disabled={!accepted}
+            >
               Cadastrar
             </Button>
           </Stack>

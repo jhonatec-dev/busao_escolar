@@ -15,6 +15,10 @@ body {
   overflow-x: hidden;
 }
 
+body {
+  padding-right: 0 !important;
+}
+
 form {
   width: 100%;
 }
@@ -28,26 +32,41 @@ form {
   padding: 2rem 1rem;
 }
 
-.large {
-  max-width: 800px !important;
-}
-
 .MuiDateCalendar-root {
   width: 100% !important;
   overflow: initial !important;
+  margin: 0 !important;
+  padding: 0 !important;
+
+  .MuiDayCalendar-header-root {
+    padding: 0 !important;
+  }
+
+  .MuiPickersCalendarHeader-root{
+    padding: 0 !important;
+  }
+
   .MuiDayCalendar-header {
-    justify-content: space-evenly !important;
-    font-size: larger;
-    font-weight: bold;
+    justify-content: space-between !important;
+    span {
+      font-size: 1.125rem;
+      font-weight: bold;
+    }
   }
 
   .MuiDayCalendar-weekContainer {
-    justify-content: space-evenly !important;
+    justify-content: space-between !important;
     margin: 0.6rem 0;
   }
 
   .MuiPickersSlideTransition-root {
     overflow: initial !important;
+  }
+
+  .MuiPickersCalendarHeader-label {
+    text-transform: capitalize !important;
+    font-size: large;
+    font-weight: bold;
   }
 }
 
@@ -81,7 +100,6 @@ form {
   100% {
     transform: translateX(500px);
   }
-  
 }
 
 @media screen and (min-width: 600px) {
@@ -95,5 +113,9 @@ form {
 
   .Card {
     width: 500px;
+  }
+
+  .Terms {
+    width: 800px;
   }
 }

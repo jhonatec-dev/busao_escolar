@@ -1,4 +1,4 @@
-import { AppContext } from "@/context/appProvider";
+import { AppContext } from "@/context/app.provider";
 import { IStudent } from "@/interfaces/IStudent";
 import { Clear } from "@mui/icons-material";
 import { Card, IconButton, Stack, TextField, Typography } from "@mui/material";
@@ -17,7 +17,7 @@ export default function Students() {
     const getStudents = async () => {
       const response = await getDataAuth("student", "get");
       if (!response) return;
-      console.log(response);
+      // console.log(response);
       setStudents(response as IStudent[]);
     };
     getStudents();
