@@ -2,11 +2,12 @@ import { AppContext } from "@/context/app.provider";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
   Button,
+  ButtonGroup,
   Card,
   Collapse,
   TextField,
   ToggleButton,
-  Typography
+  Typography,
 } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useContext, useState } from "react";
@@ -35,23 +36,48 @@ export default function DialogAdmin({
     }
   );
 
+  const handleCloseLocal = () => {
+    console.log("currentDayTravelDB", currentDayTravelDB);
+    setCurrentDayTravel(
+      currentDayTravelDB || {
+        day: date.date(),
+        active: false,
+        busSits: 0,
+        observations: "",
+        frequentStudents: [],
+        otherStudents: [],
+      }
+    );
+    handleClose();
+  };
+
   const frequentSits = currentDayTravel.frequentStudents.filter(
     (s) => s.approved
   ).length;
+
   const otherSits = currentDayTravel.otherStudents.filter(
     (s) => s.approved
   ).length;
+
   const freeSits = currentDayTravel.busSits - (frequentSits + otherSits);
+
   const handleActiveClick = (
     group: "frequentStudents" | "otherStudents",
     index: number
   ) => {
+    if (currentDayTravel[group][index].approved) return; // cancelar o poder de desmarcar a vaga
     setCurrentDayTravel((prev) => {
-      const newStudents = [...prev[group]];
-      newStudents[index].approved = !newStudents[index].approved;
       return {
         ...prev,
-        [group]: newStudents,
+        [group]: prev[group].map((s, i) => {
+          if (i === index) {
+            return {
+              ...s,
+              approved: !s.approved,
+            };
+          }
+          return s;
+        }),
       };
     });
   };
@@ -124,6 +150,7 @@ export default function DialogAdmin({
               size="large"
               startIcon={frequentOpen ? <ExpandLess /> : <ExpandMore />}
               onClick={() => setFrequentOpen((prev) => !prev)}
+              sx={{ fontWeight: 600 }}
             >
               Alunos frequentes ({currentDayTravel.frequentStudents.length})
             </Button>
@@ -132,17 +159,21 @@ export default function DialogAdmin({
                 {currentDayTravel.frequentStudents.map((student, i) => (
                   <Card key={i} elevation={2} sx={{ p: 2 }}>
                     <Stack spacing={2}>
-                      <Typography fontWeight={600}>{student.name}</Typography>
-                      <Typography>{student.school}</Typography>
+                      <Typography fontWeight={600}>
+                        <strong>Nome:</strong> {student.name}
+                      </Typography>
+                      <Typography>
+                        <strong>Instituição:</strong> {student.school}
+                      </Typography>
                       <ToggleButton
-                        color="primary"
+                        color={student.approved ? "success" : "warning"}
                         value="check"
                         selected={student.approved}
                         size="small"
                         fullWidth
-                        onClick={() => handleActiveClick("frequentStudents", i)}
+                        // onClick={() => handleActiveClick("frequentStudents", i)}
                       >
-                        {student.approved ? "Ativado" : "Desativado"}
+                        {student.approved ? "Confirmado" : "Cancelado"}
                       </ToggleButton>
                     </Stack>
                   </Card>
@@ -152,8 +183,10 @@ export default function DialogAdmin({
             <Button
               fullWidth
               variant="text"
+              size="large"
               startIcon={otherOpen ? <ExpandLess /> : <ExpandMore />}
               onClick={() => setOtherOpen((prev) => !prev)}
+              sx={{ fontWeight: 600 }}
             >
               Outros alunos ({currentDayTravel.otherStudents.length})
             </Button>
@@ -162,27 +195,40 @@ export default function DialogAdmin({
                 {currentDayTravel.otherStudents.map((student, i) => (
                   <Card key={i} elevation={2} sx={{ p: 2 }}>
                     <Stack spacing={2}>
-                      <Typography fontWeight={600}>{student.name}</Typography>
-                      <Typography>{student.school}</Typography>
-                      <Typography>{student.message}</Typography>
+                      <Typography fontWeight={600}>
+                        <strong>Nome:</strong> {student.name}
+                      </Typography>
+                      <Typography>
+                        <strong>Instituição:</strong> {student.school}
+                      </Typography>
+                      <Typography>
+                        <strong>Mensagem:</strong> {student.message}
+                      </Typography>
                       <ToggleButton
-                        color="primary"
+                        color={student.approved ? "success" : "warning"}
                         value="check"
-                        selected={student.approved}
+                        selected
                         size="small"
                         fullWidth
                         onClick={() => handleActiveClick("otherStudents", i)}
                       >
-                        {student.approved ? "Ativado" : "Desativado"}
+                        {student.approved
+                          ? "Confirmado"
+                          : "Clique para confirmar"}
                       </ToggleButton>
                     </Stack>
                   </Card>
                 ))}
               </Stack>
             </Collapse>
-            <Button onClick={handleSaveClick} fullWidth variant="contained">
-              Salvar
-            </Button>
+            <ButtonGroup fullWidth>
+              <Button onClick={handleCloseLocal} fullWidth variant="outlined">
+                Voltar
+              </Button>
+              <Button onClick={handleSaveClick} fullWidth variant="contained">
+                Salvar
+              </Button>
+            </ButtonGroup>
           </>
         ) : (
           <Typography>Dia sem viagem registrada</Typography>

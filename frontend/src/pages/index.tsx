@@ -9,8 +9,8 @@ import {
 } from "@mui/icons-material";
 import { Button, Card, IconButton, Stack, TextField } from "@mui/material";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import { useContext, useState } from "react";
+import { useWindowSize } from "usehooks-ts";
 import validator from "validator";
 
 export default function Home() {
@@ -20,7 +20,7 @@ export default function Home() {
   const [classNameImg, setClassNameImg] = useState("");
   const { showMessage, getData, login, toggleMode, themeMode } =
     useContext(AppContext);
-  const router = useRouter();
+  const { width } = useWindowSize();
 
   const validateForm = () => {
     if (!email || !password) return false;
@@ -69,8 +69,12 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Stack alignItems={"center"} justifyContent={"center"} minHeight={"100vh"}>
-        <Card className="Card" variant="outlined">
+      <Stack
+        alignItems={"center"}
+        justifyContent={"center"}
+        minHeight={"100vh"}
+      >
+        <Card className="Card" variant={width > 600 ? "outlined" : "elevation"} elevation={width > 600 ? 2 : 0}>
           <Stack spacing={2} alignItems={"center"}>
             <Logo size={100} className={classNameImg} />
             <TextField

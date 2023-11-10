@@ -13,10 +13,12 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Slide,
   Stack,
   Toolbar,
   Tooltip,
   Typography,
+  useScrollTrigger,
 } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -26,7 +28,27 @@ export default function Header() {
   const { profile, logout, toggleMode, themeMode, showMessage } =
     useContext(AppContext);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [show, setShow] = useState(false);
   const router = useRouter();
+
+  const trigger = useScrollTrigger();
+
+  // const handleScroll = () => {
+  //   // console.log(window.scrollY);
+  //   if (window.scrollY > 50) {
+  //     setShow(true);
+  //   } else {
+  //     setShow(false);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   window.addEventListener("scroll", handleScroll);
+
+  //   return () => {
+  //     window.removeEventListener("scroll", handleScroll);
+  //   };
+  // }, []);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -42,8 +64,8 @@ export default function Header() {
   };
 
   return (
-    <>
-      <AppBar position="sticky">
+    <Slide direction="down" in={!trigger}  appear={false}>
+      <AppBar>
         <Toolbar sx={{ justifyContent: "space-between", padding: 1.3 }}>
           <Stack direction="row" alignItems="center" spacing={2}>
             <Image
@@ -102,6 +124,6 @@ export default function Header() {
           </Menu>
         </Toolbar>
       </AppBar>
-    </>
+    </Slide>
   );
 }
