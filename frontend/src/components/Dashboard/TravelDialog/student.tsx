@@ -1,6 +1,10 @@
 import { AppContext } from "@/context/app.provider";
-import { Close } from "@mui/icons-material";
-import { Button, IconButton, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  ButtonGroup,
+  TextField,
+  Typography
+} from "@mui/material";
 import { Stack } from "@mui/system";
 import { useContext, useEffect, useState } from "react";
 import { ITravelDialogProps } from ".";
@@ -17,12 +21,19 @@ export default function DialogStudent({
     : undefined;
 
   useEffect(() => {
-    alreadyOnList();
+    // alreadyOnList();
   }, []);
 
   const alreadyOnList = () => {
     if (!currentDayTravel) {
-      return <Typography>Dia sem viagem registrada</Typography>;
+      return (
+        <>
+          <Typography>Dia sem viagem registrada</Typography>
+          <Button onClick={handleClose} fullWidth variant="outlined">
+            Voltar
+          </Button>
+        </>
+      );
     }
 
     const frequent = currentDayTravel?.frequentStudents.find(
@@ -37,8 +48,11 @@ export default function DialogStudent({
     if (!studentOnTravel) {
       return (
         <>
+          <Typography variant="h6">
+            Digite uma mensagem e solicite sua vaga
+          </Typography>
           <TextField
-            label="Quer adiconar alguma mensagem?"
+            label="Mensagem"
             variant="filled"
             fullWidth
             value={message}
@@ -48,9 +62,14 @@ export default function DialogStudent({
             multiline
           />
 
-          <Button onClick={handleSaveClick} fullWidth variant="contained">
-            Solicitar vaga
-          </Button>
+          <ButtonGroup fullWidth>
+            <Button onClick={handleClose} fullWidth variant="outlined">
+              Cancelar
+            </Button>
+            <Button onClick={handleSaveClick} fullWidth variant="contained">
+              Solicitar vaga
+            </Button>
+          </ButtonGroup>
         </>
       );
     }
@@ -61,6 +80,9 @@ export default function DialogStudent({
         <Typography fontWeight={"bold"}>
           {studentOnTravel.approved ? "Aprovado" : "Aguardando aprovação"}
         </Typography>
+        <Button onClick={handleClose} fullWidth variant="outlined">
+          Voltar
+        </Button>
       </>
     );
   };
@@ -85,22 +107,7 @@ export default function DialogStudent({
 
   return (
     <Stack p={2} spacing={2}>
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        spacing={2}
-        alignItems={"center"}
-      >
-        <Typography variant="h6">
-          {date.format("dddd").split("-")[0].toUpperCase()} -{" "}
-          {date.format("DD/MM/YYYY")}
-        </Typography>
-        <IconButton onClick={handleClose}>
-          <Close />
-        </IconButton>
-      </Stack>
-
-      <Stack spacing={2} textAlign={"center"}>
+      <Stack spacing={2} textAlign={"center"} >
         {alreadyOnList()}
       </Stack>
     </Stack>

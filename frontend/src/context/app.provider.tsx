@@ -26,6 +26,8 @@ export interface AppContextType {
   profile: IStudent;
   getData: (endPoint: string, method: method, data?: any) => any;
   getDataAuth: (endPoint: string, method: method, data?: any) => any;
+  studentView: boolean;
+  setStudentView: (studentView: boolean) => void;
 }
 
 export const AppContext = createContext({} as AppContextType);
@@ -38,6 +40,7 @@ export default function AppProvider({ children }: any) {
   const [messageContent, setMessageContent] = useState<string>("oi");
   const [messageMode, setMessageMode] = useState<messageMode>("info");
   const [profile, setProfile] = useState<IStudent>({} as IStudent);
+  const [studentView, setStudentView] = useState(true);
 
   const login = useCallback(async () => {
     const token = getFromLS("tokenBusaoEscolar");
@@ -260,9 +263,11 @@ export default function AppProvider({ children }: any) {
       login,
       getData,
       getDataAuth,
+      studentView,
+      setStudentView,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [themeMode, profile]
+    [themeMode, profile, studentView]
   );
 
   return (

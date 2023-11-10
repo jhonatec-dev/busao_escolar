@@ -15,36 +15,37 @@ import {
 } from "@mui/material";
 import { DateCalendar } from "@mui/x-date-pickers";
 import { DayCalendarSkeleton } from "@mui/x-date-pickers/DayCalendarSkeleton";
-import dayjs, { Dayjs } from "dayjs";
-import { useRouter } from "next/router";
+import { Dayjs } from "dayjs";
 import { useContext, useEffect, useState } from "react";
 import { useWindowSize } from "usehooks-ts";
 import TravelDialog from "../TravelDialog";
 import ServerDay from "./DaySlot";
 
 export default function Calendar() {
-  const { travel, loadMonthTravels, daysHighlightedDB, selDate, setSelDate } =
+  const { travel, daysHighlightedDB, selDate, setSelDate, loadMonthTravels } =
     useContext(DataContext);
   const { showMessage, getDataAuth, profile } = useContext(AppContext);
   const { width } = useWindowSize();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  console.log(
-    "renderizou o calendar",
-    travel.days?.length,
-    daysHighlightedDB.length
-  );
   const [daysHighlighted, setDaysHighlighted] =
     useState<number[]>(daysHighlightedDB);
   const [openDialog, setOpenDialog] = useState(false);
-  const router = useRouter();
 
   // const highlightedDays = [1, 3, 6, 10];
 
   useEffect(() => {
-    loadMonthTravels(dayjs());
-  }, []);
+    console.log("\n\n travel no useEffect \n", travel, "\n", daysHighlightedDB);
+    setLoading(true);
+    if (!travel) {
+      setDaysHighlighted([]);
+    } else {
+      // console.log("imprimindo", daysHighlightedDB);
+      setDaysHighlighted(daysHighlightedDB);
+    }
+    setLoading(false);
+  }, [travel, daysHighlightedDB]);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -58,28 +59,6 @@ export default function Calendar() {
   const handleEditClick = () => {
     handleClose();
     setEditMode(true);
-  };
-
-  const getTravelMonth = async (newDate: Dayjs, travel?: ITravel) => {
-    // aqui será a funçao para buscar do banco
-    // atualizar o estado do daysHighlightedDB
-
-    try {
-      setLoading(true);
-      // console.log("newDate", newDate);
-      await loadMonthTravels(newDate, travel);
-      if (!travel) {
-        setDaysHighlighted([]);
-        setLoading(false);
-      } else {
-        console.log("imprimindo", daysHighlightedDB);
-        setDaysHighlighted(daysHighlightedDB);
-      }
-    } catch (error) {
-      showMessage((error as Error).message, "error");
-    }
-
-    setLoading(false);
   };
 
   const handleDayClick = (newDate: Dayjs | null) => {
@@ -108,7 +87,7 @@ export default function Calendar() {
         month: selDate.month() + 1,
         days: daysHighlighted,
       })) as ITravel;
-      getTravelMonth(selDate, data);
+      setSelDate(selDate);
       showMessage("Calendário de viagens salvo com sucesso", "success");
     } catch (error) {
       showMessage((error as Error).message, "error");
@@ -147,7 +126,7 @@ export default function Calendar() {
           renderLoading={() => <DayCalendarSkeleton />}
           loading={loading}
           disablePast={profile.role !== "admin"}
-          onMonthChange={getTravelMonth}
+          onMonthChange={loadMonthTravels}
           dayOfWeekFormatter={(_day, date) => date.format("ddd")}
           views={["day"]}
           slots={{

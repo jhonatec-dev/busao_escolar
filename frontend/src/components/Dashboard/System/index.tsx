@@ -1,15 +1,11 @@
 import { AppContext } from "@/context/app.provider";
-import { DataContext } from "@/context/data.provider";
 import { Button, Card, Stack, TextField, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 
 export default function System() {
-  const { getDataAuth, showMessage } = useContext(AppContext);
-  const { asStudent, setAsStudent } = useContext(DataContext);
+  const { getDataAuth, showMessage, profile } = useContext(AppContext);
   const [busDB, setBusDB] = useState(0);
   const [bus, setBus] = useState(busDB);
-
-  console.log("asStudent", asStudent);
 
   useEffect(() => {
     const getBus = async () => {
@@ -23,7 +19,7 @@ export default function System() {
         showMessage((error as Error).message, "error");
       }
     };
-    getBus();
+    if (profile.role === "admin") getBus();
   }, []);
 
   const handleUpdateBus = async () => {

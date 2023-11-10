@@ -1,7 +1,9 @@
-import { DataContext } from "@/context/data.provider";
+import { AppContext } from "@/context/app.provider";
 import { ITravel } from "@/interfaces/ITravel";
+import { Close } from "@mui/icons-material";
 import {
   Divider,
+  IconButton,
   Stack,
   ToggleButton,
   ToggleButtonGroup,
@@ -19,28 +21,53 @@ export interface ITravelDialogProps {
 }
 
 export default function TravelDialog(props: ITravelDialogProps) {
-  const { asStudent, setAsStudent } = useContext(DataContext);
-    return (
+  const { handleClose, date } = props;
+  const { studentView, setStudentView, profile } = useContext(AppContext);
+  return (
     <Stack p={2} spacing={2}>
-      <Typography variant="h6">Interagindo com o calendário como:</Typography>
-      <ToggleButtonGroup value={asStudent} sx={{ justifyContent: "center" }}>
-        <ToggleButton
-          value="true"
-          selected={asStudent}
-          onClick={() => setAsStudent(true)}
-        >
-          Aluno
-        </ToggleButton>
-        <ToggleButton
-          value="false"
-          selected={!asStudent}
-          onClick={() => setAsStudent(false)}
-        >
-          Administrador
-        </ToggleButton>
-      </ToggleButtonGroup>
-      <Divider />
-      {asStudent ? <DialogStudent {...props} /> : <DialogAdmin {...props} />}
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        spacing={2}
+        alignItems={"center"}
+      >
+        <Typography variant="h6">
+          {date.format("dddd").split("-")[0].toUpperCase()} -{" "}
+          {date.format("DD/MM/YYYY")}
+        </Typography>
+        <IconButton onClick={handleClose}>
+          <Close />
+        </IconButton>
+      </Stack>
+      {profile.role === "admin" && (
+        <>
+          <Divider />
+          <Typography variant="h6">
+            Interagindo com o calendário como:
+          </Typography>
+          <ToggleButtonGroup
+            value={studentView}
+            sx={{ justifyContent: "center" }}
+          >
+            <ToggleButton
+              value="true"
+              selected={studentView}
+              onClick={() => setStudentView(true)}
+            >
+              Aluno
+            </ToggleButton>
+            <ToggleButton
+              value="false"
+              selected={!studentView}
+              onClick={() => setStudentView(false)}
+            >
+              Administrador
+            </ToggleButton>
+          </ToggleButtonGroup>
+          <Divider />
+        </>
+      )}
+      {studentView ? <DialogStudent {...props} /> : <DialogAdmin {...props} />}
     </Stack>
   );
 }

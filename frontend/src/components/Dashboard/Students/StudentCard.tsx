@@ -1,4 +1,5 @@
 import { AppContext } from "@/context/app.provider";
+import { DataContext } from "@/context/data.provider";
 import { IStudent } from "@/interfaces/IStudent";
 import { formatWeekDay } from "@/utils/format";
 import { Check, Delete, Edit, MoreVert } from "@mui/icons-material";
@@ -38,6 +39,7 @@ export default function StudentCard({
   const [loading, setLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const { getDataAuth, showMessage, profile, logout } = useContext(AppContext);
+  const { loadMonthTravels } = useContext(DataContext);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -47,16 +49,16 @@ export default function StudentCard({
     setAnchorEl(null);
   };
 
-  const handleSaveClick = () => {
+  const handleSaveClick = async () => {
     try {
       setLoading(true);
-      const data = getDataAuth(`student/frequency/${student._id}`, "patch", {
+      await getDataAuth(`student/frequency/${student._id}`, "patch", {
         ...localStudent.frequency,
       });
-      if (data) {
-        showMessage("Frequência salva com sucesso", "success");
-        setEditMode(false);
-      }
+
+      showMessage("Frequência salva com sucesso", "success");
+      setEditMode(false);
+      await loadMonthTravels();
     } catch (error) {
       showMessage((error as Error).message, "error");
       handleCancelClick();
@@ -72,6 +74,7 @@ export default function StudentCard({
       if (data) {
         setLocalStudent((prev) => ({ ...prev, accepted: true }));
         showMessage("Aluno ativado com sucesso", "success");
+        loadMonthTravels();
       }
     } catch (error) {
       showMessage((error as Error).message, "error");
@@ -87,10 +90,11 @@ export default function StudentCard({
       setLoading(true);
       const data = await getDataAuth(`student/${student._id}`, "delete");
       showMessage("Aluno excluído com sucesso", "success");
-      if(student._id === profile._id){
+      if (student._id === profile._id) {
         logout();
       }
       handleDeleteStudent(student._id as string);
+      loadMonthTravels();
     } catch (error) {
       showMessage((error as Error).message, "error");
     }

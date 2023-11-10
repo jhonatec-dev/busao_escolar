@@ -1,18 +1,16 @@
 import { AppContext } from "@/context/app.provider";
-import { Close, ExpandLess, ExpandMore } from "@mui/icons-material";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
   Button,
   Card,
   Collapse,
-  IconButton,
   TextField,
   ToggleButton,
-  Typography,
+  Typography
 } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useContext, useState } from "react";
 import { ITravelDialogProps } from ".";
-
 
 export default function DialogAdmin({
   handleClose,
@@ -67,7 +65,7 @@ export default function DialogAdmin({
     });
   };
 
-  const handleSaveClick = async() => {
+  const handleSaveClick = async () => {
     try {
       await getDataAuth(
         `travel/${travel._id}/${date.date()}`,
@@ -83,20 +81,6 @@ export default function DialogAdmin({
 
   return (
     <>
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        spacing={2}
-        alignItems={"center"}
-      >
-        <Typography variant="h6">
-          {date.format("dddd").split("-")[0].toUpperCase()} -{" "}
-          {date.format("DD/MM/YYYY")}
-        </Typography>
-        <IconButton onClick={handleClose}>
-          <Close />
-        </IconButton>
-      </Stack>
       <Stack spacing={2}>
         {currentDayTravel.active ? (
           <>

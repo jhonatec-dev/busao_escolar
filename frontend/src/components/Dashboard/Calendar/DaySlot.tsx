@@ -4,7 +4,7 @@ import { Dayjs } from "dayjs";
 
 export default function ServerDay(props: PickersDayProps<Dayjs> & { highlightedDays?: number[] }) {
   const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
-
+  // console.log("highlightedDays", highlightedDays);
   const isSelected =
     !props.outsideCurrentMonth && highlightedDays.indexOf(props.day.date()) >= 0;
 
