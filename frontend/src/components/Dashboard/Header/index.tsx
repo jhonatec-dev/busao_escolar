@@ -33,23 +33,6 @@ export default function Header() {
 
   const trigger = useScrollTrigger();
 
-  // const handleScroll = () => {
-  //   // console.log(window.scrollY);
-  //   if (window.scrollY > 50) {
-  //     setShow(true);
-  //   } else {
-  //     setShow(false);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   window.addEventListener("scroll", handleScroll);
-
-  //   return () => {
-  //     window.removeEventListener("scroll", handleScroll);
-  //   };
-  // }, []);
-
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -65,11 +48,11 @@ export default function Header() {
 
   return (
     <Slide direction="down" in={!trigger}  appear={false}>
-      <AppBar>
+      <AppBar elevation={0} sx={{boxShadow: "0px 0px 4px rgba(255, 255, 255, 0.2)" }}>
         <Toolbar sx={{ justifyContent: "space-between", padding: 1.3 }}>
           <Stack direction="row" alignItems="center" spacing={2}>
             <Image
-              src="/assets/images/bus.svg"
+              src="/logo192.png"
               alt="logo"
               width={50}
               height={50}

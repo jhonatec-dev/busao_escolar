@@ -74,7 +74,7 @@ export default function Home() {
         justifyContent={"center"}
         minHeight={"100vh"}
       >
-        <Card className="Card" variant={width > 600 ? "outlined" : "elevation"} elevation={width > 600 ? 2 : 0}>
+        <Card className="Card" variant={width < 600 ? "elevation" : "outlined"} >
           <Stack spacing={2} alignItems={"center"}>
             <Logo size={100} className={classNameImg} />
             <TextField

@@ -36,7 +36,6 @@ export default function Calendar() {
   // const highlightedDays = [1, 3, 6, 10];
 
   useEffect(() => {
-    console.log("\n\n travel no useEffect \n", travel, "\n", daysHighlightedDB);
     setLoading(true);
     if (!travel) {
       setDaysHighlighted([]);

@@ -11,12 +11,12 @@ export default function Logo({ size, className }: ILogoProps) {
     <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2} width={"100%"}>
       <Image
         className={`Logo-img ${className}`}
-        src="/assets/images/bus.svg"
+        src="/logo192.png"
         alt="logo"
         width={size ?? 100}
         height={size ?? 100}
       />
-      <Typography variant="h5" fontWeight="bold" textAlign={"right"} whiteSpace={"pre-line"}>Busão Escolar</Typography>
+      <Typography variant="h4" fontWeight="bold" textAlign={"right"} whiteSpace={"pre-line"}>Busão Escolar</Typography>
     </Stack>
   );
 }

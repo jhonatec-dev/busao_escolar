@@ -274,11 +274,6 @@ class TravelService {
             const weekDay = dayjs(`${trip.year}-${trip.month}-${day.day}`)
               .format('dddd')
               .toLowerCase()
-            console.log(
-              `${trip.year}-${trip.month}-${day.day}`,
-              weekDay,
-              student.frequency
-            )
 
             if (student.frequency[weekDay as keyof typeof student.frequency]) {
               // Adicione o estudante à lista de frequentStudents

@@ -1,6 +1,6 @@
 {
-  "short_name": "Jhonatec | Portfolio",
-  "name": "Jhonatec | Portfolio",
+  "short_name": "Busão Escolar",
+  "name": "Busão Escolar",
   "icons": [
     {
       "src": "favicon.ico",
@@ -20,6 +20,6 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#004381",
-  "background_color": "#1e1e1e"
+  "theme_color": "var(--scrollbar-background)",
+  "background_color": "var(--scrollbar-background)"
 }

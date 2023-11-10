@@ -1,10 +1,6 @@
 import { AppContext } from "@/context/app.provider";
-import {
-  Button,
-  ButtonGroup,
-  TextField,
-  Typography
-} from "@mui/material";
+import { DataContext } from "@/context/data.provider";
+import { Button, ButtonGroup, TextField, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useContext, useEffect, useState } from "react";
 import { ITravelDialogProps } from ".";
@@ -15,13 +11,14 @@ export default function DialogStudent({
   travel,
 }: ITravelDialogProps) {
   const { profile, showMessage, getDataAuth } = useContext(AppContext);
+  const { loadMonthTravels } = useContext(DataContext);
   const [message, setMessage] = useState("");
   const currentDayTravel = travel.days
     ? travel.days.find((d) => d.day === date.date() && d.active)
     : undefined;
 
   useEffect(() => {
-    // alreadyOnList();
+    alreadyOnList();
   }, []);
 
   const alreadyOnList = () => {
@@ -87,7 +84,7 @@ export default function DialogStudent({
     );
   };
 
-  const handleSaveClick = () => {
+  const handleSaveClick = async () => {
     try {
       const data = getDataAuth(
         `travel/${travel._id}/${date.date()}/other-students`,
@@ -98,6 +95,7 @@ export default function DialogStudent({
       );
       if (data) {
         showMessage("Vaga solicitada com sucesso", "success");
+        await loadMonthTravels();
         handleClose();
       }
     } catch (error) {
@@ -107,7 +105,7 @@ export default function DialogStudent({
 
   return (
     <Stack p={2} spacing={2}>
-      <Stack spacing={2} textAlign={"center"} >
+      <Stack spacing={2} textAlign={"center"}>
         {alreadyOnList()}
       </Stack>
     </Stack>

@@ -1,4 +1,5 @@
 import { AppContext } from "@/context/app.provider";
+import { DataContext } from "@/context/data.provider";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
   Button,
@@ -19,6 +20,7 @@ export default function DialogAdmin({
   travel,
 }: ITravelDialogProps) {
   const { showMessage, getDataAuth } = useContext(AppContext);
+  const { loadMonthTravels } = useContext(DataContext);
   const [frequentOpen, setFrequentOpen] = useState(false);
   const [otherOpen, setOtherOpen] = useState(false);
   // const [freeSits, setFreeSits] = useState(0);
@@ -36,20 +38,20 @@ export default function DialogAdmin({
     }
   );
 
-  const handleCloseLocal = () => {
-    console.log("currentDayTravelDB", currentDayTravelDB);
-    setCurrentDayTravel(
-      currentDayTravelDB || {
-        day: date.date(),
-        active: false,
-        busSits: 0,
-        observations: "",
-        frequentStudents: [],
-        otherStudents: [],
-      }
-    );
-    handleClose();
-  };
+  // const handleCloseLocal = () => {
+  //   console.log("currentDayTravelDB", currentDayTravelDB);
+  //   setCurrentDayTravel(
+  //     currentDayTravelDB || {
+  //       day: date.date(),
+  //       active: false,
+  //       busSits: 0,
+  //       observations: "",
+  //       frequentStudents: [],
+  //       otherStudents: [],
+  //     }
+  //   );
+  //   handleClose();
+  // };
 
   const frequentSits = currentDayTravel.frequentStudents.filter(
     (s) => s.approved
@@ -99,6 +101,7 @@ export default function DialogAdmin({
         currentDayTravel
       );
       showMessage("Viagem alterada com sucesso", "success");
+      await loadMonthTravels();
       handleClose();
     } catch (error) {
       showMessage((error as Error).message, "error");
@@ -222,7 +225,7 @@ export default function DialogAdmin({
               </Stack>
             </Collapse>
             <ButtonGroup fullWidth>
-              <Button onClick={handleCloseLocal} fullWidth variant="outlined">
+              <Button onClick={handleClose} fullWidth variant="outlined">
                 Voltar
               </Button>
               <Button onClick={handleSaveClick} fullWidth variant="contained">

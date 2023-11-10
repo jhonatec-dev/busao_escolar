@@ -74,7 +74,7 @@ export default function StudentCard({
       if (data) {
         setLocalStudent((prev) => ({ ...prev, accepted: true }));
         showMessage("Aluno ativado com sucesso", "success");
-        loadMonthTravels();
+        await loadMonthTravels();
       }
     } catch (error) {
       showMessage((error as Error).message, "error");
@@ -94,7 +94,7 @@ export default function StudentCard({
         logout();
       }
       handleDeleteStudent(student._id as string);
-      loadMonthTravels();
+      await loadMonthTravels();
     } catch (error) {
       showMessage((error as Error).message, "error");
     }

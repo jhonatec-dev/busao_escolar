@@ -118,19 +118,20 @@ form {
 
 .Logo-img {
   margin-right: 3.5rem;
-  animation: bus-move 3s infinite alternate;
+  animation: bus-move 800ms infinite linear alternate;
+  z-index: 50;
 }
 
 .move-to-right {
-  animation: animation-move-to-right 3s linear;
+  animation: animation-move-to-right 400ms linear;
 }
 
 @keyframes bus-move {
   0% {
-    transform: translateX(0);
+    transform: rotateZ(-5deg);
   }
   100% {
-    transform: translateX(30%);
+    transform: rotateZ(5deg);
   }
 }
 
@@ -139,7 +140,7 @@ form {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(500px);
+    transform: translateX(100%) scale(5);
   }
 }
 

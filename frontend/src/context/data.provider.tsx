@@ -22,16 +22,20 @@ export const DataProvider = ({ children }: any) => {
   const { profile, getDataAuth, showMessage } = useContext(AppContext);
 
   useEffect(() => {
-    loadMonthTravels();
+    const getFirstTravels = async () => {
+      await loadMonthTravels();
+    };
+
+    getFirstTravels();
   }, []);
 
   const loadMonthTravels = async (newDate?: Dayjs): Promise<void> => {
     try {
       const date = newDate ? newDate : selDate;
-      const data = await getDataAuth(
+      const data = (await getDataAuth(
         `travel/${date.year()}/${date.month() + 1}`,
         "get"
-      ) as ITravel;
+      )) as ITravel;
       // console.log("imprimindo", data);
       if (data === null || data === undefined) {
         setTravel({} as ITravel);
@@ -42,7 +46,6 @@ export const DataProvider = ({ children }: any) => {
           .filter((d) => d.active)
           .map((d) => d.day);
         setDaysHighlightedDB(newHighlighted);
-        console.log("alterado", travel);
       }
     } catch (error) {
       showMessage((error as Error).message, "error");

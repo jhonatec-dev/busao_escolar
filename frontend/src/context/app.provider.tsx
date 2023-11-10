@@ -54,7 +54,7 @@ export default function AppProvider({ children }: any) {
     if (!newProfile) return;
     setProfile(newProfile as IStudent);
     if (router.pathname === "/") router.push("/dashboard");
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -62,7 +62,7 @@ export default function AppProvider({ children }: any) {
     // console.log('AppProvider', messageContent, messageMode);
     setMessageContent("");
     login();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const theme = createTheme({
@@ -121,10 +121,14 @@ export default function AppProvider({ children }: any) {
         styleOverrides: {
           root: {
             backgroundColor: themeMode === "light" ? "#d9d9d9" : "#1e1e1e",
+            boxShadow: "none",
           },
           elevation2: {
             backgroundColor: themeMode === "light" ? "#e9e9e9" : "#232323",
             boxShadow: "none",
+          },
+          outlined: {
+            boxShadow: "2px 2px 6px rgba(0, 0, 0, 0.2)",
           },
         },
       },
@@ -201,7 +205,6 @@ export default function AppProvider({ children }: any) {
         const response = await axios[method](`${API_URL}/${endPoint}`, data);
         return response.data;
       } catch (error: AxiosError | any) {
-        
         if (error instanceof AxiosError) {
           showMessage(error.response?.data.message, "error");
         } else showMessage(error.message, "error");
@@ -222,7 +225,6 @@ export default function AppProvider({ children }: any) {
           return;
         }
         let response: any;
-        console.log("dados no auth do provider", { endPoint, method, data });
         if (method === "get" || method === "delete") {
           response = await axios[method](`${API_URL}/${endPoint}`, {
             headers: {
@@ -237,10 +239,8 @@ export default function AppProvider({ children }: any) {
           });
         }
 
-        console.log("response no Provider", response);
         return response.data;
       } catch (error) {
-        console.log('error no provider', error)
         if (error instanceof AxiosError) {
           if (error.response?.status === 401) {
             logout();
