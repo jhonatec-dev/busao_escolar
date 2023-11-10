@@ -31,7 +31,7 @@ export const DataProvider = ({ children }: any) => {
 
   const loadMonthTravels = async (newDate?: Dayjs): Promise<void> => {
     try {
-      const date = newDate ? newDate : selDate;
+      const date = newDate ? newDate : selDate.startOf("month");
       const data = (await getDataAuth(
         `travel/${date.year()}/${date.month() + 1}`,
         "get"
@@ -45,6 +45,7 @@ export const DataProvider = ({ children }: any) => {
         const newHighlighted = data.days
           .filter((d) => d.active)
           .map((d) => d.day);
+        setDaysHighlightedDB([])
         setDaysHighlightedDB(newHighlighted);
       }
     } catch (error) {

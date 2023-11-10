@@ -1,8 +1,9 @@
 import { AppContext } from "@/context/app.provider";
 import { DataContext } from "@/context/data.provider";
 import { ITravel } from "@/interfaces/ITravel";
-import { Edit, MoreVert, Print } from "@mui/icons-material";
+import { Edit, MoreVert, Print, Refresh } from "@mui/icons-material";
 import {
+  Box,
   Button,
   Card,
   Dialog,
@@ -40,7 +41,7 @@ export default function Calendar() {
     if (!travel) {
       setDaysHighlighted([]);
     } else {
-      // console.log("imprimindo", daysHighlightedDB);
+      console.log("imprimindo travel \n", travel, "\n", daysHighlightedDB);
       setDaysHighlighted(daysHighlightedDB);
     }
     setLoading(false);
@@ -103,70 +104,77 @@ export default function Calendar() {
   return (
     <>
       <Card className="Card" variant="outlined">
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Typography variant="h6">Calendário Mensal</Typography>
-          {profile.role === "admin" && (
-            <IconButton onClick={handleMenu}>
-              <MoreVert />
-            </IconButton>
-          )}
-        </Stack>
-        <Typography variant="body1">
-          Clique no dia marcado em azul para agendar uma vaga ou consultar se já
-          foi aprovada
-        </Typography>
-        <DateCalendar
-          onChange={handleDayClick}
-          value={selDate}
-          renderLoading={() => <DayCalendarSkeleton />}
-          loading={loading}
-          disablePast={profile.role !== "admin"}
-          onMonthChange={loadMonthTravels}
-          dayOfWeekFormatter={(_day, date) => date.format("ddd")}
-          views={["day"]}
-          slots={{
-            day: ServerDay,
-          }}
-          slotProps={{
-            day: {
-              highlightedDays: daysHighlighted,
-            } as any,
-          }}
-          sx={
-            editMode
-              ? {
-                  "& .MuiPickersArrowSwitcher-root": {
-                    opacity: "0.5 !important",
-                    pointerEvents: "none",
-                  },
-                }
-              : {}
-          }
-        />
-        {editMode && (
+        <Stack spacing={2}>
           <Stack
             direction="row"
-            justifyContent="flex-end"
+            justifyContent="space-between"
             alignItems="center"
-            spacing={2}
           >
-            <Button
-              variant="contained"
-              autoFocus
-              onClick={handleCancelClick}
-              color="inherit"
-            >
-              Cancelar
-            </Button>
-            <Button variant="contained" onClick={handleSaveClick}>
-              Salvar
-            </Button>
+            <Typography variant="h6">Calendário Mensal</Typography>
+            <Box>
+              <IconButton onClick={async () => await loadMonthTravels()}>
+                <Refresh />
+              </IconButton>
+              {profile.role === "admin" && (
+                <IconButton onClick={handleMenu}>
+                  <MoreVert />
+                </IconButton>
+              )}
+            </Box>
           </Stack>
-        )}
+          <Typography variant="body2">
+            Clique no dia marcado em azul para agendar uma vaga ou consultar se
+            já foi aprovada
+          </Typography>
+          <DateCalendar
+            onChange={handleDayClick}
+            value={selDate}
+            renderLoading={() => <DayCalendarSkeleton />}
+            loading={loading}
+            disablePast={profile.role !== "admin"}
+            onMonthChange={loadMonthTravels}
+            dayOfWeekFormatter={(_day, date) => date.format("ddd")}
+            views={["day"]}
+            slots={{
+              day: ServerDay,
+            }}
+            slotProps={{
+              day: {
+                highlightedDays: daysHighlighted,
+              } as any,
+            }}
+            sx={
+              editMode
+                ? {
+                    "& .MuiPickersArrowSwitcher-root": {
+                      opacity: "0.5 !important",
+                      pointerEvents: "none",
+                    },
+                  }
+                : {}
+            }
+          />
+          {editMode && (
+            <Stack
+              direction="row"
+              justifyContent="flex-end"
+              alignItems="center"
+              spacing={2}
+            >
+              <Button
+                variant="contained"
+                autoFocus
+                onClick={handleCancelClick}
+                color="inherit"
+              >
+                Cancelar
+              </Button>
+              <Button variant="contained" onClick={handleSaveClick}>
+                Salvar
+              </Button>
+            </Stack>
+          )}
+        </Stack>
       </Card>
       <Menu
         id="menu-appbar"

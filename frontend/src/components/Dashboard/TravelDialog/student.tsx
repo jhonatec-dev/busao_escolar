@@ -86,7 +86,7 @@ export default function DialogStudent({
 
   const handleSaveClick = async () => {
     try {
-      const data = getDataAuth(
+      const data = await getDataAuth(
         `travel/${travel._id}/${date.date()}/other-students`,
         "post",
         {
