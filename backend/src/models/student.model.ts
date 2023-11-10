@@ -67,8 +67,8 @@ class StudentModel {
     await this.model.updateOne({ _id: id }, { accepted: true })
   }
 
-  async changeFrequency (id: string, frequency: Pick<IStudent, 'frequency'>): Promise<void> {
-    await this.model.updateOne({ _id: id }, { frequency })
+  async changeFrequency (id: string, frequency: Pick<IStudent, 'frequency'>): Promise<IStudent> {
+    return await this.model.findOneAndUpdate({ _id: id }, { frequency }, { new: true }) as IStudent
   }
 }
 

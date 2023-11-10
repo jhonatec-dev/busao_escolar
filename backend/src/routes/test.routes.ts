@@ -2,6 +2,7 @@
 import { Router, type Request, type Response } from 'express'
 import validateToken from '../middlewares/token.middleware'
 import studentModel from '../models/student.model'
+import travelModel from '../models/travel.model'
 
 const testRoutes = Router()
 
@@ -19,6 +20,35 @@ testRoutes.post(
     }
 
     res.sendStatus(200)
+  }
+)
+
+testRoutes.post(
+  '/reset',
+  validateToken,
+  async (req: Request, res: Response) => {
+    try {
+      if (req.body.token.role !== 'admin') return res.sendStatus(403)
+      await travelModel.model.deleteMany({})
+      await studentModel.model.deleteMany({ role: 'student' })
+      res.sendStatus(200)
+    } catch (error) {
+      res.json((error as Error).message).status(400)
+    }
+  }
+)
+
+testRoutes.post(
+  '/travels-reset',
+  validateToken,
+  async (req: Request, res: Response) => {
+    try {
+      if (req.body.token.role !== 'admin') return res.sendStatus(403)
+      await travelModel.model.deleteMany({})
+      res.sendStatus(200)
+    } catch (error) {
+      res.json((error as Error).message).status(400)
+    }
   }
 )
 

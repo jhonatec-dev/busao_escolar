@@ -1,18 +1,11 @@
 import { AppContext } from "@/context/app.provider";
-import { ITravel } from "@/interfaces/ITravel";
 import { Close } from "@mui/icons-material";
 import { Button, IconButton, TextField, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
-import { Dayjs } from "dayjs";
 import { useContext, useEffect, useState } from "react";
+import { ITravelDialogProps } from ".";
 
-interface ITravelDialogProps {
-  date: Dayjs;
-  handleClose: () => void;
-  travel: ITravel;
-}
-
-export default function TravelDialogStudent({
+export default function DialogStudent({
   handleClose,
   date,
   travel,
@@ -74,9 +67,13 @@ export default function TravelDialogStudent({
 
   const handleSaveClick = () => {
     try {
-      const data = getDataAuth(`travel/${travel._id}/${date.date()}/other-students`, "post", {
-        message: message,
-      });
+      const data = getDataAuth(
+        `travel/${travel._id}/${date.date()}/other-students`,
+        "post",
+        {
+          message: message,
+        }
+      );
       if (data) {
         showMessage("Vaga solicitada com sucesso", "success");
         handleClose();
@@ -84,7 +81,7 @@ export default function TravelDialogStudent({
     } catch (error) {
       showMessage((error as Error).message, "error");
     }
-  }
+  };
 
   return (
     <Stack p={2} spacing={2}>

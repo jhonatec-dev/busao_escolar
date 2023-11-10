@@ -150,7 +150,8 @@ class StudentService {
       if (data === null) {
         throw new Error('Usuário não encontrado')
       }
-      await StudentModel.delete(id)
+      // await StudentModel.delete(id)
+      await travelService.removeStudentsOfTravels(data._id?.toString() as string)
       return {
         status: 'DELETED',
         data: {
@@ -196,8 +197,8 @@ class StudentService {
       if (student === null) {
         throw new Error('Usuário não encontrado')
       }
-      await StudentModel.changeFrequency(id, frequency)
-      await travelService.updateStudentOnTravels(student)
+      const udpdatedStudent = await StudentModel.changeFrequency(id, frequency)
+      await travelService.updateStudentOnTravels(udpdatedStudent)
       return {
         status: 'SUCCESS',
         data: {

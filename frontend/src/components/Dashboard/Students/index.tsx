@@ -7,7 +7,7 @@ import StudentCard from "./StudentCard";
 
 export default function Students() {
   const { getDataAuth } = useContext(AppContext);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState<string>("");
   const [students, setStudents] = useState<IStudent[]>([]);
   const filteredStudents = students.filter((student) =>
     student.name.toLowerCase().includes(search.toLowerCase())
@@ -25,7 +25,7 @@ export default function Students() {
 
   const handleDeleteStudent = (id: string) => {
     setStudents((prev) => prev.filter((student) => student._id !== id));
-  }
+  };
 
   return (
     <>
@@ -35,20 +35,28 @@ export default function Students() {
           label="Pesquisar"
           value={search}
           variant="filled"
-          inputProps={{type: "search"}}
+          inputProps={{ type: "search" }}
           fullWidth
           onChange={(e) => setSearch(e.target.value)}
-          InputProps={{
-            endAdornment: (
-              <IconButton onClick={() => setSearch("")}>
-                <Clear />
-              </IconButton>
-            ),
-          }}
+          InputProps={
+            search.length > 0
+              ? {
+                  endAdornment: (
+                    <IconButton onClick={() => setSearch("")} size="small">
+                      <Clear />
+                    </IconButton>
+                  ),
+                }
+              : {}
+          }
         />
         <Stack spacing={2} mt={2}>
           {filteredStudents.map((student) => (
-            <StudentCard key={student._id} student={student} handleDeleteStudent={handleDeleteStudent} />
+            <StudentCard
+              key={student._id}
+              student={student}
+              handleDeleteStudent={handleDeleteStudent}
+            />
           ))}
         </Stack>
       </Card>

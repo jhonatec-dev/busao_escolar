@@ -11,6 +11,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Divider,
   IconButton,
   Menu,
   MenuItem,
@@ -36,7 +37,7 @@ export default function StudentCard({
   const [localStudent, setLocalStudent] = useState(student);
   const [loading, setLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
-  const { getDataAuth, showMessage } = useContext(AppContext);
+  const { getDataAuth, showMessage, profile, logout } = useContext(AppContext);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -86,6 +87,9 @@ export default function StudentCard({
       setLoading(true);
       const data = await getDataAuth(`student/${student._id}`, "delete");
       showMessage("Aluno excluído com sucesso", "success");
+      if(student._id === profile._id){
+        logout();
+      }
       handleDeleteStudent(student._id as string);
     } catch (error) {
       showMessage((error as Error).message, "error");
@@ -220,13 +224,18 @@ export default function StudentCard({
         onClose={handleClose}
       >
         {!localStudent.accepted && (
-          <MenuItem onClick={handleActivateClick}>
-            <Check sx={{ mr: 1 }} /> Ativar
-          </MenuItem>
+          <>
+            <MenuItem onClick={handleActivateClick}>
+              <Check sx={{ mr: 1 }} /> Ativar
+            </MenuItem>
+            <Divider />
+          </>
         )}
+
         <MenuItem onClick={handleEditClick}>
           <Edit sx={{ mr: 1 }} /> Editar Frequência
         </MenuItem>
+        <Divider />
         <MenuItem onClick={() => setShowDialog(true)}>
           <Delete sx={{ mr: 1 }} /> Excluir
         </MenuItem>
@@ -242,8 +251,8 @@ export default function StudentCard({
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Isso não pode ser desfeito. {localStudent.name} também não constará no registro de todas as viagens
-            futuras.
+            Isso não pode ser desfeito. {localStudent.name} também não constará
+            no registro de todas as viagens futuras.
           </DialogContentText>
         </DialogContent>
         <DialogActions>

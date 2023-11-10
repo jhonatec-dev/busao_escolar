@@ -35,7 +35,7 @@ export type messageMode = "error" | "success" | "info" | "warning";
 
 export default function AppProvider({ children }: any) {
   const [themeMode, setThemeMode] = useState<"light" | "dark">("light");
-  const [messageContent, setMessageContent] = useState<string>("");
+  const [messageContent, setMessageContent] = useState<string>("oi");
   const [messageMode, setMessageMode] = useState<messageMode>("info");
   const [profile, setProfile] = useState<IStudent>({} as IStudent);
 
@@ -271,7 +271,7 @@ export default function AppProvider({ children }: any) {
         <ThemeProvider theme={theme}>
           {children}
           <Snackbar
-            open={messageContent.length > 0}
+            open={!!messageContent && messageContent.length > 0}
             autoHideDuration={2500}
             onClose={() => setMessageContent("")}
             anchorOrigin={{ vertical: "top", horizontal: "center" }}

@@ -6,6 +6,7 @@ import {
   Button,
   Card,
   Dialog,
+  Divider,
   IconButton,
   Menu,
   MenuItem,
@@ -15,29 +16,34 @@ import {
 import { DateCalendar } from "@mui/x-date-pickers";
 import { DayCalendarSkeleton } from "@mui/x-date-pickers/DayCalendarSkeleton";
 import dayjs, { Dayjs } from "dayjs";
+import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import { useWindowSize } from "usehooks-ts";
 import TravelDialog from "../TravelDialog";
-import TravelDialogStudent from "../TravelDialog/student";
 import ServerDay from "./DaySlot";
 
 export default function Calendar() {
-  const { travel, setTravel, asStudent } = useContext(DataContext);
+  const { travel, loadMonthTravels, daysHighlightedDB, selDate, setSelDate } =
+    useContext(DataContext);
   const { showMessage, getDataAuth, profile } = useContext(AppContext);
   const { width } = useWindowSize();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [selDate, setSelDate] = useState<Dayjs>(dayjs());
-  const [daysHighlightedDB, setDaysHighlightedDB] = useState<number[]>([]);
+  console.log(
+    "renderizou o calendar",
+    travel.days?.length,
+    daysHighlightedDB.length
+  );
   const [daysHighlighted, setDaysHighlighted] =
     useState<number[]>(daysHighlightedDB);
   const [openDialog, setOpenDialog] = useState(false);
+  const router = useRouter();
 
   // const highlightedDays = [1, 3, 6, 10];
 
   useEffect(() => {
-    getTravelMonth(selDate);
+    loadMonthTravels(dayjs());
   }, []);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -61,29 +67,13 @@ export default function Calendar() {
     try {
       setLoading(true);
       // console.log("newDate", newDate);
-      let data: ITravel;
-      if (travel === undefined) {
-        data = await getDataAuth(
-          `travel/${newDate.year()}/${newDate.month() + 1}`,
-          "get"
-        );
-      } else {
-        data = travel;
-      }
-
-      console.log("travel no handleMonth", data);
-      if (data === null || data === undefined) {
-        setTravel({} as ITravel);
-        setDaysHighlightedDB([]);
+      await loadMonthTravels(newDate, travel);
+      if (!travel) {
         setDaysHighlighted([]);
         setLoading(false);
       } else {
-        setTravel(data);
-        const newHighlighted = data.days
-          .filter((d) => d.active)
-          .map((d) => d.day);
-        setDaysHighlightedDB(newHighlighted);
-        setDaysHighlighted(newHighlighted);
+        console.log("imprimindo", daysHighlightedDB);
+        setDaysHighlighted(daysHighlightedDB);
       }
     } catch (error) {
       showMessage((error as Error).message, "error");
@@ -110,12 +100,9 @@ export default function Calendar() {
   const handleSaveClick = async () => {
     // enviar para o backend
     try {
-      console.log(
-        "handleSaveClick \n",
-        selDate.year(),
-        selDate.month() + 1,
-        daysHighlighted
-      );
+      if (daysHighlighted === daysHighlightedDB) {
+        throw new Error("Não há nada para alterar");
+      }
       const data = (await getDataAuth("travel", "post", {
         year: selDate.year(),
         month: selDate.month() + 1,
@@ -159,6 +146,7 @@ export default function Calendar() {
           value={selDate}
           renderLoading={() => <DayCalendarSkeleton />}
           loading={loading}
+          disablePast={profile.role !== "admin"}
           onMonthChange={getTravelMonth}
           dayOfWeekFormatter={(_day, date) => date.format("ddd")}
           views={["day"]}
@@ -220,6 +208,7 @@ export default function Calendar() {
         <MenuItem onClick={handleEditClick}>
           <Edit sx={{ mr: 1 }} /> Editar viagens do mês
         </MenuItem>
+        <Divider />
         <MenuItem onClick={handleClose}>
           <Print sx={{ mr: 1 }} /> Imprimir (Em Construção)
         </MenuItem>
@@ -230,19 +219,11 @@ export default function Calendar() {
         maxWidth="md"
         fullScreen={width < 800}
       >
-        {asStudent ? (
-          <TravelDialogStudent
-            handleClose={handleClose}
-            date={selDate}
-            travel={travel}
-          />
-        ) : (
-          <TravelDialog
-            handleClose={handleClose}
-            date={selDate}
-            travel={travel}
-          />
-        )}
+        <TravelDialog
+          date={selDate}
+          handleClose={handleClose}
+          travel={travel}
+        />
       </Dialog>
     </>
   );

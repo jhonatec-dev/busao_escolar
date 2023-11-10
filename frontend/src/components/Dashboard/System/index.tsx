@@ -1,15 +1,15 @@
 import { AppContext } from "@/context/app.provider";
 import { DataContext } from "@/context/data.provider";
-import { Button, Card, Stack, TextField, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
+import { Button, Card, Stack, TextField, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 
 export default function System() {
   const { getDataAuth, showMessage } = useContext(AppContext);
-  const {asStudent, setAsStudent} = useContext(DataContext);
+  const { asStudent, setAsStudent } = useContext(DataContext);
   const [busDB, setBusDB] = useState(0);
   const [bus, setBus] = useState(busDB);
 
-  console.log('asStudent', asStudent)
+  console.log("asStudent", asStudent);
 
   useEffect(() => {
     const getBus = async () => {
@@ -42,8 +42,7 @@ export default function System() {
   return (
     <Card className="Card" variant="outlined">
       <Stack spacing={2}>
-      <Typography variant="h6">Ônibus padrão</Typography>
-      <Stack direction="row" spacing={4} justifyContent={"space-between"} alignItems={"center"}>
+        <Typography variant="h6">Ônibus padrão</Typography>
         <TextField
           label="Lugares"
           variant="filled"
@@ -56,24 +55,6 @@ export default function System() {
         <Button variant="contained" onClick={handleUpdateBus}>
           Atualizar
         </Button>
-      </Stack>
-      <Typography variant="h6">Interagindo com o calendário como:</Typography>
-      <ToggleButtonGroup value={asStudent}>
-        <ToggleButton
-          value="true"
-          selected={asStudent}
-          onClick={() => setAsStudent(true)}
-        >
-          Aluno
-        </ToggleButton>
-        <ToggleButton
-          value="false"
-          selected={!asStudent}
-          onClick={() => setAsStudent(false)}
-        >
-          Administrador
-        </ToggleButton>
-      </ToggleButtonGroup>
       </Stack>
     </Card>
   );
