@@ -49,7 +49,7 @@ export default function System() {
           helperText="Valor de base usado ao criar novas viagens"
         />
         <Button variant="contained" onClick={handleUpdateBus}>
-          Atualizar
+          Salvar
         </Button>
       </Stack>
     </Card>

@@ -10,6 +10,7 @@ import {
 import studentModel from '../models/student.model'
 import systemModel from '../models/system.model'
 import travelModel from '../models/travel.model'
+import emailService from './email.service'
 
 class TravelService {
   async getTravelMonth (
@@ -44,6 +45,8 @@ class TravelService {
       .year(year)
       .month(month - 1)
 
+    const daysToCancel = []
+
     for (let i = 1; i <= date.daysInMonth(); i++) {
       if (days.includes(i) && !daysTravel.some((elm) => elm.day === i)) {
         // tenho no meu request, mas nao no banco
@@ -69,13 +72,16 @@ class TravelService {
         })
       } else if (!days.includes(i) && daysTravel.some((elm) => elm.day === i)) {
         // tenho no banco, mas nao no meu request
-        const index = daysTravel.findIndex((elm) => elm.day === i)
-        daysTravel[index].active = false
+        currentTravel.days = currentTravel.days.filter((elm) => elm.day !== i)
+        daysToCancel.push(i)
         // TODO: enviar email ao estudante avisando o cancelamento da viagem
         // criar um array de viagens canceladas e agrupar em uma única mensagem
       }
     }
 
+    if (daysToCancel.length > 0) {
+      await emailService.sendCancelTravelsEmail(currentTravel, daysToCancel)
+    }
     daysTravel.sort((a, b) => a.day - b.day)
 
     return {
@@ -101,7 +107,7 @@ class TravelService {
 
       const data = await travelModel.update(
         currentTravel._id as string,
-        newTravel
+        newTravel // mudar para newTravel
       )
 
       return {
@@ -141,7 +147,7 @@ class TravelService {
       if (travel === null) {
         throw new Error('Viagem não encontrada')
       }
-      // TODO: verificar se o estudante já está como frequente no mesmo dia da semana que a viagem solicitada
+
       if (this.isStudentInTravel(student._id, travel, day)) {
         throw new Error('Estudante já está registrado na viagem')
       }
@@ -149,11 +155,14 @@ class TravelService {
         ...student,
         approved: false
       })
+      await emailService.sendOtherStudentsEmail(
+        student as ITravelStudent,
+        dayjs(`${travel.year}-${travel.month}-${day}`)
+      )
       return {
         status: 'SUCCESS',
         data: 'adicionado com sucesso'
       }
-      // TODO: enviar email confirmando o agendamento
     } catch (error) {
       return {
         status: 'INVALID',
@@ -165,10 +174,19 @@ class TravelService {
   async updateDay (
     idTravel: string,
     day: number,
-    travel: Partial<ITravelDay>
+    travelDay: Partial<ITravelDay>
   ): Promise<ServiceResult<string>> {
     try {
-      await travelModel.updateDay(idTravel, day, travel)
+      const travel = await travelModel.findById(idTravel)
+      if (travel === null) {
+        throw new Error('Viagem não encontrada')
+      }
+      await travelModel.updateDay(idTravel, day, travelDay)
+      // TODO: enviar email confirmando o agendamento
+      await emailService.sendOtherStudentsConfirmationEmail(
+        dayjs(`${travel.year}-${travel.month}-${day}`),
+        travelDay.otherStudents as ITravelStudent[]
+      )
       return {
         status: 'SUCCESS',
         data: 'atualizado com sucesso'

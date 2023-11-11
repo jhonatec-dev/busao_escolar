@@ -4,7 +4,7 @@ import { type IStudent } from '../interfaces/IStudent'
 import StudentModel from '../models/student.model'
 import JWT from '../utils/JWT'
 import { comparePassword, encrypt } from '../utils/encrypt'
-import Email from '../utils/sendEmail'
+import emailService from './email.service'
 import travelService from './travel.service'
 
 class StudentService {
@@ -98,7 +98,7 @@ class StudentService {
         role: 'student'
       })
       const adminList = await StudentModel.getAdminList()
-      await Email.sendConfirmationEmail(student, adminList)
+      await emailService.sendConfirmationEmail(student, adminList)
       return {
         status: 'CREATED',
         data
@@ -150,8 +150,11 @@ class StudentService {
       if (data === null) {
         throw new Error('Usuário não encontrado')
       }
-      // await StudentModel.delete(id)
-      await travelService.removeStudentsOfTravels(data._id?.toString() as string)
+      await StudentModel.delete(id)
+      await travelService.removeStudentsOfTravels(
+        data._id?.toString() as string
+      )
+      await emailService.sendDeleteEmail(data)
       return {
         status: 'DELETED',
         data: {
@@ -174,6 +177,7 @@ class StudentService {
       }
       await StudentModel.accept(id)
       await travelService.updateStudentOnTravels(student)
+      await emailService.sendActivationEmail(student)
       return {
         status: 'SUCCESS',
         data: {
@@ -199,6 +203,7 @@ class StudentService {
       }
       const udpdatedStudent = await StudentModel.changeFrequency(id, frequency)
       await travelService.updateStudentOnTravels(udpdatedStudent)
+      await emailService.sendChangeFrequencyEmail(udpdatedStudent)
       return {
         status: 'SUCCESS',
         data: {

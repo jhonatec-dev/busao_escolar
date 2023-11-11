@@ -22,24 +22,24 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 interface StudentCardProps {
   student: IStudent;
-  handleDeleteStudent: (id: string) => void;
 }
 
-export default function StudentCard({
-  student,
-  handleDeleteStudent,
-}: StudentCardProps) {
+export default function StudentCard({ student }: StudentCardProps) {
   const [editMode, setEditMode] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [localStudent, setLocalStudent] = useState(student);
   const [loading, setLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const { getDataAuth, showMessage, profile, logout } = useContext(AppContext);
-  const { loadMonthTravels } = useContext(DataContext);
+  const { loadMonthTravels, getStudents } = useContext(DataContext);
+
+  useEffect(() => {
+    setLocalStudent(student);
+  }, [student]);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -59,6 +59,7 @@ export default function StudentCard({
       showMessage("Frequência salva com sucesso", "success");
       setEditMode(false);
       await loadMonthTravels();
+      await getStudents();
     } catch (error) {
       showMessage((error as Error).message, "error");
       handleCancelClick();
@@ -75,6 +76,7 @@ export default function StudentCard({
         setLocalStudent((prev) => ({ ...prev, accepted: true }));
         showMessage("Aluno ativado com sucesso", "success");
         await loadMonthTravels();
+        await getStudents();        
       }
     } catch (error) {
       showMessage((error as Error).message, "error");
@@ -93,7 +95,7 @@ export default function StudentCard({
       if (student._id === profile._id) {
         logout();
       }
-      handleDeleteStudent(student._id as string);
+      await getStudents();
       await loadMonthTravels();
     } catch (error) {
       showMessage((error as Error).message, "error");
@@ -228,12 +230,10 @@ export default function StudentCard({
         onClose={handleClose}
       >
         {!localStudent.accepted && (
-          <>
-            <MenuItem onClick={handleActivateClick}>
-              <Check sx={{ mr: 1 }} /> Ativar
-            </MenuItem>
+          <MenuItem onClick={handleActivateClick}>
+            <Check sx={{ mr: 1 }} /> Ativar
             <Divider />
-          </>
+          </MenuItem>
         )}
 
         <MenuItem onClick={handleEditClick}>

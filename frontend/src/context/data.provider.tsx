@@ -10,6 +10,8 @@ interface IDataContext {
   loadMonthTravels: (newDate?: Dayjs) => Promise<void>;
   selDate: Dayjs;
   setSelDate: (newDate: Dayjs) => void;
+  students: IStudent[];
+  getStudents: () => Promise<void>;
 }
 
 export const DataContext = createContext({} as IDataContext);
@@ -22,12 +24,26 @@ export const DataProvider = ({ children }: any) => {
   const { profile, getDataAuth, showMessage } = useContext(AppContext);
 
   useEffect(() => {
-    const getFirstTravels = async () => {
+    const getFirstData = async () => {
       await loadMonthTravels();
+      if (profile.role === "admin") {
+        await getStudents();
+      }
     };
 
-    getFirstTravels();
+    getFirstData();
   }, []);
+
+  const getStudents = async (): Promise<void> => {
+    try {
+      const response = await getDataAuth("student", "get");
+      console.log(response);
+      if (!response) return;
+      setStudents(response as IStudent[]);
+    } catch (error) {
+      showMessage((error as Error).message, "error");
+    }
+  };
 
   const loadMonthTravels = async (newDate?: Dayjs): Promise<void> => {
     try {
@@ -45,7 +61,7 @@ export const DataProvider = ({ children }: any) => {
         const newHighlighted = data.days
           .filter((d) => d.active)
           .map((d) => d.day);
-        setDaysHighlightedDB([])
+        setDaysHighlightedDB([]);
         setDaysHighlightedDB(newHighlighted);
       }
     } catch (error) {
@@ -60,8 +76,10 @@ export const DataProvider = ({ children }: any) => {
       loadMonthTravels,
       selDate,
       setSelDate,
+      students,
+      getStudents,
     }),
-    [travel, daysHighlightedDB, selDate]
+    [travel, daysHighlightedDB, selDate, students]
   );
 
   return <DataContext.Provider value={values}>{children}</DataContext.Provider>;
