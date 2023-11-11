@@ -245,7 +245,7 @@ export default function Register() {
               error={!!errors.confirmPassword}
               helperText={errors.confirmPassword?.message}
             />
-            <Button href="/terms">
+            <Button href="/terms" target="_blank">
               Termos de Serviço e Política de Privacidade
             </Button>
             <FormControlLabel

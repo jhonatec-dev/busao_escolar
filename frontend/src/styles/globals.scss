@@ -1,6 +1,41 @@
 :root {
   --max-width: 1100px;
   --border-radius: 12px;
+  --background-light: #d9d9d9;
+  --background-dark: #1e1e1e;
+  --font-color: #737373;
+  --font-color-highlight-light: #8a8a8a;
+  --font-color-highlight-dark: #aaa9a9;
+  --font-color-light: var(--font-color-highlight-light);
+  --padding-top: 95px;
+  --scrollbar-background: var(--background-light);
+  --thumb-light: #a6a6a6;
+  --thumb-dark: #6c6c6c;
+  --scrollbar-thumb: var(--thumb-light);
+  --thumb-hover-dark: #939393;
+  --thumb-hover-light: #626262;
+  --thumb-hover: var(--thumb-hover-light);
+}
+
+/* Scroll Bar */
+::-webkit-scrollbar {
+  background: var(--scrollbar-background);
+  transition: all 300ms;
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 1ex;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--thumb-hover);
+}
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-color: rgb(var(--foreground-rgb)) rgb(var(--background-end-rgb));
 }
 
 * {
@@ -23,6 +58,10 @@ form {
   width: 100%;
 }
 
+h6 {
+  font-weight: bold !important;
+}
+
 .App {
   min-height: 100vh;
 }
@@ -32,17 +71,22 @@ form {
   padding: 2rem 1rem;
 }
 
+.Dashboard {
+  padding: 0.5rem !important;
+  padding-top: 5.5rem !important;
+}
+
 .MuiDateCalendar-root {
   width: 100% !important;
   overflow: initial !important;
   margin: 0 !important;
-  padding: 0 !important;
+  margin-bottom: 30px !important;
 
   .MuiDayCalendar-header-root {
     padding: 0 !important;
   }
 
-  .MuiPickersCalendarHeader-root{
+  .MuiPickersCalendarHeader-root {
     padding: 0 !important;
   }
 
@@ -77,19 +121,20 @@ form {
 
 .Logo-img {
   margin-right: 3.5rem;
-  animation: bus-move 3s infinite alternate;
+  animation: bus-move 800ms infinite linear alternate;
+  z-index: 50;
 }
 
 .move-to-right {
-  animation: animation-move-to-right 3s linear;
+  animation: animation-move-to-right 400ms linear;
 }
 
 @keyframes bus-move {
   0% {
-    transform: translateX(0);
+    transform: rotateZ(-5deg);
   }
   100% {
-    transform: translateX(30%);
+    transform: rotateZ(5deg);
   }
 }
 
@@ -98,7 +143,7 @@ form {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(500px);
+    transform: translateX(100%) scale(5);
   }
 }
 

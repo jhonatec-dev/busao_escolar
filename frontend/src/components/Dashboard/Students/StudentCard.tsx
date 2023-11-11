@@ -1,4 +1,5 @@
 import { AppContext } from "@/context/app.provider";
+import { DataContext } from "@/context/data.provider";
 import { IStudent } from "@/interfaces/IStudent";
 import { formatWeekDay } from "@/utils/format";
 import { Check, Delete, Edit, MoreVert } from "@mui/icons-material";
@@ -11,6 +12,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Divider,
   IconButton,
   Menu,
   MenuItem,
@@ -20,23 +22,24 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 interface StudentCardProps {
   student: IStudent;
-  handleDeleteStudent: (id: string) => void;
 }
 
-export default function StudentCard({
-  student,
-  handleDeleteStudent,
-}: StudentCardProps) {
+export default function StudentCard({ student }: StudentCardProps) {
   const [editMode, setEditMode] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [localStudent, setLocalStudent] = useState(student);
   const [loading, setLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
-  const { getDataAuth, showMessage } = useContext(AppContext);
+  const { getDataAuth, showMessage, profile, logout } = useContext(AppContext);
+  const { loadMonthTravels, getStudents } = useContext(DataContext);
+
+  useEffect(() => {
+    setLocalStudent(student);
+  }, [student]);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -46,16 +49,17 @@ export default function StudentCard({
     setAnchorEl(null);
   };
 
-  const handleSaveClick = () => {
+  const handleSaveClick = async () => {
     try {
       setLoading(true);
-      const data = getDataAuth(`student/frequency/${student._id}`, "patch", {
+      await getDataAuth(`student/frequency/${student._id}`, "patch", {
         ...localStudent.frequency,
       });
-      if (data) {
-        showMessage("Frequência salva com sucesso", "success");
-        setEditMode(false);
-      }
+
+      showMessage("Frequência salva com sucesso", "success");
+      setEditMode(false);
+      await loadMonthTravels();
+      await getStudents();
     } catch (error) {
       showMessage((error as Error).message, "error");
       handleCancelClick();
@@ -71,6 +75,8 @@ export default function StudentCard({
       if (data) {
         setLocalStudent((prev) => ({ ...prev, accepted: true }));
         showMessage("Aluno ativado com sucesso", "success");
+        await loadMonthTravels();
+        await getStudents();        
       }
     } catch (error) {
       showMessage((error as Error).message, "error");
@@ -86,7 +92,11 @@ export default function StudentCard({
       setLoading(true);
       const data = await getDataAuth(`student/${student._id}`, "delete");
       showMessage("Aluno excluído com sucesso", "success");
-      handleDeleteStudent(student._id as string);
+      if (student._id === profile._id) {
+        logout();
+      }
+      await getStudents();
+      await loadMonthTravels();
     } catch (error) {
       showMessage((error as Error).message, "error");
     }
@@ -222,11 +232,14 @@ export default function StudentCard({
         {!localStudent.accepted && (
           <MenuItem onClick={handleActivateClick}>
             <Check sx={{ mr: 1 }} /> Ativar
+            <Divider />
           </MenuItem>
         )}
+
         <MenuItem onClick={handleEditClick}>
           <Edit sx={{ mr: 1 }} /> Editar Frequência
         </MenuItem>
+        <Divider />
         <MenuItem onClick={() => setShowDialog(true)}>
           <Delete sx={{ mr: 1 }} /> Excluir
         </MenuItem>
@@ -242,8 +255,8 @@ export default function StudentCard({
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Isso não pode ser desfeito. {localStudent.name} também não constará no registro de todas as viagens
-            futuras.
+            Isso não pode ser desfeito. {localStudent.name} também não constará
+            no registro de todas as viagens futuras.
           </DialogContentText>
         </DialogContent>
         <DialogActions>

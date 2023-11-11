@@ -1,23 +1,17 @@
 import { AppContext } from "@/context/app.provider";
-import { ITravel } from "@/interfaces/ITravel";
-import { Close } from "@mui/icons-material";
-import { Button, IconButton, TextField, Typography } from "@mui/material";
+import { DataContext } from "@/context/data.provider";
+import { Button, ButtonGroup, TextField, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
-import { Dayjs } from "dayjs";
 import { useContext, useEffect, useState } from "react";
+import { ITravelDialogProps } from ".";
 
-interface ITravelDialogProps {
-  date: Dayjs;
-  handleClose: () => void;
-  travel: ITravel;
-}
-
-export default function TravelDialogStudent({
+export default function DialogStudent({
   handleClose,
   date,
   travel,
 }: ITravelDialogProps) {
   const { profile, showMessage, getDataAuth } = useContext(AppContext);
+  const { loadMonthTravels } = useContext(DataContext);
   const [message, setMessage] = useState("");
   const currentDayTravel = travel.days
     ? travel.days.find((d) => d.day === date.date() && d.active)
@@ -29,7 +23,14 @@ export default function TravelDialogStudent({
 
   const alreadyOnList = () => {
     if (!currentDayTravel) {
-      return <Typography>Dia sem viagem registrada</Typography>;
+      return (
+        <>
+          <Typography>Dia sem viagem registrada</Typography>
+          <Button onClick={handleClose} fullWidth variant="outlined">
+            Voltar
+          </Button>
+        </>
+      );
     }
 
     const frequent = currentDayTravel?.frequentStudents.find(
@@ -44,8 +45,11 @@ export default function TravelDialogStudent({
     if (!studentOnTravel) {
       return (
         <>
+          <Typography variant="h6">
+            Digite uma mensagem e solicite sua vaga
+          </Typography>
           <TextField
-            label="Quer adiconar alguma mensagem?"
+            label="Mensagem"
             variant="filled"
             fullWidth
             value={message}
@@ -55,9 +59,14 @@ export default function TravelDialogStudent({
             multiline
           />
 
-          <Button onClick={handleSaveClick} fullWidth variant="contained">
-            Solicitar vaga
-          </Button>
+          <ButtonGroup fullWidth>
+            <Button onClick={handleClose} fullWidth variant="outlined">
+              Cancelar
+            </Button>
+            <Button onClick={handleSaveClick} fullWidth variant="contained">
+              Solicitar vaga
+            </Button>
+          </ButtonGroup>
         </>
       );
     }
@@ -68,41 +77,34 @@ export default function TravelDialogStudent({
         <Typography fontWeight={"bold"}>
           {studentOnTravel.approved ? "Aprovado" : "Aguardando aprovação"}
         </Typography>
+        <Button onClick={handleClose} fullWidth variant="outlined">
+          Voltar
+        </Button>
       </>
     );
   };
 
-  const handleSaveClick = () => {
+  const handleSaveClick = async () => {
     try {
-      const data = getDataAuth(`travel/${travel._id}/${date.date()}/other-students`, "post", {
-        message: message,
-      });
+      const data = await getDataAuth(
+        `travel/${travel._id}/${date.date()}/other-students`,
+        "post",
+        {
+          message: message,
+        }
+      );
       if (data) {
         showMessage("Vaga solicitada com sucesso", "success");
+        await loadMonthTravels();
         handleClose();
       }
     } catch (error) {
       showMessage((error as Error).message, "error");
     }
-  }
+  };
 
   return (
     <Stack p={2} spacing={2}>
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        spacing={2}
-        alignItems={"center"}
-      >
-        <Typography variant="h6">
-          {date.format("dddd").split("-")[0].toUpperCase()} -{" "}
-          {date.format("DD/MM/YYYY")}
-        </Typography>
-        <IconButton onClick={handleClose}>
-          <Close />
-        </IconButton>
-      </Stack>
-
       <Stack spacing={2} textAlign={"center"}>
         {alreadyOnList()}
       </Stack>

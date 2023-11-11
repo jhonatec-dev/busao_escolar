@@ -19,7 +19,7 @@ export default function Dashboard() {
         <title>Busão Escolar | Dashboard</title>
       </Head>
       <Header />
-      <Stack className="Dashboard" mt={4} gap={4}>
+      <Stack className="Dashboard" pt={"70px"} gap={4}>
         <DataProvider>
           <Stack
             direction="row"
