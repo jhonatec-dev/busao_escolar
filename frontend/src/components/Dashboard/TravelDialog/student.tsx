@@ -95,8 +95,8 @@ export default function DialogStudent({
       );
       if (data) {
         showMessage("Vaga solicitada com sucesso", "success");
-        await loadMonthTravels();
         handleClose();
+        await loadMonthTravels();
       }
     } catch (error) {
       showMessage((error as Error).message, "error");

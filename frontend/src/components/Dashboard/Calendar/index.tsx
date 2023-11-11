@@ -79,6 +79,7 @@ export default function Calendar() {
   const handleSaveClick = async () => {
     // enviar para o backend
     try {
+      setLoading(true);
       if (daysHighlighted === daysHighlightedDB) {
         throw new Error("Não há nada para alterar");
       }
@@ -94,6 +95,7 @@ export default function Calendar() {
     }
 
     setEditMode(false);
+    setLoading(false);
   };
 
   const handleCancelClick = () => {
