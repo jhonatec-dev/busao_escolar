@@ -1,6 +1,5 @@
 import { AppContext } from "@/context/app.provider";
 import { DataContext } from "@/context/data.provider";
-import { ITravel } from "@/interfaces/ITravel";
 import { Edit, MoreVert, Print, Refresh } from "@mui/icons-material";
 import {
   Box,
@@ -23,12 +22,17 @@ import TravelDialog from "../TravelDialog";
 import ServerDay from "./DaySlot";
 
 export default function Calendar() {
-  const { travel, daysHighlightedDB, selDate, setSelDate, loadMonthTravels } =
-    useContext(DataContext);
+  const {
+    travel,
+    daysHighlightedDB,
+    selDate,
+    setSelDate,
+    loadMonthTravels,
+    loadingTravel,
+  } = useContext(DataContext);
   const { showMessage, getDataAuth, profile } = useContext(AppContext);
   const { width } = useWindowSize();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [daysHighlighted, setDaysHighlighted] =
     useState<number[]>(daysHighlightedDB);
@@ -37,14 +41,12 @@ export default function Calendar() {
   // const highlightedDays = [1, 3, 6, 10];
 
   useEffect(() => {
-    setLoading(true);
     if (!travel) {
       setDaysHighlighted([]);
     } else {
       console.log("imprimindo travel \n", travel, "\n", daysHighlightedDB);
       setDaysHighlighted(daysHighlightedDB);
     }
-    setLoading(false);
   }, [travel, daysHighlightedDB]);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -79,23 +81,21 @@ export default function Calendar() {
   const handleSaveClick = async () => {
     // enviar para o backend
     try {
-      setLoading(true);
-      if (daysHighlighted === daysHighlightedDB) {
+      if (daysHighlighted.join() === daysHighlightedDB.join()) {
         throw new Error("Não há nada para alterar");
       }
-      const data = (await getDataAuth("travel", "post", {
+      await getDataAuth("travel", "post", {
         year: selDate.year(),
         month: selDate.month() + 1,
         days: daysHighlighted,
-      })) as ITravel;
-      setSelDate(selDate);
+      });
+      await loadMonthTravels();
       showMessage("Calendário de viagens salvo com sucesso", "success");
     } catch (error) {
       showMessage((error as Error).message, "error");
     }
 
     setEditMode(false);
-    setLoading(false);
   };
 
   const handleCancelClick = () => {
@@ -132,7 +132,7 @@ export default function Calendar() {
             onChange={handleDayClick}
             value={selDate}
             renderLoading={() => <DayCalendarSkeleton />}
-            loading={loading}
+            loading={loadingTravel}
             disablePast={profile.role !== "admin"}
             onMonthChange={loadMonthTravels}
             dayOfWeekFormatter={(_day, date) => date.format("ddd")}

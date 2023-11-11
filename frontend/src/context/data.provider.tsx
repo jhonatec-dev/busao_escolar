@@ -12,23 +12,25 @@ interface IDataContext {
   setSelDate: (newDate: Dayjs) => void;
   students: IStudent[];
   getStudents: () => Promise<void>;
+  loadingStudents: boolean;
+  loadingTravel: boolean;
 }
 
 export const DataContext = createContext({} as IDataContext);
 
 export const DataProvider = ({ children }: any) => {
   const [travel, setTravel] = useState<ITravel>({} as ITravel);
+  const [loadingTravel, setLoadingTravel] = useState(true);
   const [daysHighlightedDB, setDaysHighlightedDB] = useState<number[]>([]);
   const [students, setStudents] = useState<IStudent[]>([]);
+  const [loadingStudents, setLoadingStudents] = useState(true);
   const [selDate, setSelDate] = useState<Dayjs>(dayjs());
   const { profile, getDataAuth, showMessage } = useContext(AppContext);
 
   useEffect(() => {
+    console.log("useEffect DataProvider");
     const getFirstData = async () => {
       await loadMonthTravels();
-      if (profile.role === "admin") {
-        await getStudents();
-      }
     };
 
     getFirstData();
@@ -36,17 +38,22 @@ export const DataProvider = ({ children }: any) => {
 
   const getStudents = async (): Promise<void> => {
     try {
+      console.log('buscando alunos');
+      setLoadingStudents(true);
       const response = await getDataAuth("student", "get");
-      console.log(response);
-      if (!response) return;
+      if (!response) {
+        throw new Error("Erro ao buscar alunos");
+      };
       setStudents(response as IStudent[]);
     } catch (error) {
       showMessage((error as Error).message, "error");
     }
+    setLoadingStudents(false);
   };
 
   const loadMonthTravels = async (newDate?: Dayjs): Promise<void> => {
     try {
+      setLoadingTravel(true);
       const date = newDate ? newDate : selDate.startOf("month");
       const data = (await getDataAuth(
         `travel/${date.year()}/${date.month() + 1}`,
@@ -67,6 +74,7 @@ export const DataProvider = ({ children }: any) => {
     } catch (error) {
       showMessage((error as Error).message, "error");
     }
+    setLoadingTravel(false);
   };
 
   const values = useMemo(
@@ -78,8 +86,10 @@ export const DataProvider = ({ children }: any) => {
       setSelDate,
       students,
       getStudents,
+      loadingStudents,
+      loadingTravel
     }),
-    [travel, daysHighlightedDB, selDate, students]
+    [travel, daysHighlightedDB, selDate, students, loadingStudents, loadingTravel]
   );
 
   return <DataContext.Provider value={values}>{children}</DataContext.Provider>;

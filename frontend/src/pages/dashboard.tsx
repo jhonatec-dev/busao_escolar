@@ -13,12 +13,15 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Dashboard() {
   const { profile } = useContext(AppContext);
+
+  console.log('estou aqui')
   return (
     <>
       <Head>
         <title>Busão Escolar | Dashboard</title>
       </Head>
       <Header />
+      {console.log('DASHBOARD RETURN')}
       <Stack className="Dashboard" pt={"70px"} gap={4}>
         <DataProvider>
           <Stack

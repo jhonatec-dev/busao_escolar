@@ -42,7 +42,7 @@ export default function AppProvider({ children }: any) {
   const [profile, setProfile] = useState<IStudent>({} as IStudent);
   const [studentView, setStudentView] = useState(true);
 
-  const login = useCallback(async () => {
+  const login = async () => {
     const token = getFromLS("tokenBusaoEscolar");
     if (!token) {
       if (router.pathname === "/dashboard") router.push("/");
@@ -54,15 +54,16 @@ export default function AppProvider({ children }: any) {
     if (!newProfile) return;
     setProfile(newProfile as IStudent);
     if (router.pathname === "/") router.push("/dashboard");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  };
 
   useEffect(() => {
-    restoreThemeMode();
-    // console.log('AppProvider', messageContent, messageMode);
-    setMessageContent("");
-    login();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    try {
+      restoreThemeMode();
+      setMessageContent("");
+      login();
+    } catch (error) {
+      showMessage((error as Error).message, "error");
+    }
   }, []);
 
   const theme = createTheme({
@@ -274,22 +275,25 @@ export default function AppProvider({ children }: any) {
     <AppContext.Provider value={values}>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
         <ThemeProvider theme={theme}>
-          {children}
-          <Snackbar
-            open={!!messageContent && messageContent.length > 0}
-            autoHideDuration={2500}
-            onClose={() => setMessageContent("")}
-            anchorOrigin={{ vertical: "top", horizontal: "center" }}
-          >
-            <Alert
-              onClose={() => setMessageContent("")}
-              severity={messageMode}
-              variant="filled"
-              sx={{ width: "100%" }}
+          <>
+            {children}
+
+            <Snackbar
+              open={!!messageContent && messageContent.length > 0}
+              autoHideDuration={2500}
+              onClose={() => setTimeout(() => setMessageContent(""), 500)}
+              anchorOrigin={{ vertical: "top", horizontal: "center" }}
             >
-              {messageContent}
-            </Alert>
-          </Snackbar>
+              <Alert
+                onClose={() => setTimeout(() => setMessageContent(""), 500)}
+                severity={messageMode}
+                variant="filled"
+                sx={{ width: "100%" }}
+              >
+                {messageContent}
+              </Alert>
+            </Snackbar>
+          </>
         </ThemeProvider>
       </LocalizationProvider>
     </AppContext.Provider>

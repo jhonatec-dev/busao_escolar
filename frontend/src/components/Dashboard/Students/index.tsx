@@ -3,14 +3,15 @@ import { Clear, Refresh } from "@mui/icons-material";
 import { Card, IconButton, Stack, TextField, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import StudentCard from "./StudentCard";
+import StudentSkeleton from "./StudentSkeleton";
 
 export default function Students() {
-  const { students, getStudents } = useContext(DataContext);
+  const { students, getStudents, loadingStudents } = useContext(DataContext);
   const [search, setSearch] = useState<string>("");
   const filteredStudents = students.filter((student) =>
     student.name.toLowerCase().includes(search.toLowerCase())
   );
-  console.log('filteredStudents', filteredStudents);
+  console.log("filteredStudents", filteredStudents);
 
   useEffect(() => {
     getStudents();
@@ -49,12 +50,13 @@ export default function Students() {
           }
         />
         <Stack spacing={2} mt={2}>
-          {filteredStudents.map((student) => (
-            <StudentCard
-              key={student._id}
-              student={student}
-            />
-          ))}
+          {loadingStudents ? (
+            <StudentSkeleton />
+          ) : (
+            filteredStudents.map((student) => (
+              <StudentCard key={student._id} student={student} />
+            ))
+          )}
         </Stack>
       </Stack>
     </Card>

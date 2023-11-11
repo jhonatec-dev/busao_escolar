@@ -76,6 +76,11 @@ h6 {
   padding-top: 5.5rem !important;
 }
 
+.MuiDayCalendarSkeleton-week {
+  justify-content: space-between !important;
+  margin: 10px 0 !important;
+}
+
 .MuiDateCalendar-root {
   width: 100% !important;
   overflow: initial !important;
@@ -125,9 +130,9 @@ h6 {
   z-index: 50;
 }
 
-.move-to-right {
-  animation: animation-move-to-right 400ms linear;
-}
+// .move-to-right {
+//   animation: animation-move-to-right 400ms linear;
+// }
 
 @keyframes bus-move {
   0% {
@@ -138,14 +143,14 @@ h6 {
   }
 }
 
-@keyframes animation-move-to-right {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(100%) scale(5);
-  }
-}
+// @keyframes animation-move-to-right {
+//   0% {
+//     transform: translateX(0);
+//   }
+//   100% {
+//     transform: translateX(100%) scale(5);
+//   }
+// }
 
 @media screen and (min-width: 600px) {
   .App {

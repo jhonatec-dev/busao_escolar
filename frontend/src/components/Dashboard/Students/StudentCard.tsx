@@ -6,7 +6,6 @@ import { Check, Delete, Edit, MoreVert } from "@mui/icons-material";
 import {
   Button,
   Card,
-  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -20,9 +19,10 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Tooltip,
-  Typography,
+  Typography
 } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
+import StudentSkeleton from "./StudentSkeleton";
 
 interface StudentCardProps {
   student: IStudent;
@@ -76,7 +76,7 @@ export default function StudentCard({ student }: StudentCardProps) {
         setLocalStudent((prev) => ({ ...prev, accepted: true }));
         showMessage("Aluno ativado com sucesso", "success");
         await loadMonthTravels();
-        await getStudents();        
+        await getStudents();
       }
     } catch (error) {
       showMessage((error as Error).message, "error");
@@ -133,13 +133,7 @@ export default function StudentCard({ student }: StudentCardProps) {
   };
 
   if (loading) {
-    return (
-      <Card elevation={2} sx={{ padding: 2 }}>
-        <Stack justifyContent={"center"} alignItems={"center"}>
-          <CircularProgress />
-        </Stack>
-      </Card>
-    );
+    return <StudentSkeleton single />;
   }
 
   return (
@@ -187,7 +181,7 @@ export default function StudentCard({ student }: StudentCardProps) {
                       ]
                     }
                   >
-                    {formatWeekDay(day)[0]}
+                    {formatWeekDay(day).slice(0, 3)}
                   </ToggleButton>
                 </Tooltip>
               ))}

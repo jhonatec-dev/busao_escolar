@@ -249,6 +249,7 @@ class TravelService {
   }
 
   async updateStudentOnTravels (student: IStudent): Promise<void> {
+    // TODO: testar sem frequência
     try {
       const today = dayjs()
       const currYear = today.year()
@@ -279,37 +280,47 @@ class TravelService {
         approved: true
       }
 
+      console.log(
+        'tripsToUpdate',
+        tripsToUpdate,
+        '\n studentTravel',
+        studentTravel,
+        '\n'
+      )
+
       for (const trip of tripsToUpdate) {
-        trip.days.forEach((day) => {
+        trip.days.forEach((dayTravel) => {
+          console.log('\n\n')
+          console.log('trip', trip, '\ndayTravel', dayTravel)
           if (
             (trip.year === currYear &&
               trip.month === currMonth &&
-              day.day >= currDay) ||
+              dayTravel.day >= currDay) ||
             (trip.year === currYear && trip.month > currMonth) ||
             trip.year > currYear
           ) {
             // TODO: verificar sobre o dia da semana da frequencia do estudante
-            const weekDay = dayjs(`${trip.year}-${trip.month}-${day.day}`)
+            const weekDay = dayjs(`${trip.year}-${trip.month}-${dayTravel.day}`)
               .format('dddd')
               .toLowerCase()
 
             if (student.frequency[weekDay as keyof typeof student.frequency]) {
               // Adicione o estudante à lista de frequentStudents
               if (
-                !day.frequentStudents.some(
+                !dayTravel.frequentStudents.some(
                   (student) => student._id === studentTravel._id.toString()
                 )
               ) {
-                day.frequentStudents.push(studentTravel)
+                dayTravel.frequentStudents.push(studentTravel)
               }
 
               // Remova o estudante da lista de otherStudents
               if (
-                day.otherStudents.some(
+                dayTravel.otherStudents.some(
                   (student) => student._id === studentTravel._id.toString()
                 )
               ) {
-                day.otherStudents = day.otherStudents.filter(
+                dayTravel.otherStudents = dayTravel.otherStudents.filter(
                   (student) => student._id !== studentTravel._id.toString()
                 )
               }
@@ -317,7 +328,7 @@ class TravelService {
               // não é o dia da semana frequente do aluno
               // remover ele da lista de frequentes
 
-              day.frequentStudents = day.frequentStudents.filter(
+              dayTravel.frequentStudents = dayTravel.frequentStudents.filter(
                 (student) => student._id !== studentTravel._id.toString()
               )
             }
@@ -329,6 +340,7 @@ class TravelService {
         await trip.save()
       }
     } catch (error) {
+      console.log('updateStudentOnTravels', error)
       throw new Error((error as Error).message)
     }
   }

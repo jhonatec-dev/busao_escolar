@@ -1,3 +1,4 @@
+import LoginSkeleton from "@/components/Login/LoginSkeleton";
 import Logo from "@/components/Logo";
 import { AppContext } from "@/context/app.provider";
 import { saveToLS } from "@/utils/localStorage";
@@ -18,6 +19,7 @@ export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [classNameImg, setClassNameImg] = useState("");
+  const [loading, setLoading] = useState(false);
   const { showMessage, getData, login, toggleMode, themeMode } =
     useContext(AppContext);
   const { width } = useWindowSize();
@@ -34,10 +36,7 @@ export default function Home() {
       return;
     }
     try {
-      // const response = await axios.post(`${API_URL}/login`, {
-      //   email,
-      //   password,
-      // });
+      setLoading(true);
       const data = await getData("login", "post", {
         email,
         password,
@@ -50,6 +49,7 @@ export default function Home() {
     } catch (error: any) {
       showMessage(error.message, "error");
     }
+    setLoading(false);
   };
 
   const handleKeyPress = (event: any) => {
@@ -74,65 +74,73 @@ export default function Home() {
         justifyContent={"center"}
         minHeight={"100vh"}
       >
-        <Card className="Card" variant={width < 600 ? "elevation" : "outlined"} >
+        <Card className="Card" variant={width < 600 ? "elevation" : "outlined"}>
           <Stack spacing={2} alignItems={"center"}>
             <Logo size={100} className={classNameImg} />
-            <TextField
-              label="E-mail"
-              variant="filled"
-              fullWidth
-              inputProps={{ type: "email" }}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+            {loading ? (
+              <LoginSkeleton />
+            ) : (
+              <>
+                <TextField
+                  label="E-mail"
+                  variant="filled"
+                  fullWidth
+                  inputProps={{ type: "email" }}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
 
-            <TextField
-              label="Senha"
-              variant="filled"
-              fullWidth
-              value={password}
-              onKeyPress={handleKeyPress}
-              onChange={(e) => setPassword(e.target.value)}
-              inputProps={{ type: showPassword ? "text" : "password" }}
-              InputProps={{
-                endAdornment: (
-                  <IconButton onClick={() => setShowPassword(!showPassword)}>
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                ),
-              }}
-            />
-            <Button
-              variant="contained"
-              size="large"
-              onClick={handleClickLogin}
-              fullWidth
-            >
-              Entrar
-            </Button>
-            <IconButton onClick={toggleMode} size="large">
-              {themeMode === "light" ? (
-                <DarkMode fontSize="inherit" />
-              ) : (
-                <LightMode fontSize="inherit" />
-              )}
-            </IconButton>
-            <Stack
-              direction={"row"}
-              pt={4}
-              justifyContent={"space-between"}
-              width={"100%"}
-            >
-              <Button
-                onClick={() => showMessage("Em desenvolvimento", "info")}
-                sx={{ textTransform: "none" }}
-              >
-                Esqueci minha senha
-              </Button>
-              <Button href="/register" size="large">
-                Registrar
-              </Button>
-            </Stack>
+                <TextField
+                  label="Senha"
+                  variant="filled"
+                  fullWidth
+                  value={password}
+                  onKeyPress={handleKeyPress}
+                  onChange={(e) => setPassword(e.target.value)}
+                  inputProps={{ type: showPassword ? "text" : "password" }}
+                  InputProps={{
+                    endAdornment: (
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    ),
+                  }}
+                />
+                <Button
+                  variant="contained"
+                  size="large"
+                  onClick={handleClickLogin}
+                  fullWidth
+                >
+                  Entrar
+                </Button>
+                <IconButton onClick={toggleMode} size="large">
+                  {themeMode === "light" ? (
+                    <DarkMode fontSize="inherit" />
+                  ) : (
+                    <LightMode fontSize="inherit" />
+                  )}
+                </IconButton>
+                <Stack
+                  direction={"row"}
+                  pt={4}
+                  justifyContent={"space-between"}
+                  width={"100%"}
+                >
+                  <Button
+                    onClick={() => showMessage("Em desenvolvimento", "info")}
+                    sx={{ textTransform: "none" }}
+                  >
+                    Esqueci minha senha
+                  </Button>
+                  <Button href="/register" size="large">
+                    Registrar
+                  </Button>
+                </Stack>
+              </>
+            )}
           </Stack>
         </Card>
       </Stack>

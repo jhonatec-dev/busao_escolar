@@ -19,10 +19,10 @@ const WEEKDAYS = {
 
 class EmailModel {
   private getFooter (): string {
-    let text = '<br><p>Atenciosamente,</p>'
-    text += '<p>Equipe Busão Escolar</p>'
-    text = '<br><br>'
+    let text = '<br>'
+    text += '<p>Atenciosamente,</p>'
     text += `<img src="${IMG_URL}" alt="Busão Escolar" style="width: 100px; height: 100px;" />`
+    text += '<p>Equipe Busão Escolar</p>'
     text += '<br>'
     text += `<span style='font-size: 0.8em;'>
     Este e-mail foi enviado automaticamente, por favor não responder.</span>`

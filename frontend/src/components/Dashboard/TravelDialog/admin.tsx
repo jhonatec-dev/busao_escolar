@@ -13,6 +13,7 @@ import {
 import { Stack } from "@mui/system";
 import { useContext, useState } from "react";
 import { ITravelDialogProps } from ".";
+import DialogSkeleton from "./DialogSkeleton";
 
 export default function DialogAdmin({
   handleClose,
@@ -23,7 +24,7 @@ export default function DialogAdmin({
   const { loadMonthTravels } = useContext(DataContext);
   const [frequentOpen, setFrequentOpen] = useState(false);
   const [otherOpen, setOtherOpen] = useState(false);
-  // const [freeSits, setFreeSits] = useState(0);
+  const [loading, setLoading] = useState(false);
   const currentDayTravelDB = travel.days
     ? travel.days.find((d) => d.day === date.date())
     : undefined;
@@ -37,21 +38,6 @@ export default function DialogAdmin({
       otherStudents: [],
     }
   );
-
-  // const handleCloseLocal = () => {
-  //   console.log("currentDayTravelDB", currentDayTravelDB);
-  //   setCurrentDayTravel(
-  //     currentDayTravelDB || {
-  //       day: date.date(),
-  //       active: false,
-  //       busSits: 0,
-  //       observations: "",
-  //       frequentStudents: [],
-  //       otherStudents: [],
-  //     }
-  //   );
-  //   handleClose();
-  // };
 
   const frequentSits = currentDayTravel.frequentStudents.filter(
     (s) => s.approved
@@ -95,18 +81,23 @@ export default function DialogAdmin({
 
   const handleSaveClick = async () => {
     try {
+      setLoading(true);
       await getDataAuth(
         `travel/${travel._id}/${date.date()}`,
         "put",
         currentDayTravel
       );
       showMessage("Viagem alterada com sucesso", "success");
-      handleClose();
       await loadMonthTravels();
+      handleClose();
     } catch (error) {
       showMessage((error as Error).message, "error");
     }
   };
+
+  if(loading) {
+    return <DialogSkeleton />
+  }
 
   return (
     <>

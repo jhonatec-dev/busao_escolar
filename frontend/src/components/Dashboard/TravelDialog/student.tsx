@@ -4,6 +4,7 @@ import { Button, ButtonGroup, TextField, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useContext, useEffect, useState } from "react";
 import { ITravelDialogProps } from ".";
+import DialogSkeleton from "./DialogSkeleton";
 
 export default function DialogStudent({
   handleClose,
@@ -13,6 +14,7 @@ export default function DialogStudent({
   const { profile, showMessage, getDataAuth } = useContext(AppContext);
   const { loadMonthTravels } = useContext(DataContext);
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const currentDayTravel = travel.days
     ? travel.days.find((d) => d.day === date.date() && d.active)
     : undefined;
@@ -20,6 +22,10 @@ export default function DialogStudent({
   useEffect(() => {
     alreadyOnList();
   }, []);
+
+  if (loading) {
+    return <DialogSkeleton />;
+  }
 
   const alreadyOnList = () => {
     if (!currentDayTravel) {
@@ -86,6 +92,7 @@ export default function DialogStudent({
 
   const handleSaveClick = async () => {
     try {
+      setLoading(true);
       const data = await getDataAuth(
         `travel/${travel._id}/${date.date()}/other-students`,
         "post",
@@ -95,12 +102,13 @@ export default function DialogStudent({
       );
       if (data) {
         showMessage("Vaga solicitada com sucesso", "success");
-        handleClose();
         await loadMonthTravels();
+        handleClose();
       }
     } catch (error) {
       showMessage((error as Error).message, "error");
     }
+    // setLoading(false);
   };
 
   return (

@@ -73,18 +73,20 @@ class TravelModel {
     })) as ITravel
   }
 
-  async updateDay (id: string, day: number, travelDay: Partial<ITravelDay>): Promise<void> {
+  async updateDay (
+    id: string,
+    day: number,
+    travelDay: Partial<ITravelDay>
+  ): Promise<void> {
     await this.model.updateOne(
-      {
-        'days.day': day
-      },
+      { _id: id, 'days.day': day },
       {
         $set: {
-          'days.$[day]': travelDay
+          'days.$': travelDay
         }
       },
       {
-        arrayFilters: [{ 'day.day': day }]
+        arrayFilters: [{ 'days.day': day }]
       }
     )
   }
