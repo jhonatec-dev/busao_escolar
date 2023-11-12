@@ -92,6 +92,8 @@ class EmailModel {
     text += '</ul>'
     text +=
       '<h4>Sua frequência é gerenciada pelo administrador do Busão Escolar.</h4>'
+    text +=
+      '<h4>Todas as viagens à partir de agora são automaticamente confirmadas para os dias selecionados como frequência.</h4>'
     text += '<br>'
     text += this.getAccessButton()
 

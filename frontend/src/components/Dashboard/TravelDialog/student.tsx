@@ -1,6 +1,12 @@
 import { AppContext } from "@/context/app.provider";
 import { DataContext } from "@/context/data.provider";
-import { Button, ButtonGroup, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  ButtonGroup,
+  TextField,
+  ToggleButton,
+  Typography,
+} from "@mui/material";
 import { Stack } from "@mui/system";
 import { useContext, useEffect, useState } from "react";
 import { ITravelDialogProps } from ".";
@@ -80,10 +86,15 @@ export default function DialogStudent({
     return (
       <>
         <Typography>Você já está listado na viagem deste dia</Typography>
-        <Typography fontWeight={"bold"}>
+        <ToggleButton
+          value={studentOnTravel.approved}
+          selected
+          fullWidth
+          color={studentOnTravel.approved ? "success" : "warning"}
+        >
           {studentOnTravel.approved ? "Aprovado" : "Aguardando aprovação"}
-        </Typography>
-        <Button onClick={handleClose} fullWidth variant="outlined">
+        </ToggleButton>
+        <Button onClick={handleClose} fullWidth variant="outlined" size="large">
           Voltar
         </Button>
       </>
@@ -107,8 +118,8 @@ export default function DialogStudent({
       }
     } catch (error) {
       showMessage((error as Error).message, "error");
+      setLoading(false);
     }
-    // setLoading(false);
   };
 
   return (

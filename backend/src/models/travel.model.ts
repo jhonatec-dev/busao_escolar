@@ -51,7 +51,8 @@ class TravelModel {
   }
 
   async findById (id: string): Promise<ITravel> {
-    return (await this.model.findById(id)) as ITravel
+    const data = (await this.model.findById(id))
+    return data?.toObject() as ITravel
   }
 
   async create (travel: ITravel): Promise<ITravel> {
@@ -74,20 +75,14 @@ class TravelModel {
     })) as ITravel
   }
 
-  async updateDay (
-    id: string,
-    day: number,
-    travelDay: Partial<ITravelDay>
-  ): Promise<void> {
-    await this.model.findByIdAndUpdate(
-      { _id: id },
+  async updateDay (id: string, newTravel: ITravel): Promise<void> {
+    console.log('\n\n\n newTravel on model já', newTravel, '\n\n\n')
+    await this.model.updateOne(
       {
-        $set: {
-          'days.$[day]': travelDay
-        }
+        _id: id
       },
       {
-        arrayFilters: [{ 'day.day': day }]
+        $set: newTravel
       }
     )
   }

@@ -92,6 +92,7 @@ export default function DialogAdmin({
       handleClose();
     } catch (error) {
       showMessage((error as Error).message, "error");
+      setLoading(false);
     }
   };
 

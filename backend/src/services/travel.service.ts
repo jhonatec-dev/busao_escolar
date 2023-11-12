@@ -223,7 +223,13 @@ class TravelService {
         dayTravelDB,
         travelDay as ITravelDay
       )
-      await travelModel.updateDay(idTravel, day, travelDay)
+      travel.days = travel.days.map((elm) => {
+        if (elm.day === day) {
+          return travelDay as ITravelDay
+        }
+        return elm
+      })
+      await travelModel.updateDay(idTravel, travel)
       // TODO: gerar corretamente a lista de alunos que devem receber o email
       if (studentsToSendEmail.length > 0) {
         await emailService.sendOtherStudentsConfirmationEmail(
