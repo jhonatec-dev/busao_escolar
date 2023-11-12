@@ -44,7 +44,6 @@ export default function Calendar() {
     if (!travel) {
       setDaysHighlighted([]);
     } else {
-      console.log("imprimindo travel \n", travel, "\n", daysHighlightedDB);
       setDaysHighlighted(daysHighlightedDB);
     }
   }, [travel, daysHighlightedDB]);
@@ -89,12 +88,11 @@ export default function Calendar() {
         month: selDate.month() + 1,
         days: daysHighlighted,
       });
-      await loadMonthTravels();
       showMessage("Calendário de viagens salvo com sucesso", "success");
     } catch (error) {
       showMessage((error as Error).message, "error");
     }
-
+    await loadMonthTravels();
     setEditMode(false);
   };
 

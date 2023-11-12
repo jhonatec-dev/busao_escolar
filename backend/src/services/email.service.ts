@@ -115,6 +115,7 @@ class Email {
     daysToCancel: number[]
   ): Promise<void> {
     try {
+      // console.log('Cancelando travels: no emailService', daysToCancel, travel)
       if (daysToCancel.length === 0) return
 
       const promiseArray: Array<Promise<void>> = []
@@ -123,14 +124,22 @@ class Email {
         const foundDayTravel = travel.days.find(
           (dayTravel) => dayTravel.day === day
         )
+        // console.log('\n foundDayTravel', foundDayTravel)
         if (foundDayTravel === undefined) return
         const destinations = foundDayTravel.otherStudents.map(
           (student) => student.email
         )
+        // console.log('\n destinations', destinations)
         if (destinations.length === 0) return
         const studentEmailMessage = emailModel.getCancelTravelsEmail(
           dayjs(`${travel.year}-${travel.month}-${day}`)
         )
+        // console.log(
+        //   '\n\n Emails pra cancelamento\n',
+        //   studentEmailMessage,
+        //   '\nDestinatários:',
+        //   destinations
+        // )
         promiseArray.push(
           this.sendEmail(
             destinations,
@@ -140,15 +149,15 @@ class Email {
         )
       })
 
-      if (promiseArray.length > 0) {
-        Promise.all(promiseArray)
-          .then(() => {
-            console.log('Email enviado com sucesso')
-          })
-          .catch(() => {
-            console.log('Erro no envio de email')
-          })
-      }
+      // if (promiseArray.length > 0) {
+      //   Promise.all(promiseArray)
+      //     .then(() => {
+      //       console.log('Email enviado com sucesso')
+      //     })
+      //     .catch(() => {
+      //       console.log('Erro no envio de email')
+      //     })
+      // }
     } catch (error) {
       console.log('Erro no envio de email: GERAL NO CANCELAMENTO \n', error)
     }
