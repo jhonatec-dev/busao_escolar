@@ -7,12 +7,15 @@ import { AppContext } from "@/context/app.provider";
 import { DataProvider } from "@/context/data.provider";
 import { Stack } from "@mui/material";
 import Head from "next/head";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Dashboard() {
-  const { profile } = useContext(AppContext);
+  const { profile, setLoginLoading } = useContext(AppContext);
+  useEffect(() => {
+    setLoginLoading(false);
+  }, [])
   return (
     <>
       <Head>
