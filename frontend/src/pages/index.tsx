@@ -19,8 +19,7 @@ export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [classNameImg, setClassNameImg] = useState("");
-  const [loading, setLoading] = useState(false);
-  const { showMessage, getData, login, toggleMode, themeMode } =
+  const { showMessage, getData, login, toggleMode, themeMode, loginLoading, setLoginLoading } =
     useContext(AppContext);
   const { width } = useWindowSize();
 
@@ -36,7 +35,7 @@ export default function Home() {
       return;
     }
     try {
-      setLoading(true);
+      setLoginLoading(true);
       const data = await getData("login", "post", {
         email,
         password,
@@ -46,10 +45,11 @@ export default function Home() {
         saveToLS("tokenBusaoEscolar", data.token);
         login();
       }
-    } catch (error: any) {
-      showMessage(error.message, "error");
+    } catch (error) {
+      setLoginLoading(false);
+      showMessage((error as Error).message, "error");
     }
-    setLoading(false);
+    
   };
 
   const handleKeyPress = (event: any) => {
@@ -77,7 +77,7 @@ export default function Home() {
         <Card className="Card" variant={width < 600 ? "elevation" : "outlined"}>
           <Stack spacing={2} alignItems={"center"}>
             <Logo size={100} className={classNameImg} />
-            {loading ? (
+            {loginLoading ? (
               <LoginSkeleton />
             ) : (
               <>

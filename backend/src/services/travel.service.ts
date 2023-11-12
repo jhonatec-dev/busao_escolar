@@ -185,6 +185,26 @@ class TravelService {
     }
   }
 
+  private genereateUpdatedDayStudents (
+    dayTravelDB: ITravelDay,
+    newDayTravel: ITravelDay
+  ): ITravelStudent[] {
+    // analisar os dois objetos verificando se o estudante no newDayTravel está como accepted e o DB não
+    const result: ITravelStudent[] = []
+    newDayTravel.otherStudents.forEach((student) => {
+      if (student.approved) {
+        const studentDB = dayTravelDB.otherStudents.find(
+          (elm) => elm._id === student._id
+        ) as ITravelStudent
+        if (!studentDB.approved) {
+          result.push(student)
+        }
+      }
+    })
+
+    return result
+  }
+
   async updateDay (
     idTravel: string,
     day: number,
@@ -195,12 +215,22 @@ class TravelService {
       if (travel === null) {
         throw new Error('Viagem não encontrada')
       }
-      await travelModel.updateDay(idTravel, day, travelDay)
-      // TODO: enviar email confirmando o agendamento
-      await emailService.sendOtherStudentsConfirmationEmail(
-        dayjs(`${travel.year}-${travel.month}-${day}`),
-        travelDay.otherStudents as ITravelStudent[]
+      const dayTravelDB = travel.days.find((elm) => elm.day === day)
+      if (dayTravelDB === undefined) {
+        throw new Error('Viagem não encontrada')
+      }
+      const studentsToSendEmail = this.genereateUpdatedDayStudents(
+        dayTravelDB,
+        travelDay as ITravelDay
       )
+      await travelModel.updateDay(idTravel, day, travelDay)
+      // TODO: gerar corretamente a lista de alunos que devem receber o email
+      if (studentsToSendEmail.length > 0) {
+        await emailService.sendOtherStudentsConfirmationEmail(
+          dayjs(`${travel.year}-${travel.month}-${day}`),
+          studentsToSendEmail
+        )
+      }
       return {
         status: 'SUCCESS',
         data: 'atualizado com sucesso'

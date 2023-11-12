@@ -28,6 +28,8 @@ export interface AppContextType {
   getDataAuth: (endPoint: string, method: method, data?: any) => any;
   studentView: boolean;
   setStudentView: (studentView: boolean) => void;
+  loginLoading: boolean;
+  setLoginLoading: (loginLoading: boolean) => void;
 }
 
 export const AppContext = createContext({} as AppContextType);
@@ -41,19 +43,25 @@ export default function AppProvider({ children }: any) {
   const [messageMode, setMessageMode] = useState<messageMode>("info");
   const [profile, setProfile] = useState<IStudent>({} as IStudent);
   const [studentView, setStudentView] = useState(true);
+  const [loginLoading, setLoginLoading] = useState(false);
 
   const login = async () => {
-    const token = getFromLS("tokenBusaoEscolar");
-    if (!token) {
-      if (router.pathname === "/dashboard") router.push("/");
-      return;
+    try {
+      const token = getFromLS("tokenBusaoEscolar");
+      if (!token) {
+        if (router.pathname === "/dashboard") router.push("/");
+        return;
+      }
+
+      const newProfile = await getDataAuth("student/profile", "get");
+
+      if (!newProfile) return;
+      setProfile(newProfile as IStudent);
+      if (router.pathname === "/") router.push("/dashboard");
+    } catch (error) {
+      setLoginLoading(false);
+      throw new Error((error as Error).message);
     }
-
-    const newProfile = await getDataAuth("student/profile", "get");
-
-    if (!newProfile) return;
-    setProfile(newProfile as IStudent);
-    if (router.pathname === "/") router.push("/dashboard");
   };
 
   useEffect(() => {
@@ -200,21 +208,17 @@ export default function AppProvider({ children }: any) {
     router.push("/");
   }, []);
 
-  const getData = useCallback(
-    async (endPoint: string, method: method, data?: any) => {
-      try {
-        const response = await axios[method](`${API_URL}/${endPoint}`, data);
-        return response.data;
-      } catch (error: AxiosError | any) {
-        if (error instanceof AxiosError) {
-          showMessage(error.response?.data.message, "error");
-        } else showMessage(error.message, "error");
-
-        return;
+  const getData = async (endPoint: string, method: method, data?: any) => {
+    try {
+      const response = await axios[method](`${API_URL}/${endPoint}`, data);
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        throw new Error(error.response?.data.message);
       }
-    },
-    [showMessage]
-  );
+      throw new Error((error as Error).message);
+    }
+  };
 
   const getDataAuth = useCallback(
     async (endPoint: string, method: method, data?: any) => {
@@ -266,9 +270,11 @@ export default function AppProvider({ children }: any) {
       getDataAuth,
       studentView,
       setStudentView,
+      loginLoading,
+      setLoginLoading,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [themeMode, profile, studentView]
+    [themeMode, profile, studentView, loginLoading]
   );
 
   return (

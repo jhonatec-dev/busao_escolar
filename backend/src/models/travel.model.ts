@@ -79,15 +79,15 @@ class TravelModel {
     day: number,
     travelDay: Partial<ITravelDay>
   ): Promise<void> {
-    await this.model.updateOne(
-      { _id: id, 'days.day': day },
+    await this.model.findByIdAndUpdate(
+      { _id: id },
       {
         $set: {
-          'days.$': travelDay
+          'days.$[day]': travelDay
         }
       },
       {
-        arrayFilters: [{ 'days.day': day }]
+        arrayFilters: [{ 'day.day': day }]
       }
     )
   }

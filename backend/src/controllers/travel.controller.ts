@@ -13,8 +13,9 @@ class TravelController {
   }
 
   async setMonthTravels (req: Request, res: Response): Promise<Response> {
-    if (req.body.token.role === 'admin') {
-      const { status, data } = await travelService.setMonthTravels(req.body)
+    const { token, ...rest } = req.body
+    if (token.role === 'admin') {
+      const { status, data } = await travelService.setMonthTravels(rest)
       return res.status(mapStatusHTTP(status)).json(data)
     }
 
@@ -40,11 +41,12 @@ class TravelController {
   }
 
   async updateDay (req: Request, res: Response): Promise<Response> {
-    if (req.body.token.role === 'admin') {
+    const { token, ...rest } = req.body
+    if (token.role === 'admin') {
       const { status, data } = await travelService.updateDay(
         req.params.idTravel,
         +req.params.day,
-        req.body
+        rest
       )
       return res.status(mapStatusHTTP(status)).json(data)
     }
