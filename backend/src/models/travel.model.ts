@@ -62,9 +62,10 @@ class TravelModel {
     const data = await this.model.findOne({ year, month })
 
     if (data !== null && data !== undefined) {
-      return data as ITravel
+      return data.toObject() as ITravel
     }
-    return await this.model.create({ year, month })
+    const newTravel = (await this.model.create({ year, month })).toObject()
+    return newTravel
   }
 
   async update (id: string, travel: Partial<ITravel>): Promise<ITravel> {

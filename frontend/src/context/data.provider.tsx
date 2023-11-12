@@ -28,7 +28,6 @@ export const DataProvider = ({ children }: any) => {
   const { profile, getDataAuth, showMessage } = useContext(AppContext);
 
   useEffect(() => {
-    console.log("useEffect DataProvider");
     const getFirstData = async () => {
       await loadMonthTravels();
     };
@@ -38,7 +37,6 @@ export const DataProvider = ({ children }: any) => {
 
   const getStudents = async (): Promise<void> => {
     try {
-      console.log('buscando alunos');
       setLoadingStudents(true);
       const response = await getDataAuth("student", "get");
       if (!response) {

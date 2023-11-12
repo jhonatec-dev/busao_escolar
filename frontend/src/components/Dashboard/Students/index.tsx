@@ -11,7 +11,6 @@ export default function Students() {
   const filteredStudents = students.filter((student) =>
     student.name.toLowerCase().includes(search.toLowerCase())
   );
-  console.log("filteredStudents", filteredStudents);
 
   useEffect(() => {
     getStudents();

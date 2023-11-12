@@ -33,13 +33,17 @@ class TravelService {
 
   private async generateStudents (
     days: number[],
-    currentTravel: ITravel,
+    travelToEdit: ITravel,
     initialBusSits: number = 30
-  ): Promise<ITravel> {
+  ): Promise<{ newTravel: ITravel, daysToCancel: number[] }> {
     const students = await studentModel.find(true)
     if (students.length === 0) {
       throw new Error('Nenhum estudante encontrado')
     }
+
+    const currentTravel = Object.assign({}, travelToEdit)
+    // console.log('DENTRO DA FUNÇÃO \n', currentTravel)
+
     const { year, month, days: daysTravel } = currentTravel
     const date = dayjs()
       .year(year)
@@ -79,14 +83,11 @@ class TravelService {
       }
     }
 
-    if (daysToCancel.length > 0) {
-      await emailService.sendCancelTravelsEmail(currentTravel, daysToCancel)
-    }
     daysTravel.sort((a, b) => a.day - b.day)
 
     return {
-      ...currentTravel,
-      days: daysTravel
+      newTravel: currentTravel,
+      daysToCancel
     }
   }
 
@@ -99,11 +100,24 @@ class TravelService {
         travel.month
       )
       const initialBusSits = await systemModel.getBus()
-      const newTravel = await this.generateStudents(
+      // console.log('\n \n currentTravel BEFORE \n\n', currentTravel, '\n \n')
+      const { newTravel, daysToCancel } = await this.generateStudents(
         travel.days,
         currentTravel,
         initialBusSits
       )
+      // console.log('\n \n currentTravel AFTER \n\n', currentTravel, '\n \n')
+      // console.log('daysToCancel', daysToCancel)
+      if (daysToCancel.length > 0) {
+        emailService
+          .sendCancelTravelsEmail(currentTravel, daysToCancel)
+          .then(() => {
+            console.log('Email de cancelamento enviado')
+          })
+          .catch((error) => {
+            console.log('Erro no envio de email de cancelamento:', error)
+          })
+      }
 
       const data = await travelModel.update(
         currentTravel._id as string,
@@ -280,18 +294,8 @@ class TravelService {
         approved: true
       }
 
-      console.log(
-        'tripsToUpdate',
-        tripsToUpdate,
-        '\n studentTravel',
-        studentTravel,
-        '\n'
-      )
-
       for (const trip of tripsToUpdate) {
         trip.days.forEach((dayTravel) => {
-          console.log('\n\n')
-          console.log('trip', trip, '\ndayTravel', dayTravel)
           if (
             (trip.year === currYear &&
               trip.month === currMonth &&
@@ -340,7 +344,6 @@ class TravelService {
         await trip.save()
       }
     } catch (error) {
-      console.log('updateStudentOnTravels', error)
       throw new Error((error as Error).message)
     }
   }
