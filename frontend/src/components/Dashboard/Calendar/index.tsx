@@ -15,10 +15,11 @@ import {
 } from "@mui/material";
 import { DateCalendar } from "@mui/x-date-pickers";
 import { DayCalendarSkeleton } from "@mui/x-date-pickers/DayCalendarSkeleton";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { useContext, useEffect, useState } from "react";
 import { useWindowSize } from "usehooks-ts";
 import TravelDialog from "../TravelDialog";
+import Caption from "./Caption";
 import ServerDay from "./DaySlot";
 
 export default function Calendar() {
@@ -123,15 +124,23 @@ export default function Calendar() {
             </Box>
           </Stack>
           <Typography variant="body2">
-            Clique no dia marcado em azul para agendar uma vaga ou consultar se
-            já foi aprovada
+            Clique no dia desejado para conferir o status de sua vaga
           </Typography>
+          <Caption />
+          <Button
+            variant="text"
+            color="inherit"
+            onClick={() => setSelDate(dayjs())}
+          >
+            Voltar para o dia {dayjs().format("DD/MM/YYYY")}
+          </Button>
           <DateCalendar
             onChange={handleDayClick}
             value={selDate}
             renderLoading={() => <DayCalendarSkeleton />}
             loading={loadingTravel}
             disablePast={profile.role !== "admin"}
+            
             onMonthChange={loadMonthTravels}
             dayOfWeekFormatter={(_day, date) => date.format("ddd")}
             views={["day"]}
