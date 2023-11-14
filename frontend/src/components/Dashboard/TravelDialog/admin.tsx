@@ -21,7 +21,7 @@ export default function DialogAdmin({
   travel,
 }: ITravelDialogProps) {
   const { showMessage, getDataAuth } = useContext(AppContext);
-  const { loadMonthTravels } = useContext(DataContext);
+  const { loadMonthTravels, getRequests } = useContext(DataContext);
   const [frequentOpen, setFrequentOpen] = useState(false);
   const [otherOpen, setOtherOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -89,6 +89,7 @@ export default function DialogAdmin({
       );
       showMessage("Viagem alterada com sucesso", "success");
       await loadMonthTravels();
+      await getRequests();
       handleClose();
     } catch (error) {
       showMessage((error as Error).message, "error");

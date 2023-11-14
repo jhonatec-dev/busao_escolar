@@ -1,6 +1,6 @@
 import Calendar from "@/components/Dashboard/Calendar";
 import Header from "@/components/Dashboard/Header";
-import Solicitations from "@/components/Dashboard/Solicitations";
+import Requests from "@/components/Dashboard/Requests";
 import Students from "@/components/Dashboard/Students";
 import System from "@/components/Dashboard/System";
 import { AppContext } from "@/context/app.provider";
@@ -15,7 +15,7 @@ export default function Dashboard() {
   const { profile, setLoginLoading } = useContext(AppContext);
   useEffect(() => {
     setLoginLoading(false);
-  }, [])
+  }, []);
   return (
     <>
       <Head>
@@ -41,7 +41,7 @@ export default function Dashboard() {
               justifyContent="center"
             >
               <Students />
-              <Solicitations />
+              <Requests />
             </Stack>
           )}
         </DataProvider>

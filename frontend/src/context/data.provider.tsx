@@ -1,3 +1,4 @@
+import IRequest from "@/interfaces/IRequest";
 import { IStudent } from "@/interfaces/IStudent";
 import { ITravel } from "@/interfaces/ITravel";
 import dayjs, { Dayjs } from "dayjs";
@@ -14,6 +15,9 @@ interface IDataContext {
   getStudents: () => Promise<void>;
   loadingStudents: boolean;
   loadingTravel: boolean;
+  requests: IRequest[];
+  getRequests: () => Promise<void>;
+  loadingRequests: boolean;
 }
 
 export const DataContext = createContext({} as IDataContext);
@@ -25,7 +29,9 @@ export const DataProvider = ({ children }: any) => {
   const [students, setStudents] = useState<IStudent[]>([]);
   const [loadingStudents, setLoadingStudents] = useState(true);
   const [selDate, setSelDate] = useState<Dayjs>(dayjs());
-  const { profile, getDataAuth, showMessage } = useContext(AppContext);
+  const [requests, setRequests] = useState<IRequest[]>([]);
+  const [loadingRequests, setLoadingRequests] = useState(true);
+  const { getDataAuth, showMessage } = useContext(AppContext);
 
   useEffect(() => {
     const getFirstData = async () => {
@@ -35,13 +41,28 @@ export const DataProvider = ({ children }: any) => {
     getFirstData();
   }, []);
 
+  const getRequests = async (): Promise<void> => {
+    try {
+      setLoadingRequests(true);
+      const response = await getDataAuth("requests", "get");
+      if (!response) {
+        throw new Error("Erro ao buscar solicitações");
+      }
+      setRequests(response as IRequest[]);
+    } catch (error) {
+      setRequests([]);
+      showMessage((error as Error).message, "error");
+    }
+    setLoadingRequests(false);
+  };
+
   const getStudents = async (): Promise<void> => {
     try {
       setLoadingStudents(true);
       const response = await getDataAuth("student", "get");
       if (!response) {
         throw new Error("Erro ao buscar alunos");
-      };
+      }
       setStudents(response as IStudent[]);
     } catch (error) {
       showMessage((error as Error).message, "error");
@@ -85,9 +106,21 @@ export const DataProvider = ({ children }: any) => {
       students,
       getStudents,
       loadingStudents,
-      loadingTravel
+      loadingTravel,
+      requests,
+      getRequests,
+      loadingRequests,
     }),
-    [travel, daysHighlightedDB, selDate, students, loadingStudents, loadingTravel]
+    [
+      travel,
+      daysHighlightedDB,
+      selDate,
+      students,
+      loadingStudents,
+      loadingTravel,
+      requests,
+      loadingRequests,
+    ]
   );
 
   return <DataContext.Provider value={values}>{children}</DataContext.Provider>;

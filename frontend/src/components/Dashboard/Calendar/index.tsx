@@ -120,16 +120,18 @@ export default function Calendar() {
             <Button
               variant="outlined"
               color="inherit"
+              size="small"
+              disabled={editMode}
               onClick={() => setSelDate(dayjs())}
             >
               Hoje
             </Button>
             <Box>
-              <IconButton onClick={async () => await loadMonthTravels()}>
+              <IconButton disabled={editMode} onClick={async () => await loadMonthTravels()}>
                 <Refresh />
               </IconButton>
-              {profile.role === "admin" && (
-                <IconButton onClick={handleMenu}>
+              {profile.role === "admin"  && (
+                <IconButton disabled={editMode} onClick={handleMenu}>
                   <MoreVert />
                 </IconButton>
               )}

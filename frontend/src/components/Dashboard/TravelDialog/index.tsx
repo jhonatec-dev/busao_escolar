@@ -48,6 +48,8 @@ export default function TravelDialog(props: ITravelDialogProps) {
           <ToggleButtonGroup
             value={studentView}
             sx={{ justifyContent: "center" }}
+            color="primary"
+            exclusive
           >
             <ToggleButton
               value="true"

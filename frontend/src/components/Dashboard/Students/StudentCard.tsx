@@ -152,7 +152,7 @@ export default function StudentCard({ student }: StudentCardProps) {
             <MoreVert />
           </IconButton>
         </Stack>
-        <Stack direction={"row"} spacing={2} justifyContent={"space-between"}>
+        <Stack direction={"row"} spacing={2} justifyContent={"space-between"} alignItems={"center"}>
           <Typography variant="body1">{localStudent.school}</Typography>
           <ToggleButton
             color={localStudent.accepted ? "success" : "warning"}
@@ -163,7 +163,7 @@ export default function StudentCard({ student }: StudentCardProps) {
             {localStudent.accepted ? "Ativo" : "Inativo"}
           </ToggleButton>
         </Stack>
-        <Stack spacing={1}>
+        <Stack spacing={1} mt={2}>
           <Typography variant="body1" fontWeight={"bold"}>
             Frequência
           </Typography>
