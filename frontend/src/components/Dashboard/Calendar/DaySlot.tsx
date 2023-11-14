@@ -7,19 +7,38 @@ import { useContext } from "react";
 
 interface IDaySlotProps {
   highlightedDays?: number[];
+  editMode?: boolean;
 }
 
 export default function ServerDay(
-  props: PickersDayProps<Dayjs> & { highlightedDays?: number[] }
+  props: PickersDayProps<Dayjs> & {
+    highlightedDays?: number[];
+    editMode?: boolean;
+  }
 ) {
-  const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
-  const { travel } = useContext(DataContext);
+  const {
+    highlightedDays = [],
+    day,
+    outsideCurrentMonth,
+    editMode,
+    ...other
+  } = props;
+  const { travel, daysHighlightedDB } = useContext(DataContext);
   const { profile } = useContext(AppContext);
 
   // console.log("highlightedDays", highlightedDays);
-  const isSelected =
-    !props.outsideCurrentMonth &&
-    highlightedDays.indexOf(props.day.date()) >= 0;
+  let isSelected = false;
+  if (editMode) {
+    isSelected =
+      (!props.outsideCurrentMonth &&
+        daysHighlightedDB.includes(props.day.date())) ||
+      (!props.outsideCurrentMonth &&
+        highlightedDays.includes(props.day.date()));
+  } else {
+    isSelected =
+      !props.outsideCurrentMonth &&
+      highlightedDays.indexOf(props.day.date()) >= 0;
+  }
 
   // calculando a cor
   // verde se o aluno está presente
@@ -28,6 +47,24 @@ export default function ServerDay(
   const chooseColor = () => {
     if (!travel) {
       return "info";
+    }
+
+    if (profile.role === "admin") {
+      if (editMode) {
+        if (
+          highlightedDays.includes(props.day.date()) &&
+          !daysHighlightedDB.includes(props.day.date())
+        ) {
+          return "success";
+        } else if (highlightedDays.includes(props.day.date())) {
+          return "primary";
+        } else {
+          return "error";
+        }
+      }
+      const travelDay = travel.days?.find((d) => d.day === props.day.date());
+      let others = travelDay?.otherStudents.some((s) => !s.approved);
+      return others ? "warning" : "primary";
     }
 
     if (isSelected) {
@@ -60,7 +97,6 @@ export default function ServerDay(
         outsideCurrentMonth={outsideCurrentMonth}
         day={day}
         sx={{ fontSize: "16px" }}
-        
       />
     </Badge>
   );

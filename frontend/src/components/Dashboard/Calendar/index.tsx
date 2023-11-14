@@ -106,12 +106,24 @@ export default function Calendar() {
     <>
       <Card className="Card" variant="outlined">
         <Stack spacing={2}>
+          <Typography variant="h6">Calendário Mensal</Typography>
+
+          <Typography variant="body2">
+            Clique no dia desejado para conferir o status de sua vaga
+          </Typography>
+          <Caption editMode={editMode} />
           <Stack
             direction="row"
             justifyContent="space-between"
             alignItems="center"
           >
-            <Typography variant="h6">Calendário Mensal</Typography>
+            <Button
+              variant="outlined"
+              color="inherit"
+              onClick={() => setSelDate(dayjs())}
+            >
+              Hoje
+            </Button>
             <Box>
               <IconButton onClick={async () => await loadMonthTravels()}>
                 <Refresh />
@@ -123,24 +135,12 @@ export default function Calendar() {
               )}
             </Box>
           </Stack>
-          <Typography variant="body2">
-            Clique no dia desejado para conferir o status de sua vaga
-          </Typography>
-          <Caption />
-          <Button
-            variant="text"
-            color="inherit"
-            onClick={() => setSelDate(dayjs())}
-          >
-            Voltar para o dia {dayjs().format("DD/MM/YYYY")}
-          </Button>
           <DateCalendar
             onChange={handleDayClick}
             value={selDate}
             renderLoading={() => <DayCalendarSkeleton />}
             loading={loadingTravel}
             disablePast={profile.role !== "admin"}
-            
             onMonthChange={loadMonthTravels}
             dayOfWeekFormatter={(_day, date) => date.format("ddd")}
             views={["day"]}
@@ -150,6 +150,7 @@ export default function Calendar() {
             slotProps={{
               day: {
                 highlightedDays: daysHighlighted,
+                editMode,
               } as any,
             }}
             sx={
