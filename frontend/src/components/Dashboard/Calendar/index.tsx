@@ -30,6 +30,8 @@ export default function Calendar() {
     setSelDate,
     loadMonthTravels,
     loadingTravel,
+    setOpenDialogCalendar,
+    openDialogCalendar,
   } = useContext(DataContext);
   const { showMessage, getDataAuth, profile } = useContext(AppContext);
   const { width } = useWindowSize();
@@ -37,7 +39,6 @@ export default function Calendar() {
   const [editMode, setEditMode] = useState(false);
   const [daysHighlighted, setDaysHighlighted] =
     useState<number[]>(daysHighlightedDB);
-  const [openDialog, setOpenDialog] = useState(false);
 
   // const highlightedDays = [1, 3, 6, 10];
 
@@ -55,7 +56,7 @@ export default function Calendar() {
 
   const handleClose = () => {
     setAnchorEl(null);
-    setOpenDialog(false);
+    setOpenDialogCalendar(false);
   };
 
   const handleEditClick = () => {
@@ -74,7 +75,7 @@ export default function Calendar() {
         setDaysHighlighted((prev) => [...prev, day]);
       }
     } else {
-      setOpenDialog(true);
+      setOpenDialogCalendar(true);
     }
   };
 
@@ -103,15 +104,17 @@ export default function Calendar() {
   };
 
   return (
-    <>
+    <Stack gap={2} direction="row" justifyContent="center" flexWrap="wrap">
+      <Card className="Card" variant="outlined">
+        <Typography variant="h6">Calendário Mensal</Typography>
+
+        <Typography variant="body2">
+          Clique no dia desejado para conferir o status de sua vaga
+        </Typography>
+        <Caption editMode={editMode} />
+      </Card>
       <Card className="Card" variant="outlined">
         <Stack spacing={2}>
-          <Typography variant="h6">Calendário Mensal</Typography>
-
-          <Typography variant="body2">
-            Clique no dia desejado para conferir o status de sua vaga
-          </Typography>
-          <Caption editMode={editMode} />
           <Stack
             direction="row"
             justifyContent="space-between"
@@ -127,10 +130,13 @@ export default function Calendar() {
               Hoje
             </Button>
             <Box>
-              <IconButton disabled={editMode} onClick={async () => await loadMonthTravels()}>
+              <IconButton
+                disabled={editMode}
+                onClick={async () => await loadMonthTravels()}
+              >
                 <Refresh />
               </IconButton>
-              {profile.role === "admin"  && (
+              {profile.role === "admin" && (
                 <IconButton disabled={editMode} onClick={handleMenu}>
                   <MoreVert />
                 </IconButton>
@@ -212,7 +218,7 @@ export default function Calendar() {
         </MenuItem>
       </Menu>
       <Dialog
-        open={openDialog}
+        open={openDialogCalendar}
         onClose={handleClose}
         maxWidth="md"
         fullScreen={width < 800}
@@ -223,6 +229,6 @@ export default function Calendar() {
           travel={travel}
         />
       </Dialog>
-    </>
+    </Stack>
   );
 }

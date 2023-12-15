@@ -11,11 +11,12 @@ interface RequestCardProps {
 export default function RequestCard({ request }: RequestCardProps) {
   // const [showDialog, setShowDialog] = useState(false);
   const formatedDay = dayjs(request.date).format("DD/MM/YYYY");
-  const { setSelDate } = useContext(DataContext);
+  const { setSelDate, setOpenDialogCalendar } = useContext(DataContext);
 
   const handleClick = () => {
     if (request.request === "travel") {
       setSelDate(dayjs(request.date));
+      setOpenDialogCalendar(true);
     }
   };
 
