@@ -9,8 +9,8 @@ configDotenv()
 
 class Email {
   private readonly transporter = nodemailer.createTransport({
-    host: 'mail.jhonatec.com',
-    service: 'mail.jhonatec.com',
+    host: 'mail.hostinger.com',
+    service: 'smtp.hostinger.com',
     port: 465,
     secure: true,
     auth: {
@@ -161,6 +161,15 @@ class Email {
     } catch (error) {
       console.log('Erro no envio de email: GERAL NO CANCELAMENTO \n', error)
     }
+  }
+
+  public async sendResetPasswordEmail (student: IStudent): Promise<void> {
+    const studentEmailMessage = emailModel.getResetPasswordEmail(student)
+    await this.sendEmail(
+      [student.email],
+      studentEmailMessage.subject,
+      studentEmailMessage.html
+    )
   }
 }
 

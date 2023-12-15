@@ -130,7 +130,7 @@ export default function Home() {
                   width={"100%"}
                 >
                   <Button
-                    onClick={() => showMessage("Em desenvolvimento", "info")}
+                    href="/forgot-password"
                     sx={{ textTransform: "none" }}
                   >
                     Esqueci minha senha

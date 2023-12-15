@@ -193,6 +193,23 @@ class EmailModel {
 
     return email
   }
+
+  public getResetPasswordEmail (student: IStudent): IEmail {
+    const email: IEmail = { subject: '', html: '' }
+    email.subject = 'Alteração de senha no Busão Escolar!'
+
+    let text = `<h2>Olá, ${student.name}!</h2>`
+    text += '<h3>Seu acesso foi alterado no Busão Escolar!</h3>'
+    text += '<br>'
+    text += `<h3><strong>E-mail:</strong> ${student.email}</h3>`
+    text += `<h3><strong>Senha:</strong> ${student.password}</h3>`
+    text += '<br>'
+    text += this.getAccessButton()
+
+    email.html = text + this.getFooter()
+
+    return email
+  }
 }
 
 export default new EmailModel()

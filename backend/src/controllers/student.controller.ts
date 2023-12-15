@@ -76,6 +76,11 @@ class StudentController {
 
     return res.status(403).json({ message: 'Usuário não autorizado' })
   }
+
+  async forgot (req: Request, res: Response): Promise<Response> {
+    const { status, data } = await this.service.resetPassword(req.body.email)
+    return res.status(mapStatusHTTP(status)).json(data)
+  }
 }
 
 export default StudentController
