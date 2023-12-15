@@ -1,6 +1,14 @@
 import { DataContext } from "@/context/data.provider";
-import { Clear, Refresh } from "@mui/icons-material";
-import { Card, IconButton, Stack, TextField, Typography } from "@mui/material";
+import { Clear, ExpandLess, ExpandMore, Refresh } from "@mui/icons-material";
+import {
+  Button,
+  Card,
+  Collapse,
+  IconButton,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import StudentCard from "./StudentCard";
 import StudentSkeleton from "./StudentSkeleton";
@@ -8,6 +16,7 @@ import StudentSkeleton from "./StudentSkeleton";
 export default function Students() {
   const { students, getStudents, loadingStudents } = useContext(DataContext);
   const [search, setSearch] = useState<string>("");
+  const [open, setOpen] = useState(false);
   const filteredStudents = students.filter((student) =>
     student.name.toLowerCase().includes(search.toLowerCase())
   );
@@ -15,6 +24,12 @@ export default function Students() {
   useEffect(() => {
     getStudents();
   }, []);
+
+  useEffect(() => {
+    if (search.length > 0) {
+      setOpen(true);
+    }
+  }, [search]);
 
   return (
     <Card className="Card" variant="outlined">
@@ -48,15 +63,23 @@ export default function Students() {
               : {}
           }
         />
-        <Stack spacing={2} mt={2}>
-          {loadingStudents ? (
-            <StudentSkeleton />
-          ) : (
-            filteredStudents.map((student) => (
-              <StudentCard key={student._id} student={student} />
-            ))
-          )}
-        </Stack>
+        <Button
+          onClick={() => setOpen(!open)}
+          startIcon={open ? <ExpandLess /> : <ExpandMore />}
+        >
+          Ver
+        </Button>
+        <Collapse in={open}>
+          <Stack spacing={2} mt={2}>
+            {loadingStudents ? (
+              <StudentSkeleton />
+            ) : (
+              filteredStudents.map((student) => (
+                <StudentCard key={student._id} student={student} />
+              ))
+            )}
+          </Stack>
+        </Collapse>
       </Stack>
     </Card>
   );

@@ -18,6 +18,8 @@ interface IDataContext {
   requests: IRequest[];
   getRequests: () => Promise<void>;
   loadingRequests: boolean;
+  openDialogCalendar: boolean;
+  setOpenDialogCalendar: (open: boolean) => void;
 }
 
 export const DataContext = createContext({} as IDataContext);
@@ -31,6 +33,7 @@ export const DataProvider = ({ children }: any) => {
   const [selDate, setSelDate] = useState<Dayjs>(dayjs());
   const [requests, setRequests] = useState<IRequest[]>([]);
   const [loadingRequests, setLoadingRequests] = useState(true);
+  const [openDialogCalendar, setOpenDialogCalendar] = useState(false);
   const { getDataAuth, showMessage } = useContext(AppContext);
 
   useEffect(() => {
@@ -110,6 +113,8 @@ export const DataProvider = ({ children }: any) => {
       requests,
       getRequests,
       loadingRequests,
+      openDialogCalendar,
+      setOpenDialogCalendar,
     }),
     [
       travel,
@@ -120,6 +125,7 @@ export const DataProvider = ({ children }: any) => {
       loadingTravel,
       requests,
       loadingRequests,
+      openDialogCalendar,
     ]
   );
 

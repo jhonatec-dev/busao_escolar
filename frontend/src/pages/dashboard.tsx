@@ -24,15 +24,8 @@ export default function Dashboard() {
       <Header />
       <Stack className="Dashboard" pt={"70px"} gap={4}>
         <DataProvider>
-          <Stack
-            direction="row"
-            gap={2}
-            flexWrap="wrap"
-            justifyContent="center"
-          >
-            {profile.role === "admin" && <System />}
-            <Calendar />
-          </Stack>
+          <Calendar />
+
           {profile.role === "admin" && (
             <Stack
               direction={"row"}
