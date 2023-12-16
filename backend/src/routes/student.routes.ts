@@ -28,6 +28,10 @@ studentRoutes.put(
     await studentController.update(req, res)
 )
 
+studentRoutes.post('/forgot', async (req: Request, res: Response) => {
+  await studentController.forgot(req, res)
+})
+
 studentRoutes.get(
   '/profile',
   validateToken,

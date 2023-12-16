@@ -6,6 +6,7 @@ import JWT from '../utils/JWT'
 import { comparePassword, encrypt } from '../utils/encrypt'
 import emailService from './email.service'
 import travelService from './travel.service'
+import { generateRandomPassword } from '../utils/generatePassword'
 
 class StudentService {
   async find (): Promise<ServiceResult<IStudent[]>> {
@@ -209,6 +210,33 @@ class StudentService {
         data: {
           _id: id
         }
+      }
+    } catch (error) {
+      return {
+        status: 'INVALID',
+        data: { message: (error as Error).message }
+      }
+    }
+  }
+
+  async resetPassword (email: string): Promise<ServiceResult<unknown>> {
+    try {
+      const data = await StudentModel.findByEmail(email)
+      if (data === null || data === undefined) {
+        return {
+          status: 'SUCCESS',
+          data: {}
+        }
+      }
+      const newPassword = await generateRandomPassword(8)
+      console.log('newPassword', newPassword)
+      data.password = encrypt(newPassword)
+      await StudentModel.update(data._id?.toString() as string, data)
+
+      await emailService.sendResetPasswordEmail(data, newPassword)
+      return {
+        status: 'SUCCESS',
+        data: {}
       }
     } catch (error) {
       return {
