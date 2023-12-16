@@ -222,15 +222,18 @@ class StudentService {
   async resetPassword (email: string): Promise<ServiceResult<unknown>> {
     try {
       const data = await StudentModel.findByEmail(email)
-      if (data === null) {
-        throw new Error('Email inválido')
+      if (data === null || data === undefined) {
+        return {
+          status: 'SUCCESS',
+          data: {}
+        }
       }
       const newPassword = await generateRandomPassword(8)
       console.log('newPassword', newPassword)
       data.password = encrypt(newPassword)
       await StudentModel.update(data._id?.toString() as string, data)
 
-      await emailService.sendResetPasswordEmail(data)
+      await emailService.sendResetPasswordEmail(data, newPassword)
       return {
         status: 'SUCCESS',
         data: {}

@@ -9,7 +9,7 @@ configDotenv()
 
 class Email {
   private readonly transporter = nodemailer.createTransport({
-    host: 'mail.hostinger.com',
+    host: 'smtp.hostinger.com',
     service: 'smtp.hostinger.com',
     port: 465,
     secure: true,
@@ -163,8 +163,8 @@ class Email {
     }
   }
 
-  public async sendResetPasswordEmail (student: IStudent): Promise<void> {
-    const studentEmailMessage = emailModel.getResetPasswordEmail(student)
+  public async sendResetPasswordEmail (student: IStudent, newPassword: string): Promise<void> {
+    const studentEmailMessage = emailModel.getResetPasswordEmail(student, newPassword)
     await this.sendEmail(
       [student.email],
       studentEmailMessage.subject,

@@ -17,6 +17,7 @@ import validator from "validator";
 export default function Home() {
   const [email, setEmail] = useState("");
   const { showMessage, getData } = useContext(AppContext);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { width } = useWindowSize();
 
@@ -30,8 +31,13 @@ export default function Home() {
       return;
     }
     try {
+      setLoading(true);
+      await getData("student/forgot", "post", {
+        email,
+      });
     } catch (error) {
       showMessage((error as Error).message, "error");
+      setLoading(false);
     }
   };
 
@@ -49,35 +55,51 @@ export default function Home() {
         justifyContent={"center"}
         minHeight={"100vh"}
       >
-        <Card className="Card" variant={width < 600 ? "elevation" : "outlined"}>
+        <Card className="Card" elevation={width < 600 ? 0 : 2} variant={width < 600 ? "elevation" : "outlined"}>
           <Stack spacing={2} alignItems={"center"}>
             <Logo size={100} />
-            <>
-              <Typography variant="h6">
-                Digite o E-mail cadastrado no sistema
-              </Typography>
-              <TextField
-                label="E-mail"
-                variant="filled"
-                fullWidth
-                inputProps={{ type: "email" }}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+            {loading ? (
+              <>
+                <Typography variant="body1">
+                  Se o E-mail <strong>{email}</strong> estiver correto, você
+                  receberá uma mensagem informando os próximos passos a serem
+                  seguidos.
+                </Typography>
+                <Typography variant="body1">Obrigado por usar o Busão Escolar.</Typography>
+                <Button onClick={handleGoBack} fullWidth variant="outlined">Voltar</Button>
+              </>
+            ) : (
+              <>
+                <Typography variant="h6">
+                  Digite o E-mail cadastrado no sistema
+                </Typography>
+                <TextField
+                  label="E-mail"
+                  variant="filled"
+                  fullWidth
+                  inputProps={{ type: "email" }}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
 
-              <ButtonGroup>
-                <Button variant="outlined" size="large" onClick={handleGoBack}>
-                  Voltar
-                </Button>
-                <Button
-                  variant="contained"
-                  size="large"
-                  onClick={handleClickLogin}
-                >
-                  Recuperar Senha
-                </Button>
-              </ButtonGroup>
-            </>
+                <ButtonGroup>
+                  <Button
+                    variant="outlined"
+                    size="large"
+                    onClick={handleGoBack}
+                  >
+                    Voltar
+                  </Button>
+                  <Button
+                    variant="contained"
+                    size="large"
+                    onClick={handleClickLogin}
+                  >
+                    Recuperar Senha
+                  </Button>
+                </ButtonGroup>
+              </>
+            )}
           </Stack>
         </Card>
       </Stack>

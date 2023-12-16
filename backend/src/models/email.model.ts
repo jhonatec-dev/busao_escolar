@@ -194,7 +194,7 @@ class EmailModel {
     return email
   }
 
-  public getResetPasswordEmail (student: IStudent): IEmail {
+  public getResetPasswordEmail (student: IStudent, newPassword: string): IEmail {
     const email: IEmail = { subject: '', html: '' }
     email.subject = 'Alteração de senha no Busão Escolar!'
 
@@ -202,7 +202,7 @@ class EmailModel {
     text += '<h3>Seu acesso foi alterado no Busão Escolar!</h3>'
     text += '<br>'
     text += `<h3><strong>E-mail:</strong> ${student.email}</h3>`
-    text += `<h3><strong>Senha:</strong> ${student.password}</h3>`
+    text += `<h3><strong>Senha:</strong> ${newPassword}</h3>`
     text += '<br>'
     text += this.getAccessButton()
 
