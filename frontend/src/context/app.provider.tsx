@@ -133,14 +133,17 @@ export default function AppProvider({ children }: any) {
             boxShadow: "none",
           },
           elevation2: {
-            backgroundColor: themeMode === "light" ? "#e9e9e9" : "#232323",
+            backgroundColor: themeMode === "light" ? "#ffffff" : "#232323",
             boxShadow: "none",
           },
           outlined: {
             boxShadow: "2px 2px 6px rgba(0, 0, 0, 0.2)",
+            borderColor: themeMode === "light" ? "#b7b7b7" : "#6c6c6c",
+            backgroundColor: themeMode === "light" ? "#e9e9e9" : "#232323",
           },
         },
       },
+      
 
       // MuiTypography: {
       //   styleOverrides: {

@@ -1,5 +1,11 @@
 import { DataContext } from "@/context/data.provider";
-import { Clear, ExpandLess, ExpandMore, Refresh } from "@mui/icons-material";
+import {
+  Clear,
+  ExpandLess,
+  ExpandMore,
+  Refresh,
+  Search,
+} from "@mui/icons-material";
 import {
   Button,
   Card,
@@ -32,7 +38,7 @@ export default function Students() {
   }, [search]);
 
   return (
-    <Card className="Card" variant="outlined">
+    <Card className="Card" variant="outlined" elevation={1}>
       <Stack spacing={2}>
         <Stack
           direction="row"
@@ -48,26 +54,24 @@ export default function Students() {
           label="Pesquisar"
           value={search}
           variant="filled"
-          inputProps={{ type: "search" }}
           fullWidth
           onChange={(e) => setSearch(e.target.value)}
-          InputProps={
-            search.length > 0
-              ? {
-                  endAdornment: (
-                    <IconButton onClick={() => setSearch("")} size="small">
-                      <Clear />
-                    </IconButton>
-                  ),
-                }
-              : {}
-          }
+          InputProps={{
+            endAdornment:
+              search.length > 0 ? (
+                <IconButton onClick={() => setSearch("")} size="small">
+                  <Clear />
+                </IconButton>
+              ) : (
+                <Search />
+              ),
+          }}
         />
         <Button
           onClick={() => setOpen(!open)}
           startIcon={open ? <ExpandLess /> : <ExpandMore />}
         >
-          Ver
+          {open ? "Recolher" : "Mostrar"}
         </Button>
         <Collapse in={open}>
           <Stack spacing={2} mt={2}>

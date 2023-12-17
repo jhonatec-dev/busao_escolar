@@ -1,3 +1,4 @@
+import { AppContext } from "@/context/app.provider";
 import { DataContext } from "@/context/data.provider";
 import IRequest from "@/interfaces/IRequest";
 import { Card, Stack, ToggleButton, Typography } from "@mui/material";
@@ -12,11 +13,15 @@ export default function RequestCard({ request }: RequestCardProps) {
   // const [showDialog, setShowDialog] = useState(false);
   const formatedDay = dayjs(request.date).format("DD/MM/YYYY");
   const { setSelDate, setOpenDialogCalendar } = useContext(DataContext);
+  const { setStudentView } = useContext(AppContext);
 
   const handleClick = () => {
     if (request.request === "travel") {
       setSelDate(dayjs(request.date));
-      setOpenDialogCalendar(true);
+      setTimeout(() => {
+        setStudentView(false);
+        setOpenDialogCalendar(true);
+      }, 500);
     }
   };
 

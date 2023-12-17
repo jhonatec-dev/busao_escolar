@@ -77,13 +77,20 @@ export const DataProvider = ({ children }: any) => {
         setTravel({} as ITravel);
         setDaysHighlightedDB([]);
       } else {
-        setTravel(data);
-
         const newHighlighted = data.days
           .filter((d) => d.active)
           .map((d) => d.day);
         setDaysHighlightedDB([]);
         setDaysHighlightedDB(newHighlighted);
+        data.days?.map((d) => {
+          d.frequentStudents = d.frequentStudents.sort((a, b) =>
+            a.name.localeCompare(b.name)
+          );
+          d.otherStudents = d.otherStudents.sort((a, b) =>
+            a.name.localeCompare(b.name)
+          );
+        });
+        setTravel(data);
       }
       if (date.month() === dayjs().month()) {
         setSelDate(dayjs());
