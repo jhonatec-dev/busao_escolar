@@ -21,6 +21,7 @@ import { useWindowSize } from "usehooks-ts";
 import TravelDialog from "../TravelDialog";
 import Caption from "./Caption";
 import ServerDay from "./DaySlot";
+import { useRouter } from "next/router";
 
 export default function Calendar() {
   const {
@@ -39,8 +40,16 @@ export default function Calendar() {
   const [editMode, setEditMode] = useState(false);
   const [daysHighlighted, setDaysHighlighted] =
     useState<number[]>(daysHighlightedDB);
+  const router = useRouter();
 
   // const highlightedDays = [1, 3, 6, 10];
+
+  useEffect(() => {
+    const getData = async () => {
+      await loadMonthTravels();
+    };
+    getData();
+  }, []);
 
   useEffect(() => {
     if (!travel) {
@@ -101,6 +110,10 @@ export default function Calendar() {
   const handleCancelClick = () => {
     setDaysHighlighted(daysHighlightedDB); // na verdade será do DB
     setEditMode(false);
+  };
+
+  const handlePrintClick = () => {
+    router.push(`/print/${selDate.format("YYYY-MM")}`);
   };
 
   return (
@@ -213,8 +226,8 @@ export default function Calendar() {
           <Edit sx={{ mr: 1 }} /> Editar viagens do mês
         </MenuItem>
         <Divider />
-        <MenuItem onClick={handleClose}>
-          <Print sx={{ mr: 1 }} /> Imprimir (Em Construção)
+        <MenuItem onClick={handlePrintClick}>
+          <Print sx={{ mr: 1 }} /> Imprimir
         </MenuItem>
       </Menu>
       <Dialog

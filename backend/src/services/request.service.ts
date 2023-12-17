@@ -25,7 +25,7 @@ class RequestService {
       ]
     })
 
-    console.log('tripsToList', tripsToList)
+    // console.log('tripsToList', tripsToList)
 
     if (tripsToList.length === 0) {
       return []
