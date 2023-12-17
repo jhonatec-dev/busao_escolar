@@ -76,7 +76,7 @@ class TravelModel {
   }
 
   async updateDay (id: string, newTravel: ITravel): Promise<void> {
-    console.log('\n\n\n newTravel on model já', newTravel, '\n\n\n')
+    // console.log('\n\n\n newTravel on model já', newTravel, '\n\n\n')
     await this.model.updateOne(
       {
         _id: id

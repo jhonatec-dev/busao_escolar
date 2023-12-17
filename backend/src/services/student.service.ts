@@ -229,7 +229,7 @@ class StudentService {
         }
       }
       const newPassword = await generateRandomPassword(8)
-      console.log('newPassword', newPassword)
+      // console.log('newPassword', newPassword)
       data.password = encrypt(newPassword)
       await StudentModel.update(data._id?.toString() as string, data)
 

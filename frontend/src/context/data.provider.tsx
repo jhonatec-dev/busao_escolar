@@ -36,14 +36,6 @@ export const DataProvider = ({ children }: any) => {
   const [openDialogCalendar, setOpenDialogCalendar] = useState(false);
   const { getDataAuth, showMessage } = useContext(AppContext);
 
-  useEffect(() => {
-    const getFirstData = async () => {
-      await loadMonthTravels();
-    };
-
-    getFirstData();
-  }, []);
-
   const getRequests = async (): Promise<void> => {
     try {
       setLoadingRequests(true);
@@ -81,17 +73,22 @@ export const DataProvider = ({ children }: any) => {
         `travel/${date.year()}/${date.month() + 1}`,
         "get"
       )) as ITravel;
-      // console.log("imprimindo", data);
       if (data === null || data === undefined) {
         setTravel({} as ITravel);
         setDaysHighlightedDB([]);
       } else {
         setTravel(data);
+
         const newHighlighted = data.days
           .filter((d) => d.active)
           .map((d) => d.day);
         setDaysHighlightedDB([]);
         setDaysHighlightedDB(newHighlighted);
+      }
+      if (date.month() === dayjs().month()) {
+        setSelDate(dayjs());
+      } else {
+        setSelDate(() => date);
       }
     } catch (error) {
       showMessage((error as Error).message, "error");
