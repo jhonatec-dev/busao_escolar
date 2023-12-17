@@ -1,5 +1,14 @@
 import { ITravelDay } from "@/interfaces/ITravel";
-import { Box, Typography, Stack, Divider, List, ListItem } from "@mui/material";
+import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
+import {
+  Box,
+  Typography,
+  Stack,
+  Divider,
+  List,
+  ListItem,
+  Checkbox,
+} from "@mui/material";
 import dayjs from "dayjs";
 import { useRouter } from "next/router";
 
@@ -24,25 +33,46 @@ export default function DayItem({ day }: IProps) {
         <Divider orientation="vertical" variant="middle" />
         <Typography variant="body1">{freeSits} livres</Typography>
       </Stack>
-      <Stack direction={"row"} gap={2} flexWrap="wrap" justifyContent={"space-between"}>
+      <Stack
+        direction={"row"}
+        gap={2}
+        flexWrap="wrap"
+        justifyContent={"space-between"}
+      >
         <Stack>
           <Typography variant="h6">Alunos frequentes</Typography>
-            {day.frequentStudents.map((student, index) => (
-              <Typography key={index} >
+          {day.frequentStudents.map((student, index) => (
+            <Stack
+              direction={"row"}
+              spacing={1}
+              alignItems={"center"}
+              key={index}
+            >
+              <CheckBoxOutlineBlank />
+              <Typography>
                 {student.name} - {student.school}
               </Typography>
-            ))}
+            </Stack>
+          ))}
         </Stack>
         <Stack>
           <Typography variant="h6">Alunos extras</Typography>
-            {day.otherStudents.map((student, index) => (
-              <Typography key={index}>
-                {student.name} - {student.school}
-              </Typography>
-            ))}
+          {day.otherStudents.map((student, index) => (
+            <Stack
+            direction={"row"}
+            spacing={1}
+            alignItems={"center"}
+            key={index}
+          >
+            <CheckBoxOutlineBlank />
+            <Typography>
+              {student.name} - {student.school}
+            </Typography>
+          </Stack>
+          ))}
         </Stack>
       </Stack>
-      <Divider  />
+      <Divider />
     </Box>
   );
 }
