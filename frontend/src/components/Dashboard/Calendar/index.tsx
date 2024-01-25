@@ -16,12 +16,12 @@ import {
 import { DateCalendar } from "@mui/x-date-pickers";
 import { DayCalendarSkeleton } from "@mui/x-date-pickers/DayCalendarSkeleton";
 import dayjs, { Dayjs } from "dayjs";
+import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import { useWindowSize } from "usehooks-ts";
 import TravelDialog from "../TravelDialog";
 import Caption from "./Caption";
 import ServerDay from "./DaySlot";
-import { useRouter } from "next/router";
 
 export default function Calendar() {
   const {
@@ -33,6 +33,7 @@ export default function Calendar() {
     loadingTravel,
     setOpenDialogCalendar,
     openDialogCalendar,
+    getRequests,
   } = useContext(DataContext);
   const { showMessage, getDataAuth, profile } = useContext(AppContext);
   const { width } = useWindowSize();
@@ -74,6 +75,7 @@ export default function Calendar() {
   };
 
   const handleDayClick = (newDate: Dayjs | null) => {
+    console.log("handleDayClick", newDate);
     if (!newDate) return;
     setSelDate(newDate);
     const day = newDate?.date();
@@ -116,6 +118,11 @@ export default function Calendar() {
     router.push(`/print/${selDate.format("YYYY-MM")}`);
   };
 
+  const refresh = async () => {
+    await loadMonthTravels();
+    await getRequests();
+  }
+
   return (
     <Stack gap={2} direction="row" justifyContent="center" flexWrap="wrap">
       <Card className="Card" variant="outlined">
@@ -145,7 +152,7 @@ export default function Calendar() {
             <Box>
               <IconButton
                 disabled={editMode}
-                onClick={async () => await loadMonthTravels()}
+                onClick={refresh}
               >
                 <Refresh />
               </IconButton>

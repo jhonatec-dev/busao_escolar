@@ -8,6 +8,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { AxiosError } from "axios";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
@@ -32,10 +33,14 @@ export default function Home() {
     }
     try {
       setLoading(true);
-      await getData("student/forgot", "post", {
+      const response = await getData("student/forgot", "post", {
         email,
       });
+      console.log(response);
     } catch (error) {
+      if (AxiosError) {
+        console.log((error as AxiosError).response?.data);
+      }
       showMessage((error as Error).message, "error");
       setLoading(false);
     }
@@ -55,27 +60,35 @@ export default function Home() {
         justifyContent={"center"}
         minHeight={"100vh"}
       >
-        <Card className="Card" elevation={width < 600 ? 0 : 2} variant={width < 600 ? "elevation" : "outlined"}>
+        <Card
+          className='Card'
+          elevation={width < 600 ? 0 : 2}
+          variant={width < 600 ? "elevation" : "outlined"}
+        >
           <Stack spacing={2} alignItems={"center"}>
             <Logo size={100} />
             {loading ? (
               <>
-                <Typography variant="body1">
+                <Typography variant='body1'>
                   Se o E-mail <strong>{email}</strong> estiver correto, você
                   receberá uma mensagem informando os próximos passos a serem
                   seguidos.
                 </Typography>
-                <Typography variant="body1">Obrigado por usar o Busão Escolar.</Typography>
-                <Button onClick={handleGoBack} fullWidth variant="outlined">Voltar</Button>
+                <Typography variant='body1'>
+                  Obrigado por usar o Busão Escolar.
+                </Typography>
+                <Button onClick={handleGoBack} fullWidth variant='outlined'>
+                  Voltar
+                </Button>
               </>
             ) : (
               <>
-                <Typography variant="h6">
+                <Typography variant='h6'>
                   Digite o E-mail cadastrado no sistema
                 </Typography>
                 <TextField
-                  label="E-mail"
-                  variant="filled"
+                  label='E-mail'
+                  variant='filled'
                   fullWidth
                   inputProps={{ type: "email" }}
                   value={email}
@@ -84,15 +97,15 @@ export default function Home() {
 
                 <ButtonGroup>
                   <Button
-                    variant="outlined"
-                    size="large"
+                    variant='outlined'
+                    size='large'
                     onClick={handleGoBack}
                   >
                     Voltar
                   </Button>
                   <Button
-                    variant="contained"
-                    size="large"
+                    variant='contained'
+                    size='large'
                     onClick={handleClickLogin}
                   >
                     Recuperar Senha

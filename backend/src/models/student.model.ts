@@ -40,11 +40,9 @@ class StudentModel {
   }
 
   async findByEmail (email: string): Promise<IStudent | null> {
-    return (await (
-      await this.model.findOne({
-        email
-      })
-    )?.toObject()) as IStudent
+    console.log('email', email)
+    const data = await this.model.findOne({ email })
+    return await data?.toObject() as IStudent
   }
 
   async getAdminList (): Promise<string[]> {
@@ -67,8 +65,15 @@ class StudentModel {
     await this.model.updateOne({ _id: id }, { accepted: true })
   }
 
-  async changeFrequency (id: string, frequency: Pick<IStudent, 'frequency'>): Promise<IStudent> {
-    return await this.model.findOneAndUpdate({ _id: id }, { frequency }, { new: true }) as IStudent
+  async changeFrequency (
+    id: string,
+    frequency: Pick<IStudent, 'frequency'>
+  ): Promise<IStudent> {
+    return (await this.model.findOneAndUpdate(
+      { _id: id },
+      { frequency },
+      { new: true }
+    )) as IStudent
   }
 }
 

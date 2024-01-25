@@ -170,6 +170,7 @@ class Email {
       studentEmailMessage.subject,
       studentEmailMessage.html
     )
+    console.log('Email de redefinição de senha enviado')
   }
 }
 

@@ -12,16 +12,19 @@ interface RequestCardProps {
 export default function RequestCard({ request }: RequestCardProps) {
   // const [showDialog, setShowDialog] = useState(false);
   const formatedDay = dayjs(request.date).format("DD/MM/YYYY");
-  const { setSelDate, setOpenDialogCalendar } = useContext(DataContext);
+  const { selDate, setSelDate, setOpenDialogCalendar } =
+    useContext(DataContext);
   const { setStudentView } = useContext(AppContext);
 
   const handleClick = () => {
     if (request.request === "travel") {
+      setStudentView(false);
+      setOpenDialogCalendar(false);
       setSelDate(dayjs(request.date));
       setTimeout(() => {
-        setStudentView(false);
+        setSelDate(dayjs(request.date));
         setOpenDialogCalendar(true);
-      }, 500);
+      }, 1000);
     }
   };
 
@@ -35,10 +38,10 @@ export default function RequestCard({ request }: RequestCardProps) {
             justifyContent={"space-between"}
             alignItems={"center"}
           >
-            <Typography variant="body1" fontWeight={"bold"}>
+            <Typography variant='body1' fontWeight={"bold"}>
               {request.name}
             </Typography>
-            <Typography variant="h6">{formatedDay}</Typography>
+            <Typography variant='h6'>{formatedDay}</Typography>
           </Stack>
           <Stack
             direction={"row"}
@@ -46,15 +49,15 @@ export default function RequestCard({ request }: RequestCardProps) {
             justifyContent={"space-between"}
             alignItems={"center"}
           >
-            <Typography variant="body1">
+            <Typography variant='body1'>
               {request.request === "travel" ? "Viagem" : "Perfil"}
             </Typography>
             <ToggleButton
               selected
-              value="active"
-              size="small"
+              value='active'
+              size='small'
               onClick={handleClick}
-              color="primary"
+              color='primary'
             >
               Acessar
             </ToggleButton>

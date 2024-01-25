@@ -4,9 +4,9 @@ import { type IStudent } from '../interfaces/IStudent'
 import StudentModel from '../models/student.model'
 import JWT from '../utils/JWT'
 import { comparePassword, encrypt } from '../utils/encrypt'
+import { generateRandomPassword } from '../utils/generatePassword'
 import emailService from './email.service'
 import travelService from './travel.service'
-import { generateRandomPassword } from '../utils/generatePassword'
 
 class StudentService {
   async find (): Promise<ServiceResult<IStudent[]>> {

@@ -6,19 +6,25 @@ import RequestCard from "./RequestCard";
 import RequestSkeleton from "./RequestSkeleton";
 
 export default function Requests() {
-  const { requests, getRequests, loadingRequests } = useContext(DataContext);
+  const { requests, getRequests, loadingRequests, loadMonthTravels } =
+    useContext(DataContext);
 
   useEffect(() => {
     getRequests();
   }, []);
 
+  const refresh = async () => {
+    await getRequests();
+    await loadMonthTravels();
+  };
+
   return (
     <>
-      <Card className="Card" variant="outlined">
+      <Card className='Card' variant='outlined'>
         <Stack spacing={2}>
-          <Stack direction={"row"} justifyContent="space-between">
-            <Typography variant="h6">Solicitações</Typography>
-            <IconButton onClick={async () => await getRequests()}>
+          <Stack direction={"row"} justifyContent='space-between'>
+            <Typography variant='h6'>Solicitações</Typography>
+            <IconButton onClick={refresh}>
               <Refresh />
             </IconButton>
           </Stack>

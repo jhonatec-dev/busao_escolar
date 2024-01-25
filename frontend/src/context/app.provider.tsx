@@ -143,7 +143,6 @@ export default function AppProvider({ children }: any) {
           },
         },
       },
-      
 
       // MuiTypography: {
       //   styleOverrides: {
@@ -227,7 +226,7 @@ export default function AppProvider({ children }: any) {
     async (endPoint: string, method: method, data?: any) => {
       try {
         const token = getFromLS("tokenBusaoEscolar");
-        // console.log("token", token);
+        console.log("token", token);
         if (!token) {
           logout();
           return;
@@ -282,7 +281,7 @@ export default function AppProvider({ children }: any) {
 
   return (
     <AppContext.Provider value={values}>
-      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='pt-br'>
         <ThemeProvider theme={theme}>
           <>
             {children}
@@ -296,7 +295,7 @@ export default function AppProvider({ children }: any) {
               <Alert
                 onClose={() => setTimeout(() => setMessageContent(""), 500)}
                 severity={messageMode}
-                variant="filled"
+                variant='filled'
                 sx={{ width: "100%" }}
               >
                 {messageContent}
